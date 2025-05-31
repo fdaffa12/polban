@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useForm, Head, router } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Modal from "@/Components/Modal.vue";
@@ -226,6 +226,54 @@ const handleTagInput = (e) => {
 const removeTag = (tagToRemove) => {
     articleForm.tags = articleForm.tags.filter((tag) => tag !== tagToRemove);
 };
+
+// Add these new refs for search and filters
+const articleSearch = ref("");
+const categorySearch = ref("");
+const selectedCategory = ref("");
+
+// Add computed properties for filtered data
+const filteredArticles = computed(() => {
+    let filtered = props.articles;
+
+    // Filter by search term
+    if (articleSearch.value) {
+        const searchTerm = articleSearch.value.toLowerCase();
+        filtered = filtered.filter(
+            (article) =>
+                article.title.toLowerCase().includes(searchTerm) ||
+                stripHtml(article.content).toLowerCase().includes(searchTerm) ||
+                article.tags.some((tag) =>
+                    tag.name.toLowerCase().includes(searchTerm)
+                )
+        );
+    }
+
+    // Filter by category
+    if (selectedCategory.value) {
+        filtered = filtered.filter(
+            (article) => article.category_id === selectedCategory.value
+        );
+    }
+
+    return filtered;
+});
+
+const filteredCategories = computed(() => {
+    if (!categorySearch.value) return props.categories;
+
+    const searchTerm = categorySearch.value.toLowerCase();
+    return props.categories.filter((category) =>
+        category.name.toLowerCase().includes(searchTerm)
+    );
+});
+
+// Add this to your script setup
+const resetFilters = () => {
+    articleSearch.value = "";
+    categorySearch.value = "";
+    selectedCategory.value = "";
+};
 </script>
 
 <template>
@@ -278,6 +326,25 @@ const removeTag = (tagToRemove) => {
                         v-show="isCategoriesExpanded"
                         class="p-6 border-t border-gray-200 transition-all duration-300"
                     >
+                        <!-- Search and Filter -->
+                        <div class="mb-4">
+                            <div class="flex gap-2">
+                                <div class="flex-1">
+                                    <InputLabel
+                                        for="categorySearch"
+                                        value="Search"
+                                    />
+                                    <TextInput
+                                        id="categorySearch"
+                                        v-model="categorySearch"
+                                        type="text"
+                                        class="mt-1 block w-full"
+                                        placeholder="Search categories..."
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead class="bg-gray-50">
@@ -295,7 +362,7 @@ const removeTag = (tagToRemove) => {
                                     class="bg-white divide-y divide-gray-200"
                                 >
                                     <tr
-                                        v-for="category in categories"
+                                        v-for="category in filteredCategories"
                                         :key="category.id"
                                         class="hover:bg-gray-50"
                                     >
@@ -325,6 +392,14 @@ const removeTag = (tagToRemove) => {
                                             </div>
                                         </td>
                                     </tr>
+                                    <tr v-if="filteredCategories.length === 0">
+                                        <td
+                                            colspan="2"
+                                            class="px-6 py-4 text-center text-gray-500"
+                                        >
+                                            No categories found
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -339,6 +414,30 @@ const removeTag = (tagToRemove) => {
                             <PrimaryButton @click="showArticleModal = true">
                                 Add Article
                             </PrimaryButton>
+                        </div>
+
+                        <!-- Search and Filter -->
+                        <div class="mb-4 flex flex-col sm:flex-row gap-4">
+                            <TextInput
+                                v-model="articleSearch"
+                                type="search"
+                                placeholder="Search articles..."
+                                class="w-full sm:w-64"
+                            />
+
+                            <select
+                                v-model="selectedCategory"
+                                class="rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                            >
+                                <option value="">All Categories</option>
+                                <option
+                                    v-for="category in categories"
+                                    :key="category.id"
+                                    :value="category.id"
+                                >
+                                    {{ category.name }}
+                                </option>
+                            </select>
                         </div>
 
                         <!-- Articles Table -->
@@ -359,7 +458,7 @@ const removeTag = (tagToRemove) => {
                                     class="bg-white divide-y divide-gray-200"
                                 >
                                     <tr
-                                        v-for="article in articles"
+                                        v-for="article in filteredArticles"
                                         :key="article.id"
                                         class="hover:bg-gray-50"
                                     >
@@ -460,6 +559,14 @@ const removeTag = (tagToRemove) => {
                                                     <Trash2 class="w-4 h-4" />
                                                 </button>
                                             </div>
+                                        </td>
+                                    </tr>
+                                    <tr v-if="filteredArticles.length === 0">
+                                        <td
+                                            :colspan="articleHeaders.length"
+                                            class="px-6 py-4 text-center text-gray-500"
+                                        >
+                                            No articles found
                                         </td>
                                     </tr>
                                 </tbody>
