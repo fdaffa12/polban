@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue";
-import { useForm, Head, router } from "@inertiajs/vue3"; // Add router import
+import { useForm, Head, router } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Modal from "@/Components/Modal.vue";
 import InputLabel from "@/Components/InputLabel.vue";
@@ -11,6 +11,8 @@ import SecondaryButton from "@/Components/SecondaryButton.vue";
 import { Edit, Trash2, ChevronDown } from "lucide-vue-next";
 import { useToast } from "vue-toastification";
 import Swal from "sweetalert2";
+import { QuillEditor } from "@vueup/vue-quill";
+import "@vueup/vue-quill/dist/vue-quill.snow.css";
 
 const props = defineProps({
     articles: Array,
@@ -23,6 +25,10 @@ const editingArticle = ref(null);
 const editingCategory = ref(null);
 const isCategoriesExpanded = ref(true);
 const toast = useToast();
+
+// New refs for content modal
+const showContentModal = ref(false);
+const selectedContent = ref(null);
 
 const articleForm = useForm({
     title: "",
@@ -146,6 +152,41 @@ const deleteCategory = (category) => {
 
 const toggleCategories = () => {
     isCategoriesExpanded.value = !isCategoriesExpanded.value;
+};
+
+const showFullContent = (content) => {
+    selectedContent.value = content;
+    showContentModal.value = true;
+};
+
+const editorOptions = {
+    theme: "snow",
+    preserveWhitespace: true,
+    modules: {
+        toolbar: [
+            ["bold", "italic", "underline", "strike"],
+            ["blockquote", "code-block"],
+            [{ header: 1 }, { header: 2 }],
+            [{ list: "ordered" }, { list: "bullet" }],
+            [{ script: "sub" }, { script: "super" }],
+            [{ indent: "-1" }, { indent: "+1" }],
+            [{ direction: "rtl" }],
+            [{ size: ["small", false, "large", "huge"] }],
+            [{ header: [1, 2, 3, 4, 5, 6, false] }],
+            [{ color: [] }, { background: [] }],
+            [{ font: [] }],
+            [{ align: [] }],
+            ["clean"],
+            ["link", "image"],
+        ],
+    },
+};
+
+// Add this helper function
+const stripHtml = (html) => {
+    const tmp = document.createElement("DIV");
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || "";
 };
 </script>
 
@@ -298,9 +339,23 @@ const toggleCategories = () => {
                                         </td>
                                         <td class="px-6 py-4">
                                             <div
-                                                class="text-sm text-gray-500 truncate max-w-md"
+                                                @click="
+                                                    showFullContent(
+                                                        article.content
+                                                    )
+                                                "
+                                                class="text-sm text-gray-500 truncate max-w-md cursor-pointer hover:text-blue-600"
+                                                :title="'Click to view full content'"
                                             >
-                                                {{ article.content }}
+                                                {{
+                                                    stripHtml(
+                                                        article.content
+                                                    ).substring(0, 100) +
+                                                    (stripHtml(article.content)
+                                                        .length > 100
+                                                        ? "..."
+                                                        : "")
+                                                }}
                                             </div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
@@ -428,13 +483,15 @@ const toggleCategories = () => {
 
                         <div>
                             <InputLabel for="content" value="Content" />
-                            <textarea
+                            <QuillEditor
                                 id="content"
-                                v-model="articleForm.content"
-                                rows="4"
-                                class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
-                                required
-                            ></textarea>
+                                v-model:content="articleForm.content"
+                                :options="editorOptions"
+                                contentType="html"
+                                theme="snow"
+                                class="mt-1"
+                                style="min-height: 200px"
+                            />
                             <InputError
                                 :message="articleForm.errors.content"
                                 class="mt-2"
@@ -453,5 +510,58 @@ const toggleCategories = () => {
                 </form>
             </div>
         </Modal>
+
+        <!-- Content Modal -->
+        <Modal :show="showContentModal" @close="showContentModal = false">
+            <div class="p-6">
+                <h2 class="text-lg font-medium text-gray-900">
+                    Article Content
+                </h2>
+
+                <div class="mt-4">
+                    <p v-html="selectedContent" class="text-gray-700"></p>
+                </div>
+
+                <div class="mt-6 flex justify-end">
+                    <PrimaryButton @click="showContentModal = false">
+                        Close
+                    </PrimaryButton>
+                </div>
+            </div>
+        </Modal>
     </AuthenticatedLayout>
 </template>
+
+<style>
+.prose {
+    max-width: 65ch;
+    color: #374151;
+}
+.prose p {
+    margin-top: 1.25em;
+    margin-bottom: 1.25em;
+}
+.prose strong {
+    font-weight: 600;
+    color: #111827;
+}
+.prose ul {
+    margin-top: 1.25em;
+    margin-bottom: 1.25em;
+    padding-left: 1.625em;
+    list-style-type: disc;
+}
+.prose ol {
+    margin-top: 1.25em;
+    margin-bottom: 1.25em;
+    padding-left: 1.625em;
+    list-style-type: decimal;
+}
+.prose blockquote {
+    margin-top: 1.6em;
+    margin-bottom: 1.6em;
+    padding-left: 1em;
+    border-left: 0.25em solid #e5e7eb;
+    font-style: italic;
+}
+</style>
