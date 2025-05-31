@@ -6,14 +6,18 @@ use App\Models\Article;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Models\Tag;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ArticleController extends Controller
 {
     public function index()
     {
         return Inertia::render('Articles/Index', [
-            'articles' => Article::with(['category', 'user'])->latest()->get(),
-            'categories' => Category::all()
+            'articles' => Article::with(['category', 'tags'])->latest()->get(),
+            'categories' => Category::all(),
+            'tags' => Tag::all()
         ]);
     }
 
@@ -50,10 +54,28 @@ class ArticleController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required|string',
-            'category_id' => 'required|exists:categories,id'
+            'category_id' => 'required|exists:categories,id',
+            'featured_image' => 'nullable|image|max:2048',
+            'tags' => 'array'
         ]);
 
-        $request->user()->articles()->create($request->all());
+        $data = $request->except('featured_image', 'tags');
+        
+        if ($request->hasFile('featured_image')) {
+            $path = $request->file('featured_image')->store('articles', 'public');
+            $data['featured_image'] = $path;
+        }
+
+        $article = $request->user()->articles()->create($data);
+        
+        // Handle tags
+        if ($request->has('tags')) {
+            $tags = collect($request->tags)->map(function ($tagName) {
+                return Tag::firstOrCreate(['name' => $tagName, 'slug' => Str::slug($tagName)]);
+            });
+            
+            $article->tags()->sync($tags->pluck('id'));
+        }
 
         return redirect()->back();
     }
@@ -63,10 +85,29 @@ class ArticleController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required|string',
-            'category_id' => 'required|exists:categories,id'
+            'category_id' => 'required|exists:categories,id',
+            'featured_image' => 'nullable|image|max:2048',
+            'tags' => 'array'
         ]);
 
-        $article->update($request->all());
+        $data = $request->except('featured_image', 'tags');
+
+        if ($request->hasFile('featured_image')) {
+            Storage::disk('public')->delete($article->featured_image);
+            $path = $request->file('featured_image')->store('articles', 'public');
+            $data['featured_image'] = $path;
+        }
+
+        $article->update($data);
+        
+        // Handle tags
+        if ($request->has('tags')) {
+            $tags = collect($request->tags)->map(function ($tagName) {
+                return Tag::firstOrCreate(['name' => $tagName, 'slug' => Str::slug($tagName)]);
+            });
+            
+            $article->tags()->sync($tags->pluck('id'));
+        }
 
         return redirect()->back();
     }

@@ -13,10 +13,13 @@ import { useToast } from "vue-toastification";
 import Swal from "sweetalert2";
 import { QuillEditor } from "@vueup/vue-quill";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
+import Multiselect from "@vueform/multiselect";
+import "@vueform/multiselect/themes/default.css";
 
 const props = defineProps({
     articles: Array,
     categories: Array,
+    tags: Array,
 });
 
 const showCategoryModal = ref(false);
@@ -30,10 +33,17 @@ const toast = useToast();
 const showContentModal = ref(false);
 const selectedContent = ref(null);
 
+// Add these refs for tags management
+const newTag = ref("");
+const selectedTags = ref([]);
+
+// Modify articleForm to handle tags as strings
 const articleForm = useForm({
     title: "",
     content: "",
     category_id: "",
+    featured_image: null,
+    tags: [], // This will store tag strings
 });
 
 const categoryForm = useForm({
@@ -47,7 +57,9 @@ const categoryHeaders = [
 ];
 
 const articleHeaders = [
+    { text: "Image", value: "featured_image" },
     { text: "Title", value: "title" },
+    { text: "Tags", value: "tags" },
     { text: "Category", value: "category.name" },
     { text: "Content", value: "content" },
     { text: "Actions", value: "actions", sortable: false },
@@ -69,6 +81,7 @@ const editArticle = (article) => {
     articleForm.title = article.title;
     articleForm.content = article.content;
     articleForm.category_id = article.category_id;
+    articleForm.tags = article.tags.map((tag) => tag.name);
     showArticleModal.value = true;
 };
 
@@ -187,6 +200,31 @@ const stripHtml = (html) => {
     const tmp = document.createElement("DIV");
     tmp.innerHTML = html;
     return tmp.textContent || tmp.innerText || "";
+};
+
+// Add this method
+const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        articleForm.featured_image = file;
+    }
+};
+
+// Add this method to handle tag input
+const handleTagInput = (e) => {
+    if (e.key === "," || e.key === "Enter") {
+        e.preventDefault();
+        const tag = newTag.value.trim().toLowerCase();
+        if (tag && !articleForm.tags.includes(tag)) {
+            articleForm.tags.push(tag);
+        }
+        newTag.value = "";
+    }
+};
+
+// Add method to remove tag
+const removeTag = (tagToRemove) => {
+    articleForm.tags = articleForm.tags.filter((tag) => tag !== tagToRemove);
 };
 </script>
 
@@ -325,6 +363,30 @@ const stripHtml = (html) => {
                                         :key="article.id"
                                         class="hover:bg-gray-50"
                                     >
+                                        <!-- Image Column -->
+                                        <td class="px-6 py-4">
+                                            <div class="flex-shrink-0">
+                                                <img
+                                                    v-if="
+                                                        article.featured_image
+                                                    "
+                                                    :src="`/storage/${article.featured_image}`"
+                                                    :alt="article.title"
+                                                    class="w-12 h-12 rounded-lg object-cover"
+                                                    @error="handleImageError"
+                                                />
+                                                <div
+                                                    v-else
+                                                    class="w-12 h-12 rounded-lg bg-gray-200 flex items-center justify-center"
+                                                >
+                                                    <span class="text-gray-400"
+                                                        >No img</span
+                                                    >
+                                                </div>
+                                            </div>
+                                        </td>
+
+                                        <!-- Title Column -->
                                         <td class="px-6 py-4">
                                             <div
                                                 class="text-sm font-medium text-gray-900"
@@ -332,11 +394,28 @@ const stripHtml = (html) => {
                                                 {{ article.title }}
                                             </div>
                                         </td>
+
+                                        <!-- Tags Column -->
+                                        <td class="px-6 py-4">
+                                            <div class="flex flex-wrap gap-1">
+                                                <span
+                                                    v-for="tag in article.tags"
+                                                    :key="tag.id"
+                                                    class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                                                >
+                                                    {{ tag.name }}
+                                                </span>
+                                            </div>
+                                        </td>
+
+                                        <!-- Category Column -->
                                         <td class="px-6 py-4">
                                             <div class="text-sm text-gray-500">
                                                 {{ article.category.name }}
                                             </div>
                                         </td>
+
+                                        <!-- Content Column -->
                                         <td class="px-6 py-4">
                                             <div
                                                 @click="
@@ -358,6 +437,8 @@ const stripHtml = (html) => {
                                                 }}
                                             </div>
                                         </td>
+
+                                        <!-- Actions Column -->
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <div
                                                 class="flex items-center gap-2"
@@ -497,6 +578,76 @@ const stripHtml = (html) => {
                                 class="mt-2"
                             />
                         </div>
+
+                        <div>
+                            <InputLabel
+                                for="featured_image"
+                                value="Featured Image"
+                            />
+                            <input
+                                type="file"
+                                id="featured_image"
+                                @change="handleImageUpload"
+                                accept="image/*"
+                                class="mt-1 block w-full"
+                            />
+                            <InputError
+                                :message="articleForm.errors.featured_image"
+                                class="mt-2"
+                            />
+
+                            <!-- Preview current image if editing -->
+                            <div
+                                v-if="
+                                    editingArticle &&
+                                    editingArticle.featured_image
+                                "
+                                class="mt-2"
+                            >
+                                <img
+                                    :src="`/storage/${editingArticle.featured_image}`"
+                                    class="max-w-xs rounded-lg shadow-md"
+                                />
+                            </div>
+                        </div>
+
+                        <div>
+                            <InputLabel for="tags" value="Tags" />
+                            <div class="mt-1">
+                                <div
+                                    class="flex flex-wrap gap-2 p-2 border rounded-md bg-white mb-2"
+                                >
+                                    <div
+                                        v-for="tag in articleForm.tags"
+                                        :key="tag"
+                                        class="inline-flex items-center px-2 py-1 rounded-full text-sm bg-blue-100 text-blue-800"
+                                    >
+                                        {{ tag }}
+                                        <button
+                                            @click="removeTag(tag)"
+                                            type="button"
+                                            class="ml-1 text-blue-600 hover:text-blue-800"
+                                        >
+                                            ×
+                                        </button>
+                                    </div>
+                                </div>
+                                <input
+                                    type="text"
+                                    v-model="newTag"
+                                    @keydown="handleTagInput"
+                                    placeholder="Type and press comma or enter to add tags"
+                                    class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                />
+                                <div class="mt-1 text-sm text-gray-500">
+                                    Press comma or enter to add tags
+                                </div>
+                                <InputError
+                                    :message="articleForm.errors.tags"
+                                    class="mt-2"
+                                />
+                            </div>
+                        </div>
                     </div>
 
                     <div class="mt-6 flex justify-end gap-2">
@@ -563,5 +714,18 @@ const stripHtml = (html) => {
     padding-left: 1em;
     border-left: 0.25em solid #e5e7eb;
     font-style: italic;
+}
+
+/* Add these styles */
+.tag-input {
+    @apply border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm;
+}
+
+.tag-item {
+    @apply inline-flex items-center px-2 py-1 rounded-full text-sm bg-blue-100 text-blue-800;
+}
+
+.tag-remove {
+    @apply ml-1 text-blue-600 hover:text-blue-800;
 }
 </style>
