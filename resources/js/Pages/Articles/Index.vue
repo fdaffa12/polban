@@ -37,6 +37,9 @@ const selectedContent = ref(null);
 const newTag = ref("");
 const selectedTags = ref([]);
 
+// Add with other refs
+const selectedTag = ref("");
+
 // Modify articleForm to handle tags as strings
 const articleForm = useForm({
     title: "",
@@ -256,6 +259,13 @@ const filteredArticles = computed(() => {
         );
     }
 
+    // Filter by tag
+    if (selectedTag.value) {
+        filtered = filtered.filter((article) =>
+            article.tags.some((tag) => tag.id === selectedTag.value)
+        );
+    }
+
     return filtered;
 });
 
@@ -273,6 +283,7 @@ const resetFilters = () => {
     articleSearch.value = "";
     categorySearch.value = "";
     selectedCategory.value = "";
+    selectedTag.value = "";
 };
 </script>
 
@@ -438,6 +449,33 @@ const resetFilters = () => {
                                     {{ category.name }}
                                 </option>
                             </select>
+
+                            <select
+                                v-model="selectedTag"
+                                class="rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                            >
+                                <option value="">All Tags</option>
+                                <option
+                                    v-for="tag in tags"
+                                    :key="tag.id"
+                                    :value="tag.id"
+                                >
+                                    {{ tag.name }}
+                                </option>
+                            </select>
+
+                            <!-- Add clear filters button -->
+                            <button
+                                v-if="
+                                    articleSearch ||
+                                    selectedCategory ||
+                                    selectedTag
+                                "
+                                @click="resetFilters"
+                                class="text-sm text-gray-600 hover:text-gray-900 flex items-center"
+                            >
+                                <span class="mr-1">×</span> Clear filters
+                            </button>
                         </div>
 
                         <!-- Articles Table -->
