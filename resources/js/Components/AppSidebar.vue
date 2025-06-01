@@ -73,6 +73,11 @@ const items = [
         url: "/articles",
         icon: FileText, // Import FileText from lucide-vue-next
     },
+    {
+        title: "About Us",
+        url: "/about-us",
+        icon: FileText,
+    },
 ];
 
 const page = usePage();

@@ -5,6 +5,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\AboutUsController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -32,6 +33,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/categories', [ArticleController::class, 'storeCategory'])->name('categories.store');
     Route::put('/categories/{category}', [ArticleController::class, 'updateCategory'])->name('categories.update');
     Route::delete('/categories/{category}', [ArticleController::class, 'deleteCategory'])->name('categories.destroy');
+
+    Route::get('/about-us', [AboutUsController::class, 'index'])->name('about-us.index');
+    Route::post('/about-us', [AboutUsController::class, 'update'])->name('about-us.update');
 });
 
 require __DIR__.'/auth.php';
