@@ -24,6 +24,7 @@ const form = useForm({
 
 const editorOptions = {
     theme: "snow",
+    preserveWhitespace: true,
     modules: {
         toolbar: [
             ["bold", "italic", "underline", "strike"],
@@ -32,10 +33,14 @@ const editorOptions = {
             [{ list: "ordered" }, { list: "bullet" }],
             [{ script: "sub" }, { script: "super" }],
             [{ indent: "-1" }, { indent: "+1" }],
+            [{ direction: "rtl" }],
             [{ size: ["small", false, "large", "huge"] }],
             [{ header: [1, 2, 3, 4, 5, 6, false] }],
             [{ color: [] }, { background: [] }],
+            [{ font: [] }],
+            [{ align: [] }],
             ["clean"],
+            ["link", "image"],
         ],
     },
 };
@@ -78,9 +83,11 @@ const submit = () => {
                                 <QuillEditor
                                     id="au_desc"
                                     v-model:content="form.au_desc"
+                                    :options="editorOptions"
                                     contentType="html"
                                     theme="snow"
                                     class="mt-1"
+                                    style="min-height: 200px"
                                 />
                                 <InputError
                                     :message="form.errors.au_desc"
@@ -164,6 +171,7 @@ const submit = () => {
                                     contentType="html"
                                     theme="snow"
                                     class="mt-1"
+                                    style="min-height: 200px"
                                 />
                                 <InputError
                                     :message="form.errors.au_values"
@@ -182,6 +190,7 @@ const submit = () => {
                                     contentType="html"
                                     theme="snow"
                                     class="mt-1"
+                                    style="min-height: 200px"
                                 />
                                 <InputError
                                     :message="form.errors.history"
