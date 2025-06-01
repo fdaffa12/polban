@@ -40,13 +40,21 @@ const selectedTags = ref([]);
 // Add with other refs
 const selectedTag = ref("");
 
-// Modify articleForm to handle tags as strings
+// Add this constant for status options
+const STATUS_OPTIONS = [
+    { value: "draft", label: "Draft" },
+    { value: "publish", label: "Published" },
+    { value: "highlight", label: "Highlighted" },
+];
+
+// Modify articleForm to include status
 const articleForm = useForm({
     title: "",
     content: "",
     category_id: "",
     featured_image: null,
-    tags: [], // This will store tag strings
+    tags: [],
+    status: "publish", // default value
 });
 
 const categoryForm = useForm({
@@ -65,6 +73,7 @@ const articleHeaders = [
     { text: "Tags", value: "tags" },
     { text: "Category", value: "category.name" },
     { text: "Content", value: "content" },
+    { text: "Status", value: "status" },
     { text: "Actions", value: "actions", sortable: false },
 ];
 
@@ -85,6 +94,7 @@ const editArticle = (article) => {
     articleForm.content = article.content;
     articleForm.category_id = article.category_id;
     articleForm.tags = article.tags.map((tag) => tag.name);
+    articleForm.status = article.status;
     showArticleModal.value = true;
 };
 
@@ -234,6 +244,7 @@ const removeTag = (tagToRemove) => {
 const articleSearch = ref("");
 const categorySearch = ref("");
 const selectedCategory = ref("");
+const selectedStatus = ref(""); // Add new ref
 
 // Add computed properties for filtered data
 const filteredArticles = computed(() => {
@@ -266,6 +277,13 @@ const filteredArticles = computed(() => {
         );
     }
 
+    // Filter by status
+    if (selectedStatus.value) {
+        filtered = filtered.filter(
+            (article) => article.status === selectedStatus.value
+        );
+    }
+
     return filtered;
 });
 
@@ -284,6 +302,7 @@ const resetFilters = () => {
     categorySearch.value = "";
     selectedCategory.value = "";
     selectedTag.value = "";
+    selectedStatus.value = ""; // Update resetFilters
 };
 </script>
 
@@ -464,12 +483,28 @@ const resetFilters = () => {
                                 </option>
                             </select>
 
+                            <!-- Add new status filter -->
+                            <select
+                                v-model="selectedStatus"
+                                class="rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                            >
+                                <option value="">All Status</option>
+                                <option
+                                    v-for="option in STATUS_OPTIONS"
+                                    :key="option.value"
+                                    :value="option.value"
+                                >
+                                    {{ option.label }}
+                                </option>
+                            </select>
+
                             <!-- Add clear filters button -->
                             <button
                                 v-if="
                                     articleSearch ||
                                     selectedCategory ||
-                                    selectedTag
+                                    selectedTag ||
+                                    selectedStatus
                                 "
                                 @click="resetFilters"
                                 class="text-sm text-gray-600 hover:text-gray-900 flex items-center"
@@ -572,6 +607,13 @@ const resetFilters = () => {
                                                         ? "..."
                                                         : "")
                                                 }}
+                                            </div>
+                                        </td>
+
+                                        <!-- Status Column -->
+                                        <td class="px-6 py-4">
+                                            <div class="text-sm text-gray-500">
+                                                {{ article.status }}
                                             </div>
                                         </td>
 
@@ -792,6 +834,28 @@ const resetFilters = () => {
                                     class="mt-2"
                                 />
                             </div>
+                        </div>
+
+                        <div>
+                            <InputLabel for="status" value="Status" />
+                            <select
+                                id="status"
+                                v-model="articleForm.status"
+                                class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                required
+                            >
+                                <option
+                                    v-for="option in STATUS_OPTIONS"
+                                    :key="option.value"
+                                    :value="option.value"
+                                >
+                                    {{ option.label }}
+                                </option>
+                            </select>
+                            <InputError
+                                :message="articleForm.errors.status"
+                                class="mt-2"
+                            />
                         </div>
                     </div>
 

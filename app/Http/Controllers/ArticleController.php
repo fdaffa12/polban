@@ -56,10 +56,16 @@ class ArticleController extends Controller
             'content' => 'required|string',
             'category_id' => 'required|exists:categories,id',
             'featured_image' => 'nullable|image|max:2048',
-            'tags' => 'array'
+            'tags' => 'array',
+            'status' => 'required|in:draft,publish,highlight'
         ]);
 
         $data = $request->except('featured_image', 'tags');
+        
+        // Set default status if not provided
+        if (!isset($data['status'])) {
+            $data['status'] = 'publish';
+        }
         
         if ($request->hasFile('featured_image')) {
             $path = $request->file('featured_image')->store('articles', 'public');
@@ -87,7 +93,8 @@ class ArticleController extends Controller
             'content' => 'required|string',
             'category_id' => 'required|exists:categories,id',
             'featured_image' => 'nullable|image|max:2048',
-            'tags' => 'array'
+            'tags' => 'array',
+            'status' => 'required|in:draft,publish,highlight'
         ]);
 
         $data = $request->except('featured_image', 'tags');
