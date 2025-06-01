@@ -36,6 +36,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/about-us', [AboutUsController::class, 'index'])->name('about-us.index');
     Route::post('/about-us', [AboutUsController::class, 'update'])->name('about-us.update');
+    Route::post('/about-us/remove-image', [AboutUsController::class, 'removeImage'])->name('about-us.remove-image');
 });
 
 require __DIR__.'/auth.php';

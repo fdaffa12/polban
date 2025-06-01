@@ -19,7 +19,7 @@ class AboutUs extends Model
 
     protected $casts = [
         'au_multiple_image' => 'array',
-        'au_values' => 'array',
-        'history' => 'array'
+        'au_values' => 'string',
+        'history' => 'string'
     ];
 }

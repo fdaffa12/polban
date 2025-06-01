@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue";
-import { useForm } from "@inertiajs/vue3";
+import { useForm, Head, router } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import TextInput from "@/Components/TextInput.vue";
@@ -53,10 +53,39 @@ const submit = () => {
         },
     });
 };
+
+const removeImage = (index) => {
+    router.post(
+        route("about-us.remove-image"),
+        { index },
+        {
+            preserveScroll: true,
+            onSuccess: (response) => {
+                if (response?.props?.flash?.success) {
+                    props.aboutUs.au_multiple_image =
+                        response?.props?.flash?.images || [];
+                    if (window.$toast) {
+                        window.$toast.success("Image removed successfully");
+                    }
+                }
+            },
+            onError: () => {
+                if (window.$toast) {
+                    window.$toast.error("Failed to remove image");
+                }
+            },
+        }
+    );
+};
 </script>
 
 <template>
     <AuthenticatedLayout title="About Us Management">
+        <Head>
+            <title>AboutUs Management</title>
+            <meta name="description" content="Manage your history" />
+        </Head>
+
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
@@ -150,13 +179,35 @@ const submit = () => {
                                     v-if="props.aboutUs?.au_multiple_image"
                                     class="mt-2 grid grid-cols-4 gap-4"
                                 >
-                                    <img
-                                        v-for="image in props.aboutUs
+                                    <div
+                                        v-for="(image, index) in props.aboutUs
                                             .au_multiple_image"
                                         :key="image"
-                                        :src="`/storage/${image}`"
-                                        class="rounded-lg shadow-md"
-                                    />
+                                        class="relative group"
+                                    >
+                                        <img
+                                            :src="`/storage/${image}`"
+                                            class="rounded-lg shadow-md w-full h-48 object-cover"
+                                        />
+                                        <button
+                                            @click.prevent="removeImage(index)"
+                                            class="absolute -top-2 -right-2 bg-white rounded-full shadow-lg p-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:text-red-500"
+                                            title="Remove image"
+                                        >
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                class="h-5 w-5"
+                                                viewBox="0 0 20 20"
+                                                fill="currentColor"
+                                            >
+                                                <path
+                                                    fill-rule="evenodd"
+                                                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                                    clip-rule="evenodd"
+                                                />
+                                            </svg>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>

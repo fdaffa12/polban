@@ -53,4 +53,34 @@ class AboutUsController extends Controller
 
         return redirect()->back()->with('success', 'About Us updated successfully.');
     }
+
+    public function removeImage(Request $request)
+    {
+        $request->validate([
+            'index' => 'required|integer'
+        ]);
+
+        $aboutUs = AboutUs::first();
+        if (!$aboutUs) {
+            return response()->json(['message' => 'About Us not found'], 404);
+        }
+
+        $images = $aboutUs->au_multiple_image ?? [];
+        if (!isset($images[$request->index])) {
+            return response()->json(['message' => 'Image not found'], 404);
+        }
+
+        // Remove file from storage
+        Storage::disk('public')->delete($images[$request->index]);
+
+        // Remove from array and reindex
+        array_splice($images, $request->index, 1);
+        $aboutUs->au_multiple_image = array_values($images);
+        $aboutUs->save();
+
+        return redirect()->back()->with([
+            'success' => true,
+            'images' => $aboutUs->au_multiple_image
+        ]);
+    }
 }
