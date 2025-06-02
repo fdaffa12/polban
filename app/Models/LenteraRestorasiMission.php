@@ -7,4 +7,5 @@ use Illuminate\Database\Eloquent\Model;
 class LenteraRestorasiMission extends Model
 {
     protected $fillable = ['mission'];
+    protected $table = 'lentera_restorasi_missions';
 }

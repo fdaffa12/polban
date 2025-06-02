@@ -40,17 +40,25 @@ const openVisionModal = (vision = null) => {
 
 const submitVision = () => {
     if (editingVision.value) {
-        visionForm.put(
+        visionForm.post(
             route("lentera-restorasi.vision.update", editingVision.value.id),
             {
                 preserveScroll: true,
-                onSuccess: closeVisionModal,
+                onSuccess: () => {
+                    closeVisionModal();
+                    toast.success("Vision updated successfully");
+                },
+                onError: () => toast.error("Failed to update vision"),
             }
         );
     } else {
         visionForm.post(route("lentera-restorasi.vision.store"), {
             preserveScroll: true,
-            onSuccess: closeVisionModal,
+            onSuccess: () => {
+                closeVisionModal();
+                toast.success("Vision added successfully");
+            },
+            onError: () => toast.error("Failed to add vision"),
         });
     }
 };
@@ -75,7 +83,11 @@ const deleteVision = (vision) => {
             router.delete(
                 route("lentera-restorasi.vision.destroy", vision.id),
                 {
+                    preserveScroll: true,
                     onSuccess: () => {
+                        props.visions = props.visions.filter(
+                            (v) => v.id !== vision.id
+                        );
                         toast.success("Vision deleted successfully");
                     },
                     onError: () => {
@@ -104,17 +116,25 @@ const openMissionModal = (mission = null) => {
 
 const submitMission = () => {
     if (editingMission.value) {
-        missionForm.put(
+        missionForm.post(
             route("lentera-restorasi.mission.update", editingMission.value.id),
             {
                 preserveScroll: true,
-                onSuccess: closeMissionModal,
+                onSuccess: () => {
+                    closeMissionModal();
+                    toast.success("Mission updated successfully");
+                },
+                onError: () => toast.error("Failed to update mission"),
             }
         );
     } else {
         missionForm.post(route("lentera-restorasi.mission.store"), {
             preserveScroll: true,
-            onSuccess: closeMissionModal,
+            onSuccess: () => {
+                closeMissionModal();
+                toast.success("Mission added successfully");
+            },
+            onError: () => toast.error("Failed to add mission"),
         });
     }
 };
@@ -137,9 +157,13 @@ const deleteMission = (mission) => {
     }).then((result) => {
         if (result.isConfirmed) {
             router.delete(
-                route("lentera-restorasi.missions.destroy", mission.id),
+                route("lentera-restorasi.mission.destroy", mission.id),
                 {
+                    preserveScroll: true,
                     onSuccess: () => {
+                        props.missions = props.missions.filter(
+                            (m) => m.id !== mission.id
+                        );
                         toast.success("Mission deleted successfully");
                     },
                     onError: () => {
@@ -172,20 +196,28 @@ const openCoreValueModal = (coreValue = null) => {
 
 const submitCoreValue = () => {
     if (editingCoreValue.value) {
-        coreValueForm.put(
+        coreValueForm.post(
             route(
                 "lentera-restorasi.core-value.update",
                 editingCoreValue.value.id
             ),
             {
                 preserveScroll: true,
-                onSuccess: closeCoreValueModal,
+                onSuccess: () => {
+                    closeCoreValueModal();
+                    toast.success("Core Value updated successfully");
+                },
+                onError: () => toast.error("Failed to update core value"),
             }
         );
     } else {
         coreValueForm.post(route("lentera-restorasi.core-value.store"), {
             preserveScroll: true,
-            onSuccess: closeCoreValueModal,
+            onSuccess: () => {
+                closeCoreValueModal();
+                toast.success("Core Value added successfully");
+            },
+            onError: () => toast.error("Failed to add core value"),
         });
     }
 };
@@ -208,9 +240,13 @@ const deleteCoreValue = (coreValue) => {
     }).then((result) => {
         if (result.isConfirmed) {
             router.delete(
-                route("lentera-restorasi.core-values.destroy", coreValue.id),
+                route("lentera-restorasi.core-value.destroy", coreValue.id),
                 {
+                    preserveScroll: true,
                     onSuccess: () => {
+                        props.coreValues = props.coreValues.filter(
+                            (cv) => cv.id !== coreValue.id
+                        );
                         toast.success("Core Value deleted successfully");
                     },
                     onError: () => {

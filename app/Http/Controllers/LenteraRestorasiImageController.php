@@ -8,6 +8,7 @@ use App\Models\LenteraRestorasiMission;
 use App\Models\LenteraRestorasiCoreValue;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class LenteraRestorasiImageController extends Controller
@@ -52,7 +53,7 @@ class LenteraRestorasiImageController extends Controller
                 if ($image->image && Storage::disk('public')->exists($image->image)) {
                     Storage::disk('public')->delete($image->image);
                 }
-                
+
                 $path = $request->file('image')->store('lentera-restorasi', 'public');
                 $image->image = $path;
             }
@@ -62,7 +63,7 @@ class LenteraRestorasiImageController extends Controller
 
             return redirect()->back()->with('success', 'Image updated successfully');
         } catch (\Exception $e) {
-            \Log::error('Image update error: ' . $e->getMessage());
+            Log::error('Image update error: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Failed to update image');
         }
     }
@@ -74,13 +75,12 @@ class LenteraRestorasiImageController extends Controller
             if ($image->image && Storage::disk('public')->exists($image->image)) {
                 Storage::disk('public')->delete($image->image);
             }
-            
+
             $image->delete();
-            
+
             return redirect()->back()->with('success', 'Image deleted successfully');
-            
         } catch (\Exception $e) {
-            \Log::error('Image deletion error: ' . $e->getMessage());
+            Log::error('Image deletion error: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Failed to delete image');
         }
     }
@@ -88,12 +88,19 @@ class LenteraRestorasiImageController extends Controller
     // Vision Methods
     public function storeVision(Request $request)
     {
-        $request->validate([
-            'vision' => 'required|string'
-        ]);
+        try {
+            $request->validate([
+                'vision' => 'required|string'
+            ]);
 
-        LenteraRestorasiVision::create($request->all());
-        return redirect()->back()->with('success', 'Vision added successfully');
+            LenteraRestorasiVision::create([
+                'vision' => $request->vision
+            ]);
+
+            return redirect()->back()->with('success', 'Vision added successfully');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to add vision');
+        }
     }
 
     public function updateVision(Request $request, LenteraRestorasiVision $vision)
@@ -102,8 +109,15 @@ class LenteraRestorasiImageController extends Controller
             'vision' => 'required|string'
         ]);
 
-        $vision->update($request->all());
-        return redirect()->back()->with('success', 'Vision updated successfully');
+        try {
+            $vision->update([
+                'vision' => $request->vision
+            ]);
+
+            return redirect()->back()->with('success', 'Vision updated successfully');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to update vision');
+        }
     }
 
     public function destroyVision(LenteraRestorasiVision $vision)
