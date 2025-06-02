@@ -51,7 +51,7 @@ Route::middleware('auth')->group(function () {
     // Mission routes
     Route::post('/lentera-restorasi/mission', [LenteraRestorasiImageController::class, 'storeMission'])
         ->name('lentera-restorasi.mission.store');
-    Route::put('/lentera-restorasi/mission/{mission}', [LenteraRestorasiImageController::class, 'updateMission'])
+    Route::post('/lentera-restorasi/mission/{mission}', [LenteraRestorasiImageController::class, 'updateMission'])
         ->name('lentera-restorasi.mission.update');
     Route::delete('/lentera-restorasi/mission/{mission}', [LenteraRestorasiImageController::class, 'destroyMission'])
         ->name('lentera-restorasi.mission.destroy');
