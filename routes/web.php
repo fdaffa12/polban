@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\AboutUsController;
+use App\Http\Controllers\LenteraRestorasiImageController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -37,6 +38,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/about-us', [AboutUsController::class, 'index'])->name('about-us.index');
     Route::post('/about-us', [AboutUsController::class, 'update'])->name('about-us.update');
     Route::post('/about-us/remove-image', [AboutUsController::class, 'removeImage'])->name('about-us.remove-image');
+
+    Route::resource('lentera-restorasi', LenteraRestorasiImageController::class);
 });
 
 require __DIR__.'/auth.php';
