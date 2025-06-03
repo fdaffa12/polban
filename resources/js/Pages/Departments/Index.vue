@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useForm } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Modal from "@/Components/Modal.vue";
@@ -17,6 +17,7 @@ const props = defineProps({
 });
 
 const toast = useToast();
+const searchQuery = ref("");
 
 // Department Management
 const showDepartmentModal = ref(false);
@@ -186,6 +187,21 @@ const deleteMember = (member) => {
         }
     });
 };
+
+const filteredDepartments = computed(() => {
+    if (!searchQuery.value) return props.departments;
+
+    return props.departments
+        .map((department) => ({
+            ...department,
+            members: department.members.filter((member) =>
+                member.name
+                    .toLowerCase()
+                    .includes(searchQuery.value.toLowerCase())
+            ),
+        }))
+        .filter((department) => department.members.length > 0);
+});
 </script>
 
 <template>
@@ -202,10 +218,22 @@ const deleteMember = (member) => {
                         </PrimaryButton>
                     </div>
 
+                    <!-- Search Bar -->
+                    <div class="mb-4">
+                        <InputLabel for="search" value="Search Members" />
+                        <TextInput
+                            id="search"
+                            v-model="searchQuery"
+                            type="text"
+                            class="mt-1 block w-full"
+                            placeholder="Search by member name..."
+                        />
+                    </div>
+
                     <!-- Departments List -->
                     <div class="space-y-6">
                         <div
-                            v-for="department in departments"
+                            v-for="department in filteredDepartments"
                             :key="department.id"
                             class="border rounded-lg p-4"
                         >
