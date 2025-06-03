@@ -83,6 +83,11 @@ const items = [
         url: "/lentera-restorasi",
         icon: FileText,
     },
+    {
+        title: "Departement",
+        url: "/departments",
+        icon: FileText,
+    },
 ];
 
 const page = usePage();

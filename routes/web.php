@@ -8,6 +8,7 @@ use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\AboutUsController;
 use App\Http\Controllers\LenteraRestorasiImageController;
 use App\Models\LenteraRestorasiImage;
+use App\Http\Controllers\DepartmentController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -73,6 +74,17 @@ Route::middleware('auth')->group(function () {
         ->name('lentera-restorasi.update');
     Route::delete('/lentera-restorasi/{image}', [LenteraRestorasiImageController::class, 'destroy'])
         ->name('lentera-restorasi.destroy');
+
+    // Department routes
+    Route::get('/departments', [DepartmentController::class, 'index'])->name('departments.index');
+    Route::post('/departments', [DepartmentController::class, 'storeDepartment'])->name('departments.store');
+    Route::post('/departments/{department}', [DepartmentController::class, 'updateDepartment'])->name('departments.update');
+    Route::delete('/departments/{department}', [DepartmentController::class, 'destroyDepartment'])->name('departments.destroy');
+
+    // Member routes
+    Route::post('/members', [DepartmentController::class, 'storeMember'])->name('members.store');
+    Route::post('/members/{member}', [DepartmentController::class, 'updateMember'])->name('members.update');
+    Route::delete('/members/{member}', [DepartmentController::class, 'destroyMember'])->name('members.destroy');
 });
 
 require __DIR__ . '/auth.php';
