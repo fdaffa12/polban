@@ -693,10 +693,13 @@ const navigateGallery = (direction) => {
             @close="showDetailModal = false"
             max-width="4xl"
         >
-            <div class="p-6" v-if="selectedEvent">
+            <!-- Detail Modal Content -->
+            <div class="p-4 sm:p-6" v-if="selectedEvent">
                 <!-- Header -->
-                <div class="flex justify-between items-start mb-4">
-                    <h2 class="text-xl font-semibold">
+                <div
+                    class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2"
+                >
+                    <h2 class="text-lg sm:text-xl font-semibold">
                         {{ selectedEvent.event_name }}
                     </h2>
                     <span
@@ -716,19 +719,22 @@ const navigateGallery = (direction) => {
                     </span>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Left Column - Event Info -->
-                    <div>
+                <!-- Main Content -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                    <!-- Left Column -->
+                    <div class="space-y-4">
                         <!-- Event Flyer -->
-                        <div class="mb-6">
+                        <div>
                             <h3 class="text-sm font-medium mb-2">
                                 Event Flyer
                             </h3>
-                            <div class="max-h-[300px] overflow-hidden">
+                            <div
+                                class="max-h-[250px] sm:max-h-[300px] overflow-hidden"
+                            >
                                 <img
                                     :src="`/storage/${selectedEvent.event_flyer}`"
                                     :alt="selectedEvent.event_name"
-                                    class="w-full h-[300px] object-contain rounded-lg shadow-sm cursor-pointer hover:opacity-90 transition-opacity"
+                                    class="w-full h-auto max-h-[250px] sm:max-h-[300px] object-contain rounded-lg shadow-sm cursor-pointer hover:opacity-90 transition-opacity"
                                     @click="
                                         openImagePreview(
                                             selectedEvent.event_flyer
@@ -739,20 +745,20 @@ const navigateGallery = (direction) => {
                         </div>
 
                         <!-- Event Gallery -->
-                        <div class="mb-6">
+                        <div>
                             <h3 class="text-sm font-medium mb-2">
                                 Event Gallery
                             </h3>
                             <div
                                 v-if="selectedEvent.event_gallery?.length"
-                                class="grid grid-cols-3 gap-2"
+                                class="grid grid-cols-2 sm:grid-cols-3 gap-2"
                             >
                                 <div
                                     v-for="(
                                         image, index
                                     ) in selectedEvent.event_gallery"
                                     :key="index"
-                                    class="relative group h-[100px]"
+                                    class="relative aspect-square"
                                 >
                                     <img
                                         :src="`/storage/${image}`"
@@ -772,25 +778,12 @@ const navigateGallery = (direction) => {
                                 No gallery images
                             </p>
                         </div>
-
-                        <!-- Document Section -->
-                        <div v-if="selectedEvent.event_doc" class="mb-6">
-                            <h3 class="text-sm font-medium mb-2">Documents</h3>
-                            <a
-                                :href="`/storage/${selectedEvent.event_doc}`"
-                                target="_blank"
-                                class="inline-flex items-center text-sm text-blue-600 hover:text-blue-800"
-                            >
-                                <FileText class="w-4 h-4 mr-1" />
-                                View Document
-                            </a>
-                        </div>
                     </div>
 
-                    <!-- Right Column - Event Details -->
-                    <div>
+                    <!-- Right Column -->
+                    <div class="space-y-4">
                         <!-- Quick Info Section -->
-                        <div class="bg-gray-50 rounded-lg p-4 mb-6">
+                        <div class="bg-gray-50 rounded-lg p-3 sm:p-4">
                             <div class="space-y-3">
                                 <div>
                                     <h3 class="text-sm font-medium">
@@ -846,6 +839,19 @@ const navigateGallery = (direction) => {
                                 <div v-html="selectedEvent.event_detail"></div>
                             </div>
                         </div>
+
+                        <!-- Document Section -->
+                        <div v-if="selectedEvent.event_doc">
+                            <h3 class="text-sm font-medium mb-2">Documents</h3>
+                            <a
+                                :href="`/storage/${selectedEvent.event_doc}`"
+                                target="_blank"
+                                class="inline-flex items-center text-sm text-blue-600 hover:text-blue-800"
+                            >
+                                <FileText class="w-4 h-4 mr-1" />
+                                View Document
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -855,9 +861,9 @@ const navigateGallery = (direction) => {
         <Modal
             :show="showImagePreview"
             @close="showImagePreview = false"
-            max-width="4xl"
+            max-width="6xl"
         >
-            <div class="relative">
+            <div class="relative bg-gray-900">
                 <!-- Close button -->
                 <button
                     @click="showImagePreview = false"
@@ -866,30 +872,30 @@ const navigateGallery = (direction) => {
                     <XCircle class="w-6 h-6" />
                 </button>
 
-                <!-- Navigation buttons (show only for gallery) -->
+                <!-- Navigation buttons -->
                 <div
                     v-if="galleryImages.length > 1"
-                    class="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-4"
+                    class="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-2 sm:px-4"
                 >
                     <button
                         @click="navigateGallery('prev')"
                         class="p-1 bg-gray-800 bg-opacity-50 rounded-full text-white hover:bg-opacity-75"
                     >
-                        <ChevronLeft class="w-6 h-6" />
+                        <ChevronLeft class="w-4 h-4 sm:w-6 sm:h-6" />
                     </button>
                     <button
                         @click="navigateGallery('next')"
                         class="p-1 bg-gray-800 bg-opacity-50 rounded-full text-white hover:bg-opacity-75"
                     >
-                        <ChevronRight class="w-6 h-6" />
+                        <ChevronRight class="w-4 h-4 sm:w-6 sm:h-6" />
                     </button>
                 </div>
 
-                <!-- Image -->
-                <div class="flex items-center justify-center bg-gray-900 p-4">
+                <!-- Image container -->
+                <div class="flex items-center justify-center p-2 sm:p-4">
                     <img
                         :src="previewImage"
-                        class="max-h-[80vh] w-auto object-contain"
+                        class="max-w-full max-h-[85vh] w-auto h-auto object-contain"
                     />
                 </div>
 
@@ -899,7 +905,7 @@ const navigateGallery = (direction) => {
                     class="absolute bottom-4 left-0 right-0 text-center"
                 >
                     <span
-                        class="px-3 py-1 bg-gray-800 bg-opacity-50 rounded-full text-white text-sm"
+                        class="px-2 sm:px-3 py-1 bg-gray-800 bg-opacity-50 rounded-full text-white text-xs sm:text-sm"
                     >
                         {{ currentGalleryIndex + 1 }} /
                         {{ galleryImages.length }}
