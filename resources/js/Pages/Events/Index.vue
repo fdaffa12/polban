@@ -20,6 +20,14 @@ import { useToast } from "vue-toastification";
 import Swal from "sweetalert2";
 import { QuillEditor } from "@vueup/vue-quill";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
+import {
+    format,
+    startOfMonth,
+    endOfMonth,
+    eachDayOfInterval,
+    isSameDay,
+    isToday,
+} from "date-fns";
 
 const props = defineProps({
     events: Array,
@@ -273,6 +281,21 @@ const navigateGallery = (direction) => {
         galleryImages.value[currentGalleryIndex.value]
     }`;
 };
+
+const currentMonth = ref(new Date());
+const showCalendarView = ref(false);
+
+const calendarDays = computed(() => {
+    const start = startOfMonth(currentMonth.value);
+    const end = endOfMonth(currentMonth.value);
+    return eachDayOfInterval({ start, end });
+});
+
+const getEventsForDay = (day) => {
+    return props.events.filter((event) =>
+        event.dates.some((date) => isSameDay(new Date(date.event_date), day))
+    );
+};
 </script>
 
 <template>
@@ -284,13 +307,97 @@ const navigateGallery = (direction) => {
                 >
                     <div class="flex justify-between items-center mb-6">
                         <h2 class="text-xl font-semibold">Events</h2>
-                        <PrimaryButton @click="openModal()"
-                            >Add Event</PrimaryButton
-                        >
+                        <div class="flex gap-4">
+                            <button
+                                @click="showCalendarView = !showCalendarView"
+                                class="inline-flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md transition"
+                            >
+                                {{
+                                    showCalendarView
+                                        ? "List View"
+                                        : "Calendar View"
+                                }}
+                            </button>
+                            <PrimaryButton @click="openModal()"
+                                >Add Event</PrimaryButton
+                            >
+                        </div>
                     </div>
 
                     <!-- Events List -->
-                    <div class="overflow-x-auto">
+                    <div
+                        v-if="showCalendarView"
+                        class="bg-white rounded-lg shadow overflow-hidden"
+                    >
+                        <!-- Calendar Header -->
+                        <div class="px-6 py-4 border-b">
+                            <h3 class="text-lg font-semibold text-gray-900">
+                                {{ format(currentMonth, "MMMM yyyy") }}
+                            </h3>
+                        </div>
+
+                        <!-- Calendar Grid -->
+                        <div class="grid grid-cols-7 gap-px bg-gray-200">
+                            <!-- Day headers -->
+                            <div
+                                v-for="day in [
+                                    'Sun',
+                                    'Mon',
+                                    'Tue',
+                                    'Wed',
+                                    'Thu',
+                                    'Fri',
+                                    'Sat',
+                                ]"
+                                :key="day"
+                                class="bg-gray-50 py-2 text-center text-xs font-medium text-gray-500"
+                            >
+                                {{ day }}
+                            </div>
+
+                            <!-- Calendar days -->
+                            <div
+                                v-for="day in calendarDays"
+                                :key="day"
+                                class="bg-white min-h-[120px] p-2 relative"
+                                :class="{
+                                    'bg-blue-50': isToday(day),
+                                }"
+                            >
+                                <!-- Date number -->
+                                <span
+                                    class="text-sm font-medium"
+                                    :class="{
+                                        'text-blue-600': isToday(day),
+                                    }"
+                                >
+                                    {{ format(day, "d") }}
+                                </span>
+
+                                <!-- Events for this day -->
+                                <div class="mt-1 space-y-1">
+                                    <div
+                                        v-for="event in getEventsForDay(day)"
+                                        :key="event.id"
+                                        @click="previewDetail(event)"
+                                        class="text-xs p-1 rounded cursor-pointer truncate"
+                                        :class="{
+                                            'bg-yellow-100 text-yellow-800':
+                                                event.status === 'coming_soon',
+                                            'bg-green-100 text-green-800':
+                                                event.status === 'running',
+                                            'bg-red-100 text-red-800':
+                                                event.status === 'closed',
+                                        }"
+                                    >
+                                        {{ event.event_name }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div v-else class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
@@ -915,3 +1022,10 @@ const navigateGallery = (direction) => {
         </Modal>
     </AuthenticatedLayout>
 </template>
+
+<style scoped>
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+</style>
