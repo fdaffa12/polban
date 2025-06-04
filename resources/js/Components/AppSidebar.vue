@@ -88,6 +88,11 @@ const items = [
         url: "/departments",
         icon: FileText,
     },
+    {
+        title: "Event",
+        url: "/events",
+        icon: FileText,
+    },
 ];
 
 const page = usePage();

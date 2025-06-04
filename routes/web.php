@@ -9,6 +9,7 @@ use App\Http\Controllers\AboutUsController;
 use App\Http\Controllers\LenteraRestorasiImageController;
 use App\Models\LenteraRestorasiImage;
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\EventController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -85,6 +86,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/members', [DepartmentController::class, 'storeMember'])->name('members.store');
     Route::post('/members/{member}', [DepartmentController::class, 'updateMember'])->name('members.update');
     Route::delete('/members/{member}', [DepartmentController::class, 'destroyMember'])->name('members.destroy');
+
+    // Event routes
+    Route::get('/events', [EventController::class, 'index'])->name('events.index');
+    Route::post('/events', [EventController::class, 'store'])->name('events.store');
+    Route::post('/events/{event}', [EventController::class, 'update'])->name('events.update');
+    Route::delete('/events/{event}', [EventController::class, 'destroy'])->name('events.destroy');
 });
 
 require __DIR__ . '/auth.php';
