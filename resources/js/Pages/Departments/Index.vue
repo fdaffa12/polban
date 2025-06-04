@@ -206,12 +206,15 @@ const filteredDepartments = computed(() => {
 
 <template>
     <AuthenticatedLayout title="Department Management">
-        <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+        <div class="py-6 sm:py-12">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
                 <div
-                    class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6"
+                    class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-4 sm:p-6"
                 >
-                    <div class="flex justify-between items-center mb-6">
+                    <!-- Header Section -->
+                    <div
+                        class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6"
+                    >
                         <h2 class="text-xl font-semibold">Departments</h2>
                         <PrimaryButton @click="openDepartmentModal()">
                             Add Department
@@ -219,7 +222,7 @@ const filteredDepartments = computed(() => {
                     </div>
 
                     <!-- Search Bar -->
-                    <div class="mb-4">
+                    <div class="mb-6">
                         <InputLabel for="search" value="Search Members" />
                         <TextInput
                             id="search"
@@ -237,76 +240,93 @@ const filteredDepartments = computed(() => {
                             :key="department.id"
                             class="border rounded-lg p-4"
                         >
-                            <div class="flex justify-between items-start">
-                                <div>
-                                    <h3 class="text-lg font-medium">
+                            <!-- Department Header -->
+                            <div
+                                class="flex flex-col sm:flex-row justify-between items-start gap-4"
+                            >
+                                <div class="flex-1">
+                                    <h3 class="text-lg font-medium mb-2">
                                         {{ department.dept_name }}
                                     </h3>
-
-                                    <!-- Members List -->
-                                    <div
-                                        class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4"
-                                    >
-                                        <div
-                                            v-for="member in department.members"
-                                            :key="member.id"
-                                            class="border rounded p-3"
-                                        >
-                                            <img
-                                                :src="`/storage/${member.image}`"
-                                                :alt="member.name"
-                                                class="w-full h-40 object-cover rounded mb-2"
-                                            />
-                                            <h4 class="font-medium">
-                                                {{ member.name }}
-                                            </h4>
-                                            <p class="text-sm text-gray-600">
-                                                {{ member.job_titles }}
-                                            </p>
-                                            <p class="text-sm text-gray-500">
-                                                {{ member.position }}
-                                            </p>
-                                            <div class="mt-2 flex gap-2">
-                                                <button
-                                                    @click="
-                                                        openMemberModal(member)
-                                                    "
-                                                    class="text-blue-600 hover:text-blue-800"
-                                                >
-                                                    <Edit class="w-4 h-4" />
-                                                </button>
-                                                <button
-                                                    @click="
-                                                        deleteMember(member)
-                                                    "
-                                                    class="text-red-600 hover:text-red-800"
-                                                >
-                                                    <Trash2 class="w-4 h-4" />
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
-                                <div class="flex gap-2">
+                                <div class="flex flex-wrap gap-2">
                                     <PrimaryButton
                                         @click="
                                             openMemberModal(null, department)
                                         "
+                                        class="text-sm"
                                     >
                                         Add Member
                                     </PrimaryButton>
                                     <button
                                         @click="openDepartmentModal(department)"
-                                        class="text-blue-600 hover:text-blue-800"
+                                        class="inline-flex items-center justify-center p-2 text-blue-600 hover:text-blue-800 rounded-md hover:bg-blue-50"
                                     >
                                         <Edit class="w-5 h-5" />
                                     </button>
                                     <button
                                         @click="deleteDepartment(department)"
-                                        class="text-red-600 hover:text-red-800"
+                                        class="inline-flex items-center justify-center p-2 text-red-600 hover:text-red-800 rounded-md hover:bg-red-50"
                                     >
                                         <Trash2 class="w-5 h-5" />
                                     </button>
+                                </div>
+                            </div>
+
+                            <!-- Members Grid -->
+                            <div class="mt-4">
+                                <div
+                                    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+                                >
+                                    <div
+                                        v-for="member in department.members"
+                                        :key="member.id"
+                                        class="border rounded-lg p-3 bg-gray-50 hover:bg-gray-100 transition-colors"
+                                    >
+                                        <!-- Member Image -->
+                                        <div class="aspect-w-4 aspect-h-3 mb-3">
+                                            <img
+                                                :src="`/storage/${member.image}`"
+                                                :alt="member.name"
+                                                class="w-full h-full object-cover rounded-md"
+                                            />
+                                        </div>
+
+                                        <!-- Member Info -->
+                                        <div class="space-y-1">
+                                            <h4
+                                                class="font-medium text-gray-900"
+                                            >
+                                                {{ member.name }}
+                                            </h4>
+                                            <p
+                                                class="text-sm font-medium text-gray-700"
+                                            >
+                                                {{ member.job_titles }}
+                                            </p>
+                                            <p class="text-sm text-gray-600">
+                                                {{ member.position }}
+                                            </p>
+                                        </div>
+
+                                        <!-- Member Actions -->
+                                        <div
+                                            class="mt-3 flex justify-end gap-2"
+                                        >
+                                            <button
+                                                @click="openMemberModal(member)"
+                                                class="p-1.5 text-blue-600 hover:text-blue-800 rounded hover:bg-blue-50"
+                                            >
+                                                <Edit class="w-4 h-4" />
+                                            </button>
+                                            <button
+                                                @click="deleteMember(member)"
+                                                class="p-1.5 text-red-600 hover:text-red-800 rounded hover:bg-red-50"
+                                            >
+                                                <Trash2 class="w-4 h-4" />
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -351,95 +371,105 @@ const filteredDepartments = computed(() => {
         </Modal>
 
         <!-- Member Modal -->
-        <Modal :show="showMemberModal" @close="closeMemberModal">
-            <div class="p-6">
-                <h2 class="text-lg font-medium">
+        <Modal :show="showMemberModal" @close="closeMemberModal" max-width="xl">
+            <div class="p-4 sm:p-6">
+                <h2 class="text-lg font-medium mb-6">
                     {{ editingMember ? "Edit Member" : "Add New Member" }}
                 </h2>
-                <form @submit.prevent="submitMember" class="mt-6">
-                    <div>
-                        <InputLabel for="name" value="Name" />
-                        <TextInput
-                            id="name"
-                            v-model="memberForm.name"
-                            type="text"
-                            class="mt-1 block w-full"
-                            required
-                        />
-                        <InputError
-                            :message="memberForm.errors.name"
-                            class="mt-2"
-                        />
+                <form @submit.prevent="submitMember" class="space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- Name Field -->
+                        <div>
+                            <InputLabel for="name" value="Name" />
+                            <TextInput
+                                id="name"
+                                v-model="memberForm.name"
+                                type="text"
+                                class="mt-1 block w-full"
+                                required
+                            />
+                            <InputError
+                                :message="memberForm.errors.name"
+                                class="mt-1"
+                            />
+                        </div>
+
+                        <!-- Job Type Field -->
+                        <div>
+                            <InputLabel for="job_type" value="Job Type" />
+                            <select
+                                id="job_type"
+                                v-model="memberForm.job_type"
+                                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                                required
+                            >
+                                <option value="board_of_dept">
+                                    Board of Department
+                                </option>
+                                <option value="section_head_dept">
+                                    Section Head
+                                </option>
+                                <option value="staff">Staff</option>
+                            </select>
+                            <InputError
+                                :message="memberForm.errors.job_type"
+                                class="mt-1"
+                            />
+                        </div>
                     </div>
 
-                    <div class="mt-4">
-                        <InputLabel for="image" value="Image" />
+                    <!-- Image Upload -->
+                    <div>
+                        <InputLabel for="image" value="Profile Image" />
                         <input
                             type="file"
                             id="image"
                             @input="memberForm.image = $event.target.files[0]"
                             accept="image/*"
-                            class="mt-1 block w-full"
+                            class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                             :required="!editingMember"
                         />
                         <InputError
                             :message="memberForm.errors.image"
-                            class="mt-2"
+                            class="mt-1"
                         />
                     </div>
 
-                    <div class="mt-4">
-                        <InputLabel for="job_type" value="Job Type" />
-                        <select
-                            id="job_type"
-                            v-model="memberForm.job_type"
-                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
-                            required
-                        >
-                            <option value="board_of_dept">
-                                Board of Department
-                            </option>
-                            <option value="section_head_dept">
-                                Section Head
-                            </option>
-                            <option value="staff">Staff</option>
-                        </select>
-                        <InputError
-                            :message="memberForm.errors.job_type"
-                            class="mt-2"
-                        />
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- Job Title Field -->
+                        <div>
+                            <InputLabel for="job_titles" value="Job Title" />
+                            <TextInput
+                                id="job_titles"
+                                v-model="memberForm.job_titles"
+                                type="text"
+                                class="mt-1 block w-full"
+                                required
+                            />
+                            <InputError
+                                :message="memberForm.errors.job_titles"
+                                class="mt-1"
+                            />
+                        </div>
+
+                        <!-- Position Field -->
+                        <div>
+                            <InputLabel for="position" value="Position" />
+                            <TextInput
+                                id="position"
+                                v-model="memberForm.position"
+                                type="text"
+                                class="mt-1 block w-full"
+                            />
+                            <InputError
+                                :message="memberForm.errors.position"
+                                class="mt-1"
+                            />
+                        </div>
                     </div>
 
-                    <div class="mt-4">
-                        <InputLabel for="job_titles" value="Job Title" />
-                        <TextInput
-                            id="job_titles"
-                            v-model="memberForm.job_titles"
-                            type="text"
-                            class="mt-1 block w-full"
-                            required
-                        />
-                        <InputError
-                            :message="memberForm.errors.job_titles"
-                            class="mt-2"
-                        />
-                    </div>
-
-                    <div class="mt-4">
-                        <InputLabel for="position" value="Position" />
-                        <TextInput
-                            id="position"
-                            v-model="memberForm.position"
-                            type="text"
-                            class="mt-1 block w-full"
-                        />
-                        <InputError
-                            :message="memberForm.errors.position"
-                            class="mt-2"
-                        />
-                    </div>
-
-                    <div class="mt-6 flex justify-end gap-4">
+                    <!-- Submit Button -->
+                    <div class="mt-6 flex justify-end">
                         <PrimaryButton :disabled="memberForm.processing">
                             {{ editingMember ? "Update" : "Save" }}
                         </PrimaryButton>
