@@ -7,7 +7,14 @@ import InputLabel from "@/Components/InputLabel.vue";
 import TextInput from "@/Components/TextInput.vue";
 import InputError from "@/Components/InputError.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
-import { Edit, Trash2, Eye } from "lucide-vue-next";
+import {
+    Edit,
+    Trash2,
+    Eye,
+    XCircle,
+    ChevronLeft,
+    ChevronRight,
+} from "lucide-vue-next";
 import { router } from "@inertiajs/vue3";
 import { useToast } from "vue-toastification";
 import Swal from "sweetalert2";
@@ -232,6 +239,39 @@ const selectedEvent = ref(null);
 const previewDetail = (event) => {
     selectedEvent.value = event;
     showDetailModal.value = true;
+};
+
+const showImagePreview = ref(false);
+const previewImage = ref(null);
+const currentGalleryIndex = ref(0);
+const galleryImages = ref([]);
+
+const openImagePreview = (imagePath, images = null, index = 0) => {
+    previewImage.value = `/storage/${imagePath}`;
+    showImagePreview.value = true;
+    if (images) {
+        galleryImages.value = images;
+        currentGalleryIndex.value = index;
+    } else {
+        galleryImages.value = [];
+    }
+};
+
+const navigateGallery = (direction) => {
+    if (galleryImages.value.length === 0) return;
+
+    if (direction === "next") {
+        currentGalleryIndex.value =
+            (currentGalleryIndex.value + 1) % galleryImages.value.length;
+    } else {
+        currentGalleryIndex.value =
+            currentGalleryIndex.value === 0
+                ? galleryImages.value.length - 1
+                : currentGalleryIndex.value - 1;
+    }
+    previewImage.value = `/storage/${
+        galleryImages.value[currentGalleryIndex.value]
+    }`;
 };
 </script>
 
@@ -647,13 +687,14 @@ const previewDetail = (event) => {
         </Modal>
 
         <!-- Detail Modal -->
+        <!-- Detail Modal -->
         <Modal
             :show="showDetailModal"
             @close="showDetailModal = false"
             max-width="4xl"
         >
             <div class="p-6" v-if="selectedEvent">
-                <!-- Header with Event Name and Status -->
+                <!-- Header -->
                 <div class="flex justify-between items-start mb-4">
                     <h2 class="text-xl font-semibold">
                         {{ selectedEvent.event_name }}
@@ -675,95 +716,65 @@ const previewDetail = (event) => {
                     </span>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <!-- Left Column - Event Flyer -->
-                    <div class="md:col-span-1">
-                        <div class="mb-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Left Column - Event Info -->
+                    <div>
+                        <!-- Event Flyer -->
+                        <div class="mb-6">
                             <h3 class="text-sm font-medium mb-2">
                                 Event Flyer
                             </h3>
-                            <img
-                                :src="`/storage/${selectedEvent.event_flyer}`"
-                                :alt="selectedEvent.event_name"
-                                class="w-full h-48 object-cover rounded-lg shadow-sm"
-                            />
-                        </div>
-
-                        <!-- Quick Info Section -->
-                        <div class="space-y-3">
-                            <div>
-                                <h3 class="text-sm font-medium">Department</h3>
-                                <p class="text-sm text-gray-600">
-                                    {{ selectedEvent.department.dept_name }}
-                                </p>
-                            </div>
-                            <div>
-                                <h3 class="text-sm font-medium">Fee</h3>
-                                <p class="text-sm text-gray-600">
-                                    {{
-                                        selectedEvent.fee_type === "free"
-                                            ? "Free"
-                                            : formatRupiah(
-                                                  selectedEvent.fee_amount
-                                              )
-                                    }}
-                                </p>
-                            </div>
-                            <div>
-                                <h3 class="text-sm font-medium">Event Dates</h3>
-                                <div class="space-y-1">
-                                    <div
-                                        v-for="date in selectedEvent.dates"
-                                        :key="date.id"
-                                        class="flex items-center text-sm text-gray-600"
-                                    >
-                                        <CalendarDays class="w-4 h-4 mr-1" />
-                                        {{
-                                            new Date(
-                                                date.event_date
-                                            ).toLocaleDateString()
-                                        }}
-                                        at {{ date.event_time }}
-                                    </div>
-                                </div>
+                            <div class="max-h-[300px] overflow-hidden">
+                                <img
+                                    :src="`/storage/${selectedEvent.event_flyer}`"
+                                    :alt="selectedEvent.event_name"
+                                    class="w-full h-[300px] object-contain rounded-lg shadow-sm cursor-pointer hover:opacity-90 transition-opacity"
+                                    @click="
+                                        openImagePreview(
+                                            selectedEvent.event_flyer
+                                        )
+                                    "
+                                />
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Middle Column - Event Details -->
-                    <div class="md:col-span-1">
-                        <h3 class="text-sm font-medium mb-2">Event Details</h3>
-                        <div class="prose prose-sm max-w-none">
-                            <div v-html="selectedEvent.event_detail"></div>
-                        </div>
-                    </div>
-
-                    <!-- Right Column - Gallery and Documents -->
-                    <div class="md:col-span-1">
-                        <div class="mb-4">
+                        <!-- Event Gallery -->
+                        <div class="mb-6">
                             <h3 class="text-sm font-medium mb-2">
                                 Event Gallery
                             </h3>
                             <div
                                 v-if="selectedEvent.event_gallery?.length"
-                                class="grid grid-cols-2 gap-2"
+                                class="grid grid-cols-3 gap-2"
                             >
-                                <img
+                                <div
                                     v-for="(
                                         image, index
                                     ) in selectedEvent.event_gallery"
                                     :key="index"
-                                    :src="`/storage/${image}`"
-                                    :alt="`Gallery image ${index + 1}`"
-                                    class="w-full h-24 object-cover rounded-md shadow-sm cursor-pointer hover:opacity-75 transition-opacity"
-                                />
+                                    class="relative group h-[100px]"
+                                >
+                                    <img
+                                        :src="`/storage/${image}`"
+                                        :alt="`Gallery image ${index + 1}`"
+                                        class="w-full h-full object-cover rounded-md shadow-sm cursor-pointer hover:opacity-75 transition-opacity"
+                                        @click="
+                                            openImagePreview(
+                                                image,
+                                                selectedEvent.event_gallery,
+                                                index
+                                            )
+                                        "
+                                    />
+                                </div>
                             </div>
                             <p v-else class="text-sm text-gray-500">
                                 No gallery images
                             </p>
                         </div>
 
-                        <div v-if="selectedEvent.event_doc">
+                        <!-- Document Section -->
+                        <div v-if="selectedEvent.event_doc" class="mb-6">
                             <h3 class="text-sm font-medium mb-2">Documents</h3>
                             <a
                                 :href="`/storage/${selectedEvent.event_doc}`"
@@ -775,6 +786,124 @@ const previewDetail = (event) => {
                             </a>
                         </div>
                     </div>
+
+                    <!-- Right Column - Event Details -->
+                    <div>
+                        <!-- Quick Info Section -->
+                        <div class="bg-gray-50 rounded-lg p-4 mb-6">
+                            <div class="space-y-3">
+                                <div>
+                                    <h3 class="text-sm font-medium">
+                                        Department
+                                    </h3>
+                                    <p class="text-sm text-gray-600">
+                                        {{ selectedEvent.department.dept_name }}
+                                    </p>
+                                </div>
+                                <div>
+                                    <h3 class="text-sm font-medium">Fee</h3>
+                                    <p class="text-sm text-gray-600">
+                                        {{
+                                            selectedEvent.fee_type === "free"
+                                                ? "Free"
+                                                : formatRupiah(
+                                                      selectedEvent.fee_amount
+                                                  )
+                                        }}
+                                    </p>
+                                </div>
+                                <div>
+                                    <h3 class="text-sm font-medium">
+                                        Event Dates
+                                    </h3>
+                                    <div class="space-y-1">
+                                        <div
+                                            v-for="date in selectedEvent.dates"
+                                            :key="date.id"
+                                            class="flex items-center text-sm text-gray-600"
+                                        >
+                                            <CalendarDays
+                                                class="w-4 h-4 mr-1"
+                                            />
+                                            {{
+                                                new Date(
+                                                    date.event_date
+                                                ).toLocaleDateString()
+                                            }}
+                                            at {{ date.event_time }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Event Details -->
+                        <div>
+                            <h3 class="text-sm font-medium mb-2">
+                                Event Details
+                            </h3>
+                            <div class="prose prose-sm max-w-none">
+                                <div v-html="selectedEvent.event_detail"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </Modal>
+
+        <!-- Image Preview Modal -->
+        <Modal
+            :show="showImagePreview"
+            @close="showImagePreview = false"
+            max-width="4xl"
+        >
+            <div class="relative">
+                <!-- Close button -->
+                <button
+                    @click="showImagePreview = false"
+                    class="absolute top-2 right-2 z-50 p-1 bg-gray-800 bg-opacity-50 rounded-full text-white hover:bg-opacity-75"
+                >
+                    <XCircle class="w-6 h-6" />
+                </button>
+
+                <!-- Navigation buttons (show only for gallery) -->
+                <div
+                    v-if="galleryImages.length > 1"
+                    class="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-4"
+                >
+                    <button
+                        @click="navigateGallery('prev')"
+                        class="p-1 bg-gray-800 bg-opacity-50 rounded-full text-white hover:bg-opacity-75"
+                    >
+                        <ChevronLeft class="w-6 h-6" />
+                    </button>
+                    <button
+                        @click="navigateGallery('next')"
+                        class="p-1 bg-gray-800 bg-opacity-50 rounded-full text-white hover:bg-opacity-75"
+                    >
+                        <ChevronRight class="w-6 h-6" />
+                    </button>
+                </div>
+
+                <!-- Image -->
+                <div class="flex items-center justify-center bg-gray-900 p-4">
+                    <img
+                        :src="previewImage"
+                        class="max-h-[80vh] w-auto object-contain"
+                    />
+                </div>
+
+                <!-- Gallery counter -->
+                <div
+                    v-if="galleryImages.length > 1"
+                    class="absolute bottom-4 left-0 right-0 text-center"
+                >
+                    <span
+                        class="px-3 py-1 bg-gray-800 bg-opacity-50 rounded-full text-white text-sm"
+                    >
+                        {{ currentGalleryIndex + 1 }} /
+                        {{ galleryImages.length }}
+                    </span>
                 </div>
             </div>
         </Modal>
