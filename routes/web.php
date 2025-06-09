@@ -10,6 +10,7 @@ use App\Http\Controllers\LenteraRestorasiImageController;
 use App\Models\LenteraRestorasiImage;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\ProposalController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -93,6 +94,16 @@ Route::middleware('auth')->group(function () {
     Route::post('/events/{event}', [EventController::class, 'update'])->name('events.update');
     Route::delete('/events/{event}', [EventController::class, 'destroy'])->name('events.destroy');
     Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
+
+    // Proposal routes
+    Route::get('/proposals', [ProposalController::class, 'index'])->name('proposals.index');
+    Route::get('/proposals/create', [ProposalController::class, 'create'])->name('proposals.create');
+    Route::post('/proposals', [ProposalController::class, 'store'])->name('proposals.store');
+    Route::get('/proposals/{proposal}', [ProposalController::class, 'show'])->name('proposals.show');
+    Route::get('/proposals/{proposal}/edit', [ProposalController::class, 'edit'])->name('proposals.edit');
+    Route::post('/proposals/{proposal}', [ProposalController::class, 'update'])->name('proposals.update');
+    Route::delete('/proposals/{proposal}', [ProposalController::class, 'destroy'])->name('proposals.destroy');
+    Route::post('/proposals/{proposal}/status', [ProposalController::class, 'updateStatus'])->name('proposals.update-status');
 });
 
 require __DIR__ . '/auth.php';

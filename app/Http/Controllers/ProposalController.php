@@ -1,0 +1,234 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Proposal;
+use App\Models\Department;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Illuminate\Support\Facades\Storage;
+
+class ProposalController extends Controller
+{
+    public function index()
+    {
+        return Inertia::render('Proposals/Index', [
+            'proposals' => Proposal::with('department')->latest()->get(),
+        ]);
+    }
+
+    public function create()
+    {
+        return Inertia::render('Proposals/Create', [
+            'departments' => Department::all(),
+        ]);
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'pic_name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'required|string|max:20',
+            'nama_kegiatan' => 'required|string|max:255',
+            'bidang_kegiatan' => 'required|string|max:255',
+            'jenis_kegiatan' => 'required|string|in:karakter,penalaran,peminatan,pengabdian',
+            'department_id' => 'required|exists:departments,id',
+            'tanggal_mulai' => 'required|date',
+            'tanggal_akhir' => 'required|date|after_or_equal:tanggal_mulai',
+            'tempat_kegiatan' => 'required|string|max:255',
+            'jumlah_peserta' => 'required|integer|min:1',
+            'jumlah_panitia' => 'required|integer|min:1',
+            'jumlah_spj' => 'required|integer|min:0',
+            'dana_dipa_polban' => 'nullable|numeric|min:0',
+            'dana_swadaya' => 'nullable|numeric|min:0',
+            'dana_sponsor' => 'nullable|numeric|min:0',
+            'pengisi_acara' => 'required|string|max:255',
+            'sponsorship' => 'nullable|string|max:255',
+            'media_partner' => 'nullable|string|max:255',
+            'doc_proposal' => 'required|mimes:pdf|max:10240',
+            'doc_berkegiatan_ketuplak' => 'required|mimes:pdf|max:10240',
+            'doc_ormawa' => 'required|mimes:pdf|max:10240',
+            'doc_sarana_prasarana' => 'required|mimes:pdf|max:10240',
+            'link_surat_izin_ortu' => 'required|string|max:255',
+            'poster' => 'required|image|max:2048',
+            'caption_poster' => 'required|string',
+        ]);
+
+        try {
+            $docProposalPath = $request->file('doc_proposal')->store('proposals/docs', 'public');
+            $docBerkegiatanPath = $request->file('doc_berkegiatan_ketuplak')->store('proposals/docs', 'public');
+            $docOrmawaPath = $request->file('doc_ormawa')->store('proposals/docs', 'public');
+            $docSaranaPrasaranaPath = $request->file('doc_sarana_prasarana')->store('proposals/docs', 'public');
+            $posterPath = $request->file('poster')->store('proposals/posters', 'public');
+
+            Proposal::create([
+                'pic_name' => $request->pic_name,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'nama_kegiatan' => $request->nama_kegiatan,
+                'bidang_kegiatan' => $request->bidang_kegiatan,
+                'jenis_kegiatan' => $request->jenis_kegiatan,
+                'department_id' => $request->department_id,
+                'tanggal_mulai' => $request->tanggal_mulai,
+                'tanggal_akhir' => $request->tanggal_akhir,
+                'tempat_kegiatan' => $request->tempat_kegiatan,
+                'jumlah_peserta' => $request->jumlah_peserta,
+                'jumlah_panitia' => $request->jumlah_panitia,
+                'jumlah_spj' => $request->jumlah_spj,
+                'dana_dipa_polban' => $request->dana_dipa_polban,
+                'dana_swadaya' => $request->dana_swadaya,
+                'dana_sponsor' => $request->dana_sponsor,
+                'pengisi_acara' => $request->pengisi_acara,
+                'sponsorship' => $request->sponsorship,
+                'media_partner' => $request->media_partner,
+                'doc_proposal' => $docProposalPath,
+                'doc_berkegiatan_ketuplak' => $docBerkegiatanPath,
+                'doc_ormawa' => $docOrmawaPath,
+                'doc_sarana_prasarana' => $docSaranaPrasaranaPath,
+                'link_surat_izin_ortu' => $request->link_surat_izin_ortu,
+                'poster' => $posterPath,
+                'caption_poster' => $request->caption_poster,
+                'status' => 'pending',
+            ]);
+
+            return redirect()->route('proposals.index')->with('success', 'Proposal berhasil dibuat');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal membuat proposal: ' . $e->getMessage());
+        }
+    }
+
+    public function show(Proposal $proposal)
+    {
+        $proposal->load('department');
+        return Inertia::render('Proposals/Show', [
+            'proposal' => $proposal
+        ]);
+    }
+
+    public function edit(Proposal $proposal)
+    {
+        return Inertia::render('Proposals/Edit', [
+            'proposal' => $proposal,
+            'departments' => Department::all(),
+        ]);
+    }
+
+    public function update(Request $request, Proposal $proposal)
+    {
+        $request->validate([
+            'pic_name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'required|string|max:20',
+            'nama_kegiatan' => 'required|string|max:255',
+            'bidang_kegiatan' => 'required|string|max:255',
+            'jenis_kegiatan' => 'required|string|in:karakter,penalaran,peminatan,pengabdian',
+            'department_id' => 'required|exists:departments,id',
+            'tanggal_mulai' => 'required|date',
+            'tanggal_akhir' => 'required|date|after_or_equal:tanggal_mulai',
+            'tempat_kegiatan' => 'required|string|max:255',
+            'jumlah_peserta' => 'required|integer|min:1',
+            'jumlah_panitia' => 'required|integer|min:1',
+            'jumlah_spj' => 'required|integer|min:0',
+            'dana_dipa_polban' => 'nullable|numeric|min:0',
+            'dana_swadaya' => 'nullable|numeric|min:0',
+            'dana_sponsor' => 'nullable|numeric|min:0',
+            'pengisi_acara' => 'required|string|max:255',
+            'sponsorship' => 'nullable|string|max:255',
+            'media_partner' => 'nullable|string|max:255',
+            'doc_proposal' => 'nullable|mimes:pdf|max:10240',
+            'doc_berkegiatan_ketuplak' => 'nullable|mimes:pdf|max:10240',
+            'doc_ormawa' => 'nullable|mimes:pdf|max:10240',
+            'doc_sarana_prasarana' => 'nullable|mimes:pdf|max:10240',
+            'link_surat_izin_ortu' => 'required|string|max:255',
+            'poster' => 'nullable|image|max:2048',
+            'caption_poster' => 'required|string',
+        ]);
+
+        try {
+            $data = $request->except(['doc_proposal', 'doc_berkegiatan_ketuplak', 'doc_ormawa', 'doc_sarana_prasarana', 'poster']);
+
+            if ($request->hasFile('doc_proposal')) {
+                if ($proposal->doc_proposal && Storage::disk('public')->exists($proposal->doc_proposal)) {
+                    Storage::disk('public')->delete($proposal->doc_proposal);
+                }
+                $data['doc_proposal'] = $request->file('doc_proposal')->store('proposals/docs', 'public');
+            }
+
+            if ($request->hasFile('doc_berkegiatan_ketuplak')) {
+                if ($proposal->doc_berkegiatan_ketuplak && Storage::disk('public')->exists($proposal->doc_berkegiatan_ketuplak)) {
+                    Storage::disk('public')->delete($proposal->doc_berkegiatan_ketuplak);
+                }
+                $data['doc_berkegiatan_ketuplak'] = $request->file('doc_berkegiatan_ketuplak')->store('proposals/docs', 'public');
+            }
+
+            if ($request->hasFile('doc_ormawa')) {
+                if ($proposal->doc_ormawa && Storage::disk('public')->exists($proposal->doc_ormawa)) {
+                    Storage::disk('public')->delete($proposal->doc_ormawa);
+                }
+                $data['doc_ormawa'] = $request->file('doc_ormawa')->store('proposals/docs', 'public');
+            }
+
+            if ($request->hasFile('doc_sarana_prasarana')) {
+                if ($proposal->doc_sarana_prasarana && Storage::disk('public')->exists($proposal->doc_sarana_prasarana)) {
+                    Storage::disk('public')->delete($proposal->doc_sarana_prasarana);
+                }
+                $data['doc_sarana_prasarana'] = $request->file('doc_sarana_prasarana')->store('proposals/docs', 'public');
+            }
+
+            if ($request->hasFile('poster')) {
+                if ($proposal->poster && Storage::disk('public')->exists($proposal->poster)) {
+                    Storage::disk('public')->delete($proposal->poster);
+                }
+                $data['poster'] = $request->file('poster')->store('proposals/posters', 'public');
+            }
+
+            $proposal->update($data);
+
+            return redirect()->route('proposals.index')->with('success', 'Proposal berhasil diperbarui');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal memperbarui proposal: ' . $e->getMessage());
+        }
+    }
+
+    public function destroy(Proposal $proposal)
+    {
+        try {
+            // Delete associated files
+            if ($proposal->doc_proposal && Storage::disk('public')->exists($proposal->doc_proposal)) {
+                Storage::disk('public')->delete($proposal->doc_proposal);
+            }
+            if ($proposal->doc_berkegiatan_ketuplak && Storage::disk('public')->exists($proposal->doc_berkegiatan_ketuplak)) {
+                Storage::disk('public')->delete($proposal->doc_berkegiatan_ketuplak);
+            }
+            if ($proposal->doc_ormawa && Storage::disk('public')->exists($proposal->doc_ormawa)) {
+                Storage::disk('public')->delete($proposal->doc_ormawa);
+            }
+            if ($proposal->doc_sarana_prasarana && Storage::disk('public')->exists($proposal->doc_sarana_prasarana)) {
+                Storage::disk('public')->delete($proposal->doc_sarana_prasarana);
+            }
+            if ($proposal->poster && Storage::disk('public')->exists($proposal->poster)) {
+                Storage::disk('public')->delete($proposal->poster);
+            }
+
+            $proposal->delete();
+
+            return redirect()->route('proposals.index')->with('success', 'Proposal berhasil dihapus');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal menghapus proposal: ' . $e->getMessage());
+        }
+    }
+
+    public function updateStatus(Request $request, Proposal $proposal)
+    {
+        $request->validate([
+            'status' => 'required|in:pending,approved,rejected',
+        ]);
+
+        $proposal->update([
+            'status' => $request->status,
+        ]);
+
+        return redirect()->back()->with('success', 'Status proposal berhasil diperbarui');
+    }
+}

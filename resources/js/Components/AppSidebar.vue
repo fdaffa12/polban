@@ -69,6 +69,11 @@ const items = [
         icon: Settings,
     },
     {
+        title: "Proposals",
+        url: "/proposals",
+        icon: FileText,
+    },
+    {
         title: "Articles",
         url: "/articles",
         icon: FileText, // Import FileText from lucide-vue-next
