@@ -179,4 +179,11 @@ class EventController extends Controller
             return redirect()->back()->with('error', 'Failed to delete event');
         }
     }
+
+    public function show(Event $event)
+    {
+        return Inertia::render('Events/Show', [
+            'event' => $event->load(['department', 'dates']),
+        ]);
+    }
 }
