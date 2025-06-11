@@ -16,7 +16,7 @@ const props = defineProps({
 });
 
 // State untuk tab aktif
-const activeTab = ref("details");
+const activeTab = ref("doc_proposal");
 
 // Format tanggal
 const formatDate = (dateString) => {
@@ -110,152 +110,165 @@ const getGoogleDriveImageUrl = (url) => {
     return url;
 };
 
+// Fungsi untuk mendapatkan file ID dari URL Google Drive
+const getFileId = (url) => {
+    const match = url.match(/[-\w]{25,}/);
+    return match ? match[0] : '';
+};
+
 </script>
 
 <template>
     <AuthenticatedLayout :title="'Preview: ' + proposal.nama_kegiatan">
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-                <!-- Navigation Tabs -->
-                <div class="border-b border-gray-200">
-                    <nav class="-mb-px flex space-x-8" aria-label="Tabs">
-                        <button v-for="tab in documentTabs" :key="tab.id" @click="activeTab = tab.id" :class="[
-                            activeTab === tab.id
-                                ? 'border-indigo-500 text-indigo-600'
-                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
-                            'group inline-flex items-center py-4 px-1 border-b-2 font-medium text-sm',
-                        ]">
-                            <component :is="tab.icon" class="h-5 w-5 mr-2" :class="[
-                                activeTab === tab.id
-                                    ? 'text-indigo-500'
-                                    : 'text-gray-400 group-hover:text-gray-500',
-                            ]" />
-                            {{ tab.name }}
-                        </button>
-                    </nav>
-                </div>
-
-                <!-- Content Area -->
-                <div class="bg-white shadow-sm rounded-lg">
-                    <!-- Detail Proposal Tab -->
-                    <div v-if="activeTab === 'details'" class="p-6">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <!-- Poster dan Status -->
-                            <div class="space-y-4">
+                <!-- Detail Proposal Section -->
+                <div class="bg-white shadow-sm rounded-lg p-6">
+                    <h2 class="text-2xl font-bold mb-6">Detail Proposal</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- Poster dan Status -->
+                        <div class="space-y-4">
+                            <div class="aspect-[3/4] rounded-lg shadow-lg overflow-hidden">
                                 <img :src="getGoogleDriveImageUrl(proposal.poster)" :alt="proposal.nama_kegiatan"
-                                    class="w-full rounded-lg shadow-lg" />
-                                <div class="flex justify-between items-center">
-                                    <span :class="[
-                                        'px-3 py-1 text-sm font-semibold rounded-full',
-                                        getStatusClass(proposal.status),
-                                    ]">
-                                        {{ proposal.status.toUpperCase() }}
-                                    </span>
-                                </div>
+                                    class="w-full h-full object-cover" />
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span :class="[
+                                    'px-4 py-2 text-sm font-semibold rounded-full',
+                                    getStatusClass(proposal.status),
+                                ]">
+                                    {{ proposal.status.toUpperCase() }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Informasi Kegiatan -->
+                        <div class="bg-gray-50 rounded-lg p-6 space-y-6">
+                            <div>
+                                <h3 class="text-xl font-semibold text-gray-900">
+                                    {{ proposal.nama_kegiatan }}
+                                </h3>
+                                <p class="text-gray-600 mt-1">
+                                    {{ proposal.bidang_kegiatan }} -
+                                    {{ proposal.jenis_kegiatan }}
+                                </p>
                             </div>
 
-                            <!-- Informasi Kegiatan -->
-                            <div class="space-y-6">
-                                <div>
-                                    <h3 class="text-lg font-semibold">
-                                        {{ proposal.nama_kegiatan }}
-                                    </h3>
-                                    <p class="text-gray-600">
-                                        {{ proposal.bidang_kegiatan }} -
-                                        {{ proposal.jenis_kegiatan }}
-                                    </p>
-                                </div>
-
+                            <div class="grid grid-cols-1 gap-6">
                                 <div class="space-y-4">
-                                    <div class="flex items-center">
-                                        <Users class="h-5 w-5 text-gray-400 mr-2" />
+                                    <div class="flex items-start">
+                                        <Users class="h-5 w-5 text-gray-400 mt-1 mr-3" />
                                         <div>
-                                            <p class="text-sm font-medium">
-                                                PIC: {{ proposal.pic_name }}
+                                            <p class="text-sm font-medium text-gray-900">
+                                                Penanggung Jawab
+                                            </p>
+                                            <p class="text-sm text-gray-600">
+                                                {{ proposal.pic_name }}
                                             </p>
                                             <p class="text-sm text-gray-500">
-                                                {{ proposal.email }} |
-                                                {{ proposal.phone }}
+                                                {{ proposal.email }} | {{ proposal.phone }}
                                             </p>
                                         </div>
                                     </div>
 
-                                    <div class="flex items-center">
-                                        <Calendar class="h-5 w-5 text-gray-400 mr-2" />
+                                    <div class="flex items-start">
+                                        <Calendar class="h-5 w-5 text-gray-400 mt-1 mr-3" />
                                         <div>
-                                            <p class="text-sm">
-                                                {{
-                                                    formatDate(
-                                                        proposal.tanggal_mulai
-                                                    )
-                                                }}
+                                            <p class="text-sm font-medium text-gray-900">
+                                                Waktu Pelaksanaan
                                             </p>
-                                            <p class="text-sm text-gray-500" v-if="
-                                                proposal.tanggal_mulai !==
-                                                proposal.tanggal_akhir
-                                            ">
-                                                s/d
-                                                {{
-                                                    formatDate(
-                                                        proposal.tanggal_akhir
-                                                    )
-                                                }}
+                                            <p class="text-sm text-gray-600">
+                                                {{ formatDate(proposal.tanggal_mulai) }}
+                                                <span v-if="proposal.tanggal_mulai !== proposal.tanggal_akhir">
+                                                    s/d {{ formatDate(proposal.tanggal_akhir) }}
+                                                </span>
                                             </p>
                                         </div>
                                     </div>
 
-                                    <div class="flex items-center">
-                                        <MapPin class="h-5 w-5 text-gray-400 mr-2" />
-                                        <p class="text-sm">
-                                            {{ proposal.tempat_kegiatan }}
-                                        </p>
+                                    <div class="flex items-start">
+                                        <MapPin class="h-5 w-5 text-gray-400 mt-1 mr-3" />
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-900">
+                                                Tempat Kegiatan
+                                            </p>
+                                            <p class="text-sm text-gray-600">
+                                                {{ proposal.tempat_kegiatan }}
+                                            </p>
+                                        </div>
                                     </div>
 
-                                    <div class="flex items-center">
-                                        <DollarSign class="h-5 w-5 text-gray-400 mr-2" />
+                                    <div class="flex items-start">
+                                        <Users class="h-5 w-5 text-gray-400 mt-1 mr-3" />
                                         <div>
-                                            <p class="text-sm">
-                                                DIPA:
-                                                {{
-                                                    formatRupiah(
-                                                        proposal.dana_dipa_polban
-                                                    )
-                                                }}
+                                            <p class="text-sm font-medium text-gray-900">
+                                                Peserta & Panitia
                                             </p>
-                                            <p class="text-sm">
-                                                Swadaya:
-                                                {{
-                                                    formatRupiah(
-                                                        proposal.dana_swadaya
-                                                    )
-                                                }}
+                                            <p class="text-sm text-gray-600">
+                                                {{ proposal.jumlah_peserta }} Peserta |
+                                                {{ proposal.jumlah_panitia }} Panitia |
+                                                {{ proposal.jumlah_spj }} SPJ
                                             </p>
-                                            <p class="text-sm">
-                                                Sponsor:
-                                                {{
-                                                    formatRupiah(
-                                                        proposal.dana_sponsor
-                                                    )
-                                                }}
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-start">
+                                        <DollarSign class="h-5 w-5 text-gray-400 mt-1 mr-3" />
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-900">
+                                                Pendanaan
                                             </p>
+                                            <div class="space-y-1">
+                                                <p class="text-sm text-gray-600">
+                                                    DIPA: {{ formatRupiah(proposal.dana_dipa_polban) }}
+                                                </p>
+                                                <p class="text-sm text-gray-600">
+                                                    Swadaya: {{ formatRupiah(proposal.dana_swadaya) }}
+                                                </p>
+                                                <p class="text-sm text-gray-600">
+                                                    Sponsor: {{ formatRupiah(proposal.dana_sponsor) }}
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <!-- PDF Preview Tabs -->
-                    <div v-else class="p-6">
+                <!-- Dokumen Section -->
+                <div class="bg-white shadow-sm rounded-lg">
+                    <div class="border-b border-gray-200">
+                        <nav class="-mb-px flex space-x-8 px-6" aria-label="Tabs">
+                            <button v-for="tab in documentTabs.slice(1)" :key="tab.id" @click="activeTab = tab.id"
+                                :class="[
+                                    activeTab === tab.id
+                                        ? 'border-indigo-500 text-indigo-600'
+                                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
+                                    'group inline-flex items-center py-4 px-1 border-b-2 font-medium text-sm',
+                                ]">
+                                <FileText class="h-5 w-5 mr-2" :class="[
+                                    activeTab === tab.id
+                                        ? 'text-indigo-500'
+                                        : 'text-gray-400 group-hover:text-gray-500',
+                                ]" />
+                                {{ tab.name }}
+                            </button>
+                        </nav>
+                    </div>
+
+                    <!-- PDF Preview -->
+                    <div class="p-6">
                         <div class="bg-gray-50 rounded-lg p-4 mb-4">
                             <div class="flex flex-col space-y-2">
                                 <div class="flex justify-between items-center">
                                     <h3 class="text-lg font-medium">
-                                        {{documentTabs.find((tab) => tab.id === activeTab).name}}
+                                        {{documentTabs.find((tab) => tab.id === activeTab)?.name}}
                                     </h3>
                                     <div class="space-x-2">
                                         <button
-                                            @click="openDocument(documentTabs.find((tab) => tab.id === activeTab).path)"
+                                            @click="openDocument(documentTabs.find((tab) => tab.id === activeTab)?.path)"
                                             class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700">
                                             Buka di Google Drive
                                         </button>
@@ -267,7 +280,8 @@ const getGoogleDriveImageUrl = (url) => {
                             </div>
                         </div>
                         <div class="h-screen bg-gray-100 rounded-lg overflow-hidden">
-                            <iframe :src="getGoogleViewerUrl(documentTabs.find((tab) => tab.id === activeTab).path)"
+                            <iframe v-if="activeTab !== 'details'"
+                                :src="getGoogleViewerUrl(documentTabs.find((tab) => tab.id === activeTab)?.path)"
                                 class="w-full h-full" frameborder="0" allowfullscreen
                                 allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
                                 sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-presentation"></iframe>
