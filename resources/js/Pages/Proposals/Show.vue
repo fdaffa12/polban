@@ -239,23 +239,27 @@ const getFileId = (url) => {
 
                 <!-- Dokumen Section -->
                 <div class="bg-white shadow-sm rounded-lg">
-                    <div class="border-b border-gray-200">
-                        <nav class="-mb-px flex space-x-8 px-6" aria-label="Tabs">
-                            <button v-for="tab in documentTabs.slice(1)" :key="tab.id" @click="activeTab = tab.id"
-                                :class="[
-                                    activeTab === tab.id
-                                        ? 'border-indigo-500 text-indigo-600'
-                                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
-                                    'group inline-flex items-center py-4 px-1 border-b-2 font-medium text-sm',
-                                ]">
-                                <FileText class="h-5 w-5 mr-2" :class="[
-                                    activeTab === tab.id
-                                        ? 'text-indigo-500'
-                                        : 'text-gray-400 group-hover:text-gray-500',
-                                ]" />
-                                {{ tab.name }}
-                            </button>
-                        </nav>
+                    <div class="border-b border-gray-200 overflow-x-auto">
+                        <div class="min-w-full">
+                            <nav class="-mb-px flex px-4 sm:px-6" aria-label="Tabs">
+                                <div class="flex space-x-2 sm:space-x-4 md:space-x-8 whitespace-nowrap">
+                                    <button v-for="tab in documentTabs.slice(1)" :key="tab.id"
+                                        @click="activeTab = tab.id" :class="[
+                                            activeTab === tab.id
+                                                ? 'border-indigo-500 text-indigo-600'
+                                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
+                                            'group inline-flex items-center py-3 sm:py-4 px-2 sm:px-3 border-b-2 font-medium text-xs sm:text-sm',
+                                        ]">
+                                        <FileText class="h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2" :class="[
+                                            activeTab === tab.id
+                                                ? 'text-indigo-500'
+                                                : 'text-gray-400 group-hover:text-gray-500',
+                                        ]" />
+                                        <span class="truncate max-w-[100px] sm:max-w-none">{{ tab.name }}</span>
+                                    </button>
+                                </div>
+                            </nav>
+                        </div>
                     </div>
 
                     <!-- PDF Preview -->
@@ -279,12 +283,15 @@ const getFileId = (url) => {
                                 </p>
                             </div>
                         </div>
-                        <div class="h-screen bg-gray-100 rounded-lg overflow-hidden">
-                            <iframe v-if="activeTab !== 'details'"
-                                :src="getGoogleViewerUrl(documentTabs.find((tab) => tab.id === activeTab)?.path)"
-                                class="w-full h-full" frameborder="0" allowfullscreen
-                                allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-                                sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-presentation"></iframe>
+                        <div class="pdf-wrapper">
+                            <div class="pdf-container bg-gray-100 rounded-lg overflow-hidden mx-auto">
+                                <iframe v-if="activeTab !== 'details'"
+                                    :src="getGoogleViewerUrl(documentTabs.find((tab) => tab.id === activeTab)?.path)"
+                                    class="w-full h-full" frameborder="0" allowfullscreen
+                                    allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                                    sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-presentation">
+                                </iframe>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -294,7 +301,94 @@ const getFileId = (url) => {
 </template>
 
 <style scoped>
-.h-screen {
-    height: calc(100vh - 200px);
+.pdf-wrapper {
+    width: 100%;
+    max-width: 1024px;
+    /* Maksimum lebar wrapper */
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.pdf-container {
+    position: relative;
+    width: 100%;
+    max-width: 595px;
+    /* Lebar maksimum A4 */
+    margin: 1rem auto;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    background: white;
+}
+
+/* Mempertahankan rasio aspek A4 (1:1.4142) menggunakan padding-bottom */
+.pdf-container::before {
+    content: "";
+    display: block;
+    padding-bottom: 141.42%;
+    /* Rasio aspek A4 */
+}
+
+.pdf-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* Tablet (md) */
+@media (min-width: 768px) {
+    .pdf-wrapper {
+        padding: 0 2rem;
+    }
+
+    .pdf-container {
+        margin: 2rem auto;
+    }
+}
+
+/* Desktop (lg) */
+@media (min-width: 1024px) {
+    .pdf-wrapper {
+        padding: 0;
+    }
+
+    .pdf-container {
+        margin: 2rem auto;
+    }
+}
+
+/* Untuk layar sangat kecil */
+@media (max-width: 640px) {
+    .pdf-wrapper {
+        padding: 0 0.5rem;
+    }
+
+    .pdf-container {
+        margin: 1rem auto;
+    }
+}
+
+/* Tambahkan style untuk smooth scrolling di mobile */
+.overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE and Edge */
+}
+
+.overflow-x-auto::-webkit-scrollbar {
+    display: none;
+    /* Chrome, Safari, Opera */
+}
+
+/* Animasi transisi untuk hover dan active state */
+.group {
+    transition: all 0.2s ease-in-out;
+}
+
+/* Pastikan truncate bekerja dengan baik */
+.truncate {
+    text-overflow: ellipsis;
 }
 </style>
