@@ -101,6 +101,14 @@ const openDocument = (url) => {
     window.open(url, '_blank');
 };
 
+// Fungsi untuk mendapatkan URL gambar dari Google Drive
+const getGoogleDriveImageUrl = (url) => {
+    const fileId = url.match(/[-\w]{25,}/);
+    if (fileId) {
+        return `https://drive.google.com/thumbnail?id=${fileId[0]}&sz=w1000`;
+    }
+    return url;
+};
 
 </script>
 
@@ -134,7 +142,7 @@ const openDocument = (url) => {
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <!-- Poster dan Status -->
                             <div class="space-y-4">
-                                <img :src="`/storage/${proposal.poster}`" :alt="proposal.nama_kegiatan"
+                                <img :src="getGoogleDriveImageUrl(proposal.poster)" :alt="proposal.nama_kegiatan"
                                     class="w-full rounded-lg shadow-lg" />
                                 <div class="flex justify-between items-center">
                                     <span :class="[
