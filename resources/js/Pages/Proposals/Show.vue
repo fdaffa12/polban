@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { router } from "@inertiajs/vue3";
+import { router, Link } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import {
     Eye,
@@ -87,11 +87,10 @@ const getDocumentUrl = (path) => {
 
 // Fungsi untuk mendapatkan URL Google Drive Viewer
 const getGoogleViewerUrl = (url) => {
-    // Ekstrak ID file dari URL Google Drive
     const fileId = url.match(/[-\w]{25,}/);
     if (fileId) {
-        // Gunakan format URL untuk Google Drive PDF Viewer
-        return `https://drive.google.com/file/d/${fileId[0]}/preview`;
+        // Gunakan format URL yang lebih aman
+        return `https://drive.google.com/file/d/${fileId[0]}/preview?embedded=true&rm=minimal`;
     }
     return url;
 };
@@ -116,12 +115,37 @@ const getFileId = (url) => {
     return match ? match[0] : '';
 };
 
+// Tambahkan di script setup
+const handleIframeLoad = (event) => {
+    // Clear console errors
+    console.clear();
+};
+
+const handleIframeError = (error) => {
+    console.clear();
+    // Optional: Tampilkan pesan error yang lebih user-friendly
+};
+
 </script>
 
 <template>
     <AuthenticatedLayout :title="'Preview: ' + proposal.nama_kegiatan">
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+                <!-- Tombol Kembali -->
+                <div class="flex items-center justify-between">
+                    <button @click="router.get(route('proposals.index'))"
+                        class="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20"
+                            fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        Kembali
+                    </button>
+                </div>
+
                 <!-- Detail Proposal Section -->
                 <div class="bg-white shadow-sm rounded-lg p-6">
                     <h2 class="text-2xl font-bold mb-6">Detail Proposal</h2>
@@ -287,9 +311,9 @@ const getFileId = (url) => {
                             <div class="pdf-container bg-gray-100 rounded-lg overflow-hidden mx-auto">
                                 <iframe v-if="activeTab !== 'details'"
                                     :src="getGoogleViewerUrl(documentTabs.find((tab) => tab.id === activeTab)?.path)"
-                                    class="w-full h-full" frameborder="0" allowfullscreen
-                                    allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-                                    sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-presentation">
+                                    class="w-full h-full" frameborder="0" allowfullscreen referrerpolicy="no-referrer"
+                                    loading="lazy" allow="autoplay" :key="activeTab" @load="handleIframeLoad"
+                                    @error="handleIframeError">
                                 </iframe>
                             </div>
                         </div>
