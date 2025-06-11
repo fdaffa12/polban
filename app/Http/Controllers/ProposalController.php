@@ -7,9 +7,17 @@ use App\Models\Department;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
+use App\Services\GoogleDriveService;
 
 class ProposalController extends Controller
 {
+    protected $googleDrive;
+
+    public function __construct(GoogleDriveService $googleDrive)
+    {
+        $this->googleDrive = $googleDrive;
+    }
+
     public function index()
     {
         return Inertia::render('Proposals/Index', [
@@ -56,11 +64,12 @@ class ProposalController extends Controller
         ]);
 
         try {
-            $docProposalPath = $request->file('doc_proposal')->store('proposals/docs', 'public');
-            $docBerkegiatanPath = $request->file('doc_berkegiatan_ketuplak')->store('proposals/docs', 'public');
-            $docOrmawaPath = $request->file('doc_ormawa')->store('proposals/docs', 'public');
-            $docSaranaPrasaranaPath = $request->file('doc_sarana_prasarana')->store('proposals/docs', 'public');
-            $posterPath = $request->file('poster')->store('proposals/posters', 'public');
+            // Upload files ke Google Drive
+            $docProposal = $this->googleDrive->uploadFile($request->file('doc_proposal'), 'proposal');
+            $docBerkegiatan = $this->googleDrive->uploadFile($request->file('doc_berkegiatan_ketuplak'), 'berkegiatan');
+            $docOrmawa = $this->googleDrive->uploadFile($request->file('doc_ormawa'), 'ormawa');
+            $docSaranaPrasarana = $this->googleDrive->uploadFile($request->file('doc_sarana_prasarana'), 'sarana');
+            $poster = $this->googleDrive->uploadFile($request->file('poster'), 'poster');
 
             Proposal::create([
                 'pic_name' => $request->pic_name,
@@ -82,12 +91,12 @@ class ProposalController extends Controller
                 'pengisi_acara' => $request->pengisi_acara,
                 'sponsorship' => $request->sponsorship,
                 'media_partner' => $request->media_partner,
-                'doc_proposal' => $docProposalPath,
-                'doc_berkegiatan_ketuplak' => $docBerkegiatanPath,
-                'doc_ormawa' => $docOrmawaPath,
-                'doc_sarana_prasarana' => $docSaranaPrasaranaPath,
+                'doc_proposal' => $docProposal['url'],
+                'doc_berkegiatan_ketuplak' => $docBerkegiatan['url'],
+                'doc_ormawa' => $docOrmawa['url'],
+                'doc_sarana_prasarana' => $docSaranaPrasarana['url'],
                 'link_surat_izin_ortu' => $request->link_surat_izin_ortu,
-                'poster' => $posterPath,
+                'poster' => $poster['url'],
                 'caption_poster' => $request->caption_poster,
                 'status' => 'pending',
             ]);

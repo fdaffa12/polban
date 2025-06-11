@@ -85,10 +85,23 @@ const getDocumentUrl = (path) => {
     return `/storage/${path}`;
 };
 
-// Fungsi untuk membuka dokumen di tab baru
-const openDocument = (path) => {
-    window.open(getDocumentUrl(path), "_blank");
+// Fungsi untuk mendapatkan URL Google Drive Viewer
+const getGoogleViewerUrl = (url) => {
+    // Ekstrak ID file dari URL Google Drive
+    const fileId = url.match(/[-\w]{25,}/);
+    if (fileId) {
+        // Gunakan format URL untuk Google Drive PDF Viewer
+        return `https://drive.google.com/file/d/${fileId[0]}/preview`;
+    }
+    return url;
 };
+
+// Fungsi untuk membuka dokumen di Google Drive
+const openDocument = (url) => {
+    window.open(url, '_blank');
+};
+
+
 </script>
 
 <template>
@@ -98,26 +111,17 @@ const openDocument = (path) => {
                 <!-- Navigation Tabs -->
                 <div class="border-b border-gray-200">
                     <nav class="-mb-px flex space-x-8" aria-label="Tabs">
-                        <button
-                            v-for="tab in documentTabs"
-                            :key="tab.id"
-                            @click="activeTab = tab.id"
-                            :class="[
+                        <button v-for="tab in documentTabs" :key="tab.id" @click="activeTab = tab.id" :class="[
+                            activeTab === tab.id
+                                ? 'border-indigo-500 text-indigo-600'
+                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
+                            'group inline-flex items-center py-4 px-1 border-b-2 font-medium text-sm',
+                        ]">
+                            <component :is="tab.icon" class="h-5 w-5 mr-2" :class="[
                                 activeTab === tab.id
-                                    ? 'border-indigo-500 text-indigo-600'
-                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
-                                'group inline-flex items-center py-4 px-1 border-b-2 font-medium text-sm',
-                            ]"
-                        >
-                            <component
-                                :is="tab.icon"
-                                class="h-5 w-5 mr-2"
-                                :class="[
-                                    activeTab === tab.id
-                                        ? 'text-indigo-500'
-                                        : 'text-gray-400 group-hover:text-gray-500',
-                                ]"
-                            />
+                                    ? 'text-indigo-500'
+                                    : 'text-gray-400 group-hover:text-gray-500',
+                            ]" />
                             {{ tab.name }}
                         </button>
                     </nav>
@@ -130,18 +134,13 @@ const openDocument = (path) => {
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <!-- Poster dan Status -->
                             <div class="space-y-4">
-                                <img
-                                    :src="`/storage/${proposal.poster}`"
-                                    :alt="proposal.nama_kegiatan"
-                                    class="w-full rounded-lg shadow-lg"
-                                />
+                                <img :src="`/storage/${proposal.poster}`" :alt="proposal.nama_kegiatan"
+                                    class="w-full rounded-lg shadow-lg" />
                                 <div class="flex justify-between items-center">
-                                    <span
-                                        :class="[
-                                            'px-3 py-1 text-sm font-semibold rounded-full',
-                                            getStatusClass(proposal.status),
-                                        ]"
-                                    >
+                                    <span :class="[
+                                        'px-3 py-1 text-sm font-semibold rounded-full',
+                                        getStatusClass(proposal.status),
+                                    ]">
                                         {{ proposal.status.toUpperCase() }}
                                     </span>
                                 </div>
@@ -161,9 +160,7 @@ const openDocument = (path) => {
 
                                 <div class="space-y-4">
                                     <div class="flex items-center">
-                                        <Users
-                                            class="h-5 w-5 text-gray-400 mr-2"
-                                        />
+                                        <Users class="h-5 w-5 text-gray-400 mr-2" />
                                         <div>
                                             <p class="text-sm font-medium">
                                                 PIC: {{ proposal.pic_name }}
@@ -176,9 +173,7 @@ const openDocument = (path) => {
                                     </div>
 
                                     <div class="flex items-center">
-                                        <Calendar
-                                            class="h-5 w-5 text-gray-400 mr-2"
-                                        />
+                                        <Calendar class="h-5 w-5 text-gray-400 mr-2" />
                                         <div>
                                             <p class="text-sm">
                                                 {{
@@ -187,13 +182,10 @@ const openDocument = (path) => {
                                                     )
                                                 }}
                                             </p>
-                                            <p
-                                                class="text-sm text-gray-500"
-                                                v-if="
-                                                    proposal.tanggal_mulai !==
-                                                    proposal.tanggal_akhir
-                                                "
-                                            >
+                                            <p class="text-sm text-gray-500" v-if="
+                                                proposal.tanggal_mulai !==
+                                                proposal.tanggal_akhir
+                                            ">
                                                 s/d
                                                 {{
                                                     formatDate(
@@ -205,18 +197,14 @@ const openDocument = (path) => {
                                     </div>
 
                                     <div class="flex items-center">
-                                        <MapPin
-                                            class="h-5 w-5 text-gray-400 mr-2"
-                                        />
+                                        <MapPin class="h-5 w-5 text-gray-400 mr-2" />
                                         <p class="text-sm">
                                             {{ proposal.tempat_kegiatan }}
                                         </p>
                                     </div>
 
                                     <div class="flex items-center">
-                                        <DollarSign
-                                            class="h-5 w-5 text-gray-400 mr-2"
-                                        />
+                                        <DollarSign class="h-5 w-5 text-gray-400 mr-2" />
                                         <div>
                                             <p class="text-sm">
                                                 DIPA:
@@ -252,69 +240,29 @@ const openDocument = (path) => {
                     <!-- PDF Preview Tabs -->
                     <div v-else class="p-6">
                         <div class="bg-gray-50 rounded-lg p-4 mb-4">
-                            <div class="flex justify-between items-center">
-                                <h3 class="text-lg font-medium">
-                                    {{
-                                        documentTabs.find(
-                                            (tab) => tab.id === activeTab
-                                        ).name
-                                    }}
-                                </h3>
-                                <div class="space-x-2">
-                                    <a
-                                        :href="
-                                            getDocumentUrl(
-                                                documentTabs.find(
-                                                    (tab) =>
-                                                        tab.id === activeTab
-                                                ).path
-                                            )
-                                        "
-                                        download
-                                        class="inline-flex items-center px-4 py-2 bg-gray-600 text-white text-sm font-medium rounded-md hover:bg-gray-700"
-                                    >
-                                        Download
-                                    </a>
-                                    <button
-                                        @click="
-                                            openDocument(
-                                                documentTabs.find(
-                                                    (tab) =>
-                                                        tab.id === activeTab
-                                                ).path
-                                            )
-                                        "
-                                        class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700"
-                                    >
-                                        Buka di Tab Baru
-                                    </button>
+                            <div class="flex flex-col space-y-2">
+                                <div class="flex justify-between items-center">
+                                    <h3 class="text-lg font-medium">
+                                        {{documentTabs.find((tab) => tab.id === activeTab).name}}
+                                    </h3>
+                                    <div class="space-x-2">
+                                        <button
+                                            @click="openDocument(documentTabs.find((tab) => tab.id === activeTab).path)"
+                                            class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700">
+                                            Buka di Google Drive
+                                        </button>
+                                    </div>
                                 </div>
+                                <p class="text-sm text-gray-600">
+                                    Untuk menambahkan komentar pada PDF, silakan klik tombol "Buka di Google Drive"
+                                </p>
                             </div>
                         </div>
-                        <div
-                            class="h-screen bg-gray-100 rounded-lg overflow-hidden"
-                        >
-                            <object
-                                :data="
-                                    getDocumentUrl(
-                                        documentTabs.find(
-                                            (tab) => tab.id === activeTab
-                                        ).path
-                                    )
-                                "
-                                type="application/pdf"
-                                class="w-full h-full"
-                            >
-                                <div
-                                    class="flex items-center justify-center h-full"
-                                >
-                                    <p class="text-gray-500">
-                                        PDF tidak dapat ditampilkan. Silakan
-                                        gunakan tombol "Buka di Tab Baru" atau
-                                        "Download".
-                                    </p>
-                                </div>
-                            </object>
+                        <div class="h-screen bg-gray-100 rounded-lg overflow-hidden">
+                            <iframe :src="getGoogleViewerUrl(documentTabs.find((tab) => tab.id === activeTab).path)"
+                                class="w-full h-full" frameborder="0" allowfullscreen
+                                allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                                sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-presentation"></iframe>
                         </div>
                     </div>
                 </div>
