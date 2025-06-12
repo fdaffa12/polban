@@ -8,8 +8,14 @@ import {
     ChevronDown,
     Mail,
     Send,
-    FileText, // Import FileText from lucide-vue-next
+    FileText,
+    Users,
+    Info,
+    Newspaper,
+    Building2,
+    CalendarDays,
 } from "lucide-vue-next";
+// ... existing code ...
 import {
     Sidebar,
     SidebarContent,
@@ -42,37 +48,42 @@ const items: MenuItem[] = [
     {
         title: "Dashboard",
         url: route("dashboard"),
-        icon: Home,
+        icon: Home, // Icon rumah untuk Dashboard
     },
     {
         title: "Proposals",
         url: route("proposals.index"),
-        icon: FileText,
+        icon: FileText, // Icon dokumen untuk Proposals
     },
     {
         title: "Articles",
         url: route("articles.index"),
-        icon: FileText,
+        icon: Newspaper, // Icon koran untuk Articles
     },
     {
         title: "About Us",
         url: route("about-us.index"),
-        icon: FileText,
+        icon: Info, // Icon informasi untuk About Us
     },
     {
         title: "Lentera Restorasi",
         url: route("lentera-restorasi"),
-        icon: FileText,
+        icon: Mail, // Icon surat untuk Lentera Restorasi
     },
     {
         title: "Departement",
         url: route("departments.index"),
-        icon: FileText,
+        icon: Building2, // Icon gedung untuk Departement
     },
     {
         title: "Event",
         url: route("events.index"),
-        icon: FileText,
+        icon: CalendarDays, // Icon kalender untuk Event
+    },
+    {
+        title: "User Management",
+        url: route("users.index"),
+        icon: Users,
     },
 ];
 

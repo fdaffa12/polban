@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
     ];
 
     /**
@@ -38,13 +39,19 @@ class User extends Authenticatable
      *
      * @return array<string, string>
      */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
-    }
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+    ];
+
+    const ROLES = [
+        'BPH' => 'BPH',
+        'SEKERTARIS_BENDAHARA' => 'Sekertaris & Bendahara',
+        'SEKERTARIS_KABINET' => 'Sekertaris Kabinet',
+        'SEKERTARIS_UMUM_MPH' => 'Sekertaris Umum MPH',
+        'MEDKOM' => 'Medkom',
+        'FUNGSIONARIS' => 'Fungsionaris'
+    ];
 
     /**
      * Get the articles for the user.
@@ -52,5 +59,10 @@ class User extends Authenticatable
     public function articles(): HasMany
     {
         return $this->hasMany(Article::class);
+    }
+
+    public function hasRole($role)
+    {
+        return $this->role === $role;
     }
 }
