@@ -6,6 +6,7 @@ use Google\Client as Google_Client;
 use Google\Service\Drive as Google_Service_Drive;
 use Google\Service\Drive\DriveFile as Google_Service_Drive_DriveFile;
 use Google\Service\Drive\Permission;
+use Illuminate\Support\Facades\Log;
 
 class GoogleDriveService
 {
@@ -48,8 +49,8 @@ class GoogleDriveService
             ]);
 
             $this->service->permissions->create(
-                $file->id, 
-                $permission, 
+                $file->id,
+                $permission,
                 ['fields' => 'id']
             );
 
@@ -61,16 +62,15 @@ class GoogleDriveService
             ]);
 
             $this->service->files->update(
-                $file->id, 
-                $updatedFile, 
+                $file->id,
+                $updatedFile,
                 ['fields' => 'id,webViewLink']
             );
 
             // 4. Return URL dengan format yang benar
             return "https://drive.google.com/file/d/" . $file->id . "/view?usp=sharing";
-
         } catch (\Exception $e) {
-            \Log::error('Google Drive Upload Error: ' . $e->getMessage());
+            Log::error('Google Drive Upload Error: ' . $e->getMessage());
             throw $e;
         }
     }

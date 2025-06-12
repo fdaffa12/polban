@@ -28,74 +28,50 @@ import {
     DropdownMenuItem,
 } from "@/Components/ui/dropdown-menu";
 import { computed } from "vue";
-import { usePage } from "@inertiajs/vue3";
+import { usePage, router } from "@inertiajs/vue3";
+
+interface MenuItem {
+    title: string;
+    url?: string;
+    icon: any;
+    children?: MenuItem[];
+}
 
 // Menu items with nested structure
-const items = [
+const items: MenuItem[] = [
     {
-        title: "Home",
-        url: "#",
+        title: "Dashboard",
+        url: route("dashboard"),
         icon: Home,
     },
     {
-        title: "Mail",
-        icon: Mail,
-        children: [
-            {
-                title: "Inbox",
-                url: "#",
-                icon: Inbox,
-            },
-            {
-                title: "Sent",
-                url: "#",
-                icon: Send,
-            },
-        ],
-    },
-    {
-        title: "Calendar",
-        url: "#",
-        icon: Calendar,
-    },
-    {
-        title: "Search",
-        url: "#",
-        icon: Settings,
-    },
-    {
-        title: "Settings",
-        url: "#",
-        icon: Settings,
-    },
-    {
         title: "Proposals",
-        url: "/proposals",
+        url: route("proposals.index"),
         icon: FileText,
     },
     {
         title: "Articles",
-        url: "/articles",
-        icon: FileText, // Import FileText from lucide-vue-next
+        url: route("articles.index"),
+        icon: FileText,
     },
     {
         title: "About Us",
-        url: "/about-us",
+        url: route("about-us.index"),
         icon: FileText,
     },
     {
         title: "Lentera Restorasi",
-        url: "/lentera-restorasi",
+        url: route("lentera-restorasi"),
         icon: FileText,
     },
     {
         title: "Departement",
-        url: "/departments",
+        url: route("departments.index"),
         icon: FileText,
     },
     {
         title: "Event",
-        url: "/events",
+        url: route("events.index"),
         icon: FileText,
     },
 ];
@@ -230,10 +206,10 @@ defineProps<{
                             </template>
 
                             <!-- For regular menu items -->
-                            <SidebarMenuButton v-else asChild>
-                                <a
-                                    :href="item.url"
-                                    class="flex items-center gap-2 py-2"
+                            <SidebarMenuButton v-else>
+                                <button
+                                    @click="router.visit(item.url)"
+                                    class="flex items-center gap-2 py-2 w-full text-left"
                                     :title="isCollapsed ? item.title : ''"
                                     :class="{
                                         'text-blue-600': isActive(item.url),
@@ -262,7 +238,7 @@ defineProps<{
                                     >
                                         {{ item.title }}
                                     </span>
-                                </a>
+                                </button>
                             </SidebarMenuButton>
                         </SidebarMenuItem>
                     </SidebarMenu>

@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { router, Link } from "@inertiajs/vue3";
+import { router, Link, Head } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import {
     Eye,
@@ -97,7 +97,7 @@ const getGoogleViewerUrl = (url) => {
 
 // Fungsi untuk membuka dokumen di Google Drive
 const openDocument = (url) => {
-    window.open(url, '_blank');
+    window.open(url, "_blank");
 };
 
 // Fungsi untuk mendapatkan URL gambar dari Google Drive
@@ -112,7 +112,7 @@ const getGoogleDriveImageUrl = (url) => {
 // Fungsi untuk mendapatkan file ID dari URL Google Drive
 const getFileId = (url) => {
     const match = url.match(/[-\w]{25,}/);
-    return match ? match[0] : '';
+    return match ? match[0] : "";
 };
 
 // Tambahkan di script setup
@@ -125,22 +125,33 @@ const handleIframeError = (error) => {
     console.clear();
     // Optional: Tampilkan pesan error yang lebih user-friendly
 };
-
 </script>
 
 <template>
-    <AuthenticatedLayout :title="'Preview: ' + proposal.nama_kegiatan">
+    <AuthenticatedLayout :title="'Proposal'">
+        <Head>
+            <title>Proposal Management</title>
+            <meta name="description" content="Manage your proposal" />
+        </Head>
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
                 <!-- Tombol Kembali -->
                 <div class="flex items-center justify-between">
-                    <button @click="router.get(route('proposals.index'))"
-                        class="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20"
-                            fill="currentColor">
-                            <path fill-rule="evenodd"
+                    <button
+                        @click="router.get(route('proposals.index'))"
+                        class="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-5 w-5 mr-2"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                        >
+                            <path
+                                fill-rule="evenodd"
                                 d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
-                                clip-rule="evenodd" />
+                                clip-rule="evenodd"
+                            />
                         </svg>
                         Kembali
                     </button>
@@ -152,15 +163,24 @@ const handleIframeError = (error) => {
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <!-- Poster dan Status -->
                         <div class="space-y-4">
-                            <div class="aspect-[3/4] rounded-lg shadow-lg overflow-hidden">
-                                <img :src="getGoogleDriveImageUrl(proposal.poster)" :alt="proposal.nama_kegiatan"
-                                    class="w-full h-full object-cover" />
+                            <div
+                                class="aspect-[3/4] rounded-lg shadow-lg overflow-hidden"
+                            >
+                                <img
+                                    :src="
+                                        getGoogleDriveImageUrl(proposal.poster)
+                                    "
+                                    :alt="proposal.nama_kegiatan"
+                                    class="w-full h-full object-cover"
+                                />
                             </div>
                             <div class="flex justify-between items-center">
-                                <span :class="[
-                                    'px-4 py-2 text-sm font-semibold rounded-full',
-                                    getStatusClass(proposal.status),
-                                ]">
+                                <span
+                                    :class="[
+                                        'px-4 py-2 text-sm font-semibold rounded-full',
+                                        getStatusClass(proposal.status),
+                                    ]"
+                                >
                                     {{ proposal.status.toUpperCase() }}
                                 </span>
                             </div>
@@ -168,90 +188,248 @@ const handleIframeError = (error) => {
 
                         <!-- Informasi Kegiatan -->
                         <div class="bg-gray-50 rounded-lg p-6 space-y-6">
-                            <div>
-                                <h3 class="text-xl font-semibold text-gray-900">
+                            <div class="bg-white p-4 rounded-lg shadow-sm">
+                                <h3
+                                    class="text-xl font-semibold text-gray-900 mb-2"
+                                >
                                     {{ proposal.nama_kegiatan }}
                                 </h3>
-                                <p class="text-gray-600 mt-1">
+                                <div
+                                    class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-50 text-blue-700"
+                                >
                                     {{ proposal.bidang_kegiatan }} -
                                     {{ proposal.jenis_kegiatan }}
-                                </p>
+                                </div>
                             </div>
 
                             <div class="grid grid-cols-1 gap-6">
                                 <div class="space-y-4">
-                                    <div class="flex items-start">
-                                        <Users class="h-5 w-5 text-gray-400 mt-1 mr-3" />
-                                        <div>
-                                            <p class="text-sm font-medium text-gray-900">
-                                                Penanggung Jawab
-                                            </p>
-                                            <p class="text-sm text-gray-600">
-                                                {{ proposal.pic_name }}
-                                            </p>
-                                            <p class="text-sm text-gray-500">
-                                                {{ proposal.email }} | {{ proposal.phone }}
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <div class="flex items-start">
-                                        <Calendar class="h-5 w-5 text-gray-400 mt-1 mr-3" />
-                                        <div>
-                                            <p class="text-sm font-medium text-gray-900">
-                                                Waktu Pelaksanaan
-                                            </p>
-                                            <p class="text-sm text-gray-600">
-                                                {{ formatDate(proposal.tanggal_mulai) }}
-                                                <span v-if="proposal.tanggal_mulai !== proposal.tanggal_akhir">
-                                                    s/d {{ formatDate(proposal.tanggal_akhir) }}
-                                                </span>
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <div class="flex items-start">
-                                        <MapPin class="h-5 w-5 text-gray-400 mt-1 mr-3" />
-                                        <div>
-                                            <p class="text-sm font-medium text-gray-900">
-                                                Tempat Kegiatan
-                                            </p>
-                                            <p class="text-sm text-gray-600">
-                                                {{ proposal.tempat_kegiatan }}
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <div class="flex items-start">
-                                        <Users class="h-5 w-5 text-gray-400 mt-1 mr-3" />
-                                        <div>
-                                            <p class="text-sm font-medium text-gray-900">
-                                                Peserta & Panitia
-                                            </p>
-                                            <p class="text-sm text-gray-600">
-                                                {{ proposal.jumlah_peserta }} Peserta |
-                                                {{ proposal.jumlah_panitia }} Panitia |
-                                                {{ proposal.jumlah_spj }} SPJ
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <div class="flex items-start">
-                                        <DollarSign class="h-5 w-5 text-gray-400 mt-1 mr-3" />
-                                        <div>
-                                            <p class="text-sm font-medium text-gray-900">
-                                                Pendanaan
-                                            </p>
-                                            <div class="space-y-1">
-                                                <p class="text-sm text-gray-600">
-                                                    DIPA: {{ formatRupiah(proposal.dana_dipa_polban) }}
+                                    <!-- Penanggung Jawab -->
+                                    <div
+                                        class="bg-white p-4 rounded-lg shadow-sm"
+                                    >
+                                        <div class="flex items-start">
+                                            <Users
+                                                class="h-5 w-5 text-indigo-500 mt-1 mr-3"
+                                            />
+                                            <div class="flex-1">
+                                                <label
+                                                    class="text-sm font-medium text-gray-700"
+                                                    >Penanggung Jawab</label
+                                                >
+                                                <input
+                                                    type="text"
+                                                    disabled
+                                                    :value="proposal.pic_name"
+                                                    class="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-gray-600 text-sm"
+                                                />
+                                                <p
+                                                    class="mt-1 text-sm text-indigo-600"
+                                                >
+                                                    {{ proposal.email }} |
+                                                    {{ proposal.phone }}
                                                 </p>
-                                                <p class="text-sm text-gray-600">
-                                                    Swadaya: {{ formatRupiah(proposal.dana_swadaya) }}
-                                                </p>
-                                                <p class="text-sm text-gray-600">
-                                                    Sponsor: {{ formatRupiah(proposal.dana_sponsor) }}
-                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Waktu Pelaksanaan -->
+                                    <div
+                                        class="bg-white p-4 rounded-lg shadow-sm"
+                                    >
+                                        <div class="flex items-start">
+                                            <Calendar
+                                                class="h-5 w-5 text-emerald-500 mt-1 mr-3"
+                                            />
+                                            <div class="flex-1">
+                                                <label
+                                                    class="text-sm font-medium text-gray-700"
+                                                    >Waktu Pelaksanaan</label
+                                                >
+                                                <input
+                                                    type="text"
+                                                    disabled
+                                                    :value="
+                                                        formatDate(
+                                                            proposal.tanggal_mulai
+                                                        ) +
+                                                        (proposal.tanggal_mulai !==
+                                                        proposal.tanggal_akhir
+                                                            ? ' s/d ' +
+                                                              formatDate(
+                                                                  proposal.tanggal_akhir
+                                                              )
+                                                            : '')
+                                                    "
+                                                    class="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-gray-600 text-sm"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Tempat Kegiatan -->
+                                    <div
+                                        class="bg-white p-4 rounded-lg shadow-sm"
+                                    >
+                                        <div class="flex items-start">
+                                            <MapPin
+                                                class="h-5 w-5 text-rose-500 mt-1 mr-3"
+                                            />
+                                            <div class="flex-1">
+                                                <label
+                                                    class="text-sm font-medium text-gray-700"
+                                                    >Tempat Kegiatan</label
+                                                >
+                                                <input
+                                                    type="text"
+                                                    disabled
+                                                    :value="
+                                                        proposal.tempat_kegiatan
+                                                    "
+                                                    class="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-gray-600 text-sm"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Peserta & Panitia -->
+                                    <div
+                                        class="bg-white p-4 rounded-lg shadow-sm"
+                                    >
+                                        <div class="flex items-start">
+                                            <Users
+                                                class="h-5 w-5 text-amber-500 mt-1 mr-3"
+                                            />
+                                            <div class="flex-1">
+                                                <label
+                                                    class="text-sm font-medium text-gray-700"
+                                                    >Peserta & Panitia</label
+                                                >
+                                                <div
+                                                    class="mt-2 grid grid-cols-3 gap-3"
+                                                >
+                                                    <div
+                                                        class="bg-amber-50 px-3 py-2 rounded-lg text-center"
+                                                    >
+                                                        <div
+                                                            class="text-amber-700 font-semibold"
+                                                        >
+                                                            {{
+                                                                proposal.jumlah_peserta
+                                                            }}
+                                                        </div>
+                                                        <div
+                                                            class="text-xs text-amber-600"
+                                                        >
+                                                            Peserta
+                                                        </div>
+                                                    </div>
+                                                    <div
+                                                        class="bg-amber-50 px-3 py-2 rounded-lg text-center"
+                                                    >
+                                                        <div
+                                                            class="text-amber-700 font-semibold"
+                                                        >
+                                                            {{
+                                                                proposal.jumlah_panitia
+                                                            }}
+                                                        </div>
+                                                        <div
+                                                            class="text-xs text-amber-600"
+                                                        >
+                                                            Panitia
+                                                        </div>
+                                                    </div>
+                                                    <div
+                                                        class="bg-amber-50 px-3 py-2 rounded-lg text-center"
+                                                    >
+                                                        <div
+                                                            class="text-amber-700 font-semibold"
+                                                        >
+                                                            {{
+                                                                proposal.jumlah_spj
+                                                            }}
+                                                        </div>
+                                                        <div
+                                                            class="text-xs text-amber-600"
+                                                        >
+                                                            SPJ
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Pendanaan -->
+                                    <div
+                                        class="bg-white p-4 rounded-lg shadow-sm"
+                                    >
+                                        <div class="flex items-start">
+                                            <DollarSign
+                                                class="h-5 w-5 text-green-500 mt-1 mr-3"
+                                            />
+                                            <div class="flex-1">
+                                                <label
+                                                    class="text-sm font-medium text-gray-700"
+                                                    >Pendanaan</label
+                                                >
+                                                <div class="mt-2 space-y-2">
+                                                    <div
+                                                        class="bg-green-50 p-3 rounded-lg"
+                                                    >
+                                                        <div
+                                                            class="text-xs text-green-600"
+                                                        >
+                                                            DIPA
+                                                        </div>
+                                                        <div
+                                                            class="text-green-700 font-semibold"
+                                                        >
+                                                            {{
+                                                                formatRupiah(
+                                                                    proposal.dana_dipa_polban
+                                                                )
+                                                            }}
+                                                        </div>
+                                                    </div>
+                                                    <div
+                                                        class="bg-blue-50 p-3 rounded-lg"
+                                                    >
+                                                        <div
+                                                            class="text-xs text-blue-600"
+                                                        >
+                                                            Swadaya
+                                                        </div>
+                                                        <div
+                                                            class="text-blue-700 font-semibold"
+                                                        >
+                                                            {{
+                                                                formatRupiah(
+                                                                    proposal.dana_swadaya
+                                                                )
+                                                            }}
+                                                        </div>
+                                                    </div>
+                                                    <div
+                                                        class="bg-purple-50 p-3 rounded-lg"
+                                                    >
+                                                        <div
+                                                            class="text-xs text-purple-600"
+                                                        >
+                                                            Sponsor
+                                                        </div>
+                                                        <div
+                                                            class="text-purple-700 font-semibold"
+                                                        >
+                                                            {{
+                                                                formatRupiah(
+                                                                    proposal.dana_sponsor
+                                                                )
+                                                            }}
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -265,21 +443,36 @@ const handleIframeError = (error) => {
                 <div class="bg-white shadow-sm rounded-lg">
                     <div class="border-b border-gray-200 overflow-x-auto">
                         <div class="min-w-full">
-                            <nav class="-mb-px flex px-4 sm:px-6" aria-label="Tabs">
-                                <div class="flex space-x-2 sm:space-x-4 md:space-x-8 whitespace-nowrap">
-                                    <button v-for="tab in documentTabs.slice(1)" :key="tab.id"
-                                        @click="activeTab = tab.id" :class="[
+                            <nav
+                                class="-mb-px flex px-4 sm:px-6"
+                                aria-label="Tabs"
+                            >
+                                <div
+                                    class="flex space-x-2 sm:space-x-4 md:space-x-8 whitespace-nowrap"
+                                >
+                                    <button
+                                        v-for="tab in documentTabs.slice(1)"
+                                        :key="tab.id"
+                                        @click="activeTab = tab.id"
+                                        :class="[
                                             activeTab === tab.id
                                                 ? 'border-indigo-500 text-indigo-600'
                                                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
                                             'group inline-flex items-center py-3 sm:py-4 px-2 sm:px-3 border-b-2 font-medium text-xs sm:text-sm',
-                                        ]">
-                                        <FileText class="h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2" :class="[
-                                            activeTab === tab.id
-                                                ? 'text-indigo-500'
-                                                : 'text-gray-400 group-hover:text-gray-500',
-                                        ]" />
-                                        <span class="truncate max-w-[100px] sm:max-w-none">{{ tab.name }}</span>
+                                        ]"
+                                    >
+                                        <FileText
+                                            class="h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2"
+                                            :class="[
+                                                activeTab === tab.id
+                                                    ? 'text-indigo-500'
+                                                    : 'text-gray-400 group-hover:text-gray-500',
+                                            ]"
+                                        />
+                                        <span
+                                            class="truncate max-w-[100px] sm:max-w-none"
+                                            >{{ tab.name }}</span
+                                        >
                                     </button>
                                 </div>
                             </nav>
@@ -292,28 +485,57 @@ const handleIframeError = (error) => {
                             <div class="flex flex-col space-y-2">
                                 <div class="flex justify-between items-center">
                                     <h3 class="text-lg font-medium">
-                                        {{documentTabs.find((tab) => tab.id === activeTab)?.name}}
+                                        {{
+                                            documentTabs.find(
+                                                (tab) => tab.id === activeTab
+                                            )?.name
+                                        }}
                                     </h3>
                                     <div class="space-x-2">
                                         <button
-                                            @click="openDocument(documentTabs.find((tab) => tab.id === activeTab)?.path)"
-                                            class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700">
+                                            @click="
+                                                openDocument(
+                                                    documentTabs.find(
+                                                        (tab) =>
+                                                            tab.id === activeTab
+                                                    )?.path
+                                                )
+                                            "
+                                            class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700"
+                                        >
                                             Buka di Google Drive
                                         </button>
                                     </div>
                                 </div>
                                 <p class="text-sm text-gray-600">
-                                    Untuk menambahkan komentar pada PDF, silakan klik tombol "Buka di Google Drive"
+                                    Untuk menambahkan komentar pada PDF, silakan
+                                    klik tombol "Buka di Google Drive"
                                 </p>
                             </div>
                         </div>
                         <div class="pdf-wrapper">
-                            <div class="pdf-container bg-gray-100 rounded-lg overflow-hidden mx-auto">
-                                <iframe v-if="activeTab !== 'details'"
-                                    :src="getGoogleViewerUrl(documentTabs.find((tab) => tab.id === activeTab)?.path)"
-                                    class="w-full h-full" frameborder="0" allowfullscreen referrerpolicy="no-referrer"
-                                    loading="lazy" allow="autoplay" :key="activeTab" @load="handleIframeLoad"
-                                    @error="handleIframeError">
+                            <div
+                                class="pdf-container bg-gray-100 rounded-lg overflow-hidden mx-auto"
+                            >
+                                <iframe
+                                    v-if="activeTab !== 'details'"
+                                    :src="
+                                        getGoogleViewerUrl(
+                                            documentTabs.find(
+                                                (tab) => tab.id === activeTab
+                                            )?.path
+                                        )
+                                    "
+                                    class="w-full h-full"
+                                    frameborder="0"
+                                    allowfullscreen
+                                    referrerpolicy="no-referrer"
+                                    loading="lazy"
+                                    allow="autoplay"
+                                    :key="activeTab"
+                                    @load="handleIframeLoad"
+                                    @error="handleIframeError"
+                                >
                                 </iframe>
                             </div>
                         </div>
