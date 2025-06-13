@@ -111,7 +111,7 @@ class ProposalController extends Controller
 
     public function show(Proposal $proposal)
     {
-        $proposal->load('department');
+        $proposal->load(['department', 'reviewer', 'approver']);
         return Inertia::render('Proposals/Show', [
             'proposal' => $proposal
         ]);
@@ -276,7 +276,8 @@ class ProposalController extends Controller
             $proposal->update([
                 'status' => 'revised',
                 'revision_note' => $request->revision_note,
-                'revised_by' => $request->user()->id
+                'review_by' => $request->user()->id,
+                'review_at' => now()
             ]);
 
             try {

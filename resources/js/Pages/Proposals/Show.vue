@@ -11,7 +11,7 @@ import {
     DollarSign,
 } from "lucide-vue-next";
 
-import { useForm } from '@inertiajs/vue3';
+import { useForm } from "@inertiajs/vue3";
 
 const props = defineProps({
     proposal: Object,
@@ -21,17 +21,18 @@ const props = defineProps({
 const activeTab = ref("doc_proposal");
 const showApproveModal = ref(false);
 const showReviseModal = ref(false);
+const showPosterModal = ref(false);
 
 const approveForm = useForm({
     approved_at: new Date().toISOString(),
 });
 
 const reviseForm = useForm({
-    revision_note: '',
+    revision_note: "",
 });
 
 const handleApprove = () => {
-    approveForm.put(route('proposals.approve', props.proposal.id), {
+    approveForm.put(route("proposals.approve", props.proposal.id), {
         onSuccess: () => {
             showApproveModal.value = false;
         },
@@ -39,7 +40,7 @@ const handleApprove = () => {
 };
 
 const handleRevise = () => {
-    reviseForm.put(route('proposals.revise', props.proposal.id), {
+    reviseForm.put(route("proposals.revise", props.proposal.id), {
         onSuccess: () => {
             showReviseModal.value = false;
             reviseForm.reset();
@@ -102,6 +103,8 @@ const getStatusClass = (status) => {
             return "bg-yellow-100 text-yellow-800";
         case "approved":
             return "bg-green-100 text-green-800";
+        case "revised":
+            return "bg-orange-100 text-orange-800";
         case "rejected":
             return "bg-red-100 text-red-800";
         default:
@@ -187,304 +190,291 @@ const handleIframeError = (error) => {
                 </div>
 
                 <!-- Detail Proposal Section -->
-                <div class="bg-white shadow-sm rounded-lg p-6">
-                    <h2 class="text-2xl font-bold mb-6">Detail Proposal</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <!-- Poster dan Status -->
-                        <div class="space-y-4">
-                            <div
-                                class="aspect-[3/4] rounded-lg shadow-lg overflow-hidden"
+                <div class="bg-white shadow-sm rounded-lg p-4 sm:p-6 lg:p-8">
+                    <h2 class="text-2xl font-bold mb-6 text-gray-900">
+                        Detail Proposal
+                    </h2>
+
+                    <!-- Tombol Lihat Poster -->
+                    <div class="flex justify-center mb-6">
+                        <button
+                            @click="showPosterModal = true"
+                            class="inline-flex items-center px-4 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transform transition-all duration-200 hover:scale-105"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-5 w-5 mr-2"
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
                             >
-                                <img
-                                    :src="
-                                        getGoogleDriveImageUrl(proposal.poster)
-                                    "
-                                    :alt="proposal.nama_kegiatan"
-                                    class="w-full h-full object-cover"
+                                <path
+                                    fill-rule="evenodd"
+                                    d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
+                                    clip-rule="evenodd"
                                 />
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <div class="flex items-center gap-4">
-                                    <span
-                                        :class="[
-                                            'px-4 py-2 text-sm font-semibold rounded-full',
-                                            getStatusClass(proposal.status),
-                                        ]"
-                                    >
-                                        {{ proposal.status.toUpperCase() }}
-                                    </span>
+                            </svg>
+                            Lihat Poster
+                        </button>
+                    </div>
 
-                                    <!-- Tombol Approve/Revise untuk SEKERTARIS_KABINET -->
-                                    <div v-if="$page.props.auth.user.role === 'SEKERTARIS_KABINET' && proposal.status === 'pending'" class="flex gap-2">
-                                        <!-- Modal Approve -->
-                                        <button
-                                            @click="showApproveModal = true"
-                                            class="inline-flex items-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-150"
-                                        >
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1.5" viewBox="0 0 20 20" fill="currentColor">
-                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                                            </svg>
-                                            Approve
-                                        </button>
+                    <!-- Status Badge -->
+                    <div class="flex justify-between items-center mb-6">
+                        <div class="flex items-center gap-4">
+                            <span
+                                :class="[
+                                    'px-4 py-2 text-sm font-semibold rounded-full shadow-sm',
+                                    getStatusClass(proposal.status),
+                                ]"
+                            >
+                                {{ proposal.status.toUpperCase() }}
+                            </span>
+                        </div>
+                    </div>
 
-                                        <!-- Modal Revise -->
-                                        <button
-                                            @click="showReviseModal = true"
-                                            class="inline-flex items-center px-4 py-2 bg-yellow-600 text-white text-sm font-medium rounded-md hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-colors duration-150"
-                                        >
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1.5" viewBox="0 0 20 20" fill="currentColor">
-                                                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                                            </svg>
-                                            Revise
-                                        </button>
-                                    </div>
-                                </div>
+                    <!-- Informasi Kegiatan -->
+                    <div class="bg-gray-50 rounded-xl p-4 sm:p-6 space-y-6">
+                        <!-- Header Kegiatan -->
+                        <div
+                            class="bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200"
+                        >
+                            <h3
+                                class="text-xl font-semibold text-gray-900 mb-3"
+                            >
+                                {{ proposal.nama_kegiatan }}
+                            </h3>
+                            <div
+                                class="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-medium bg-blue-50 text-blue-700 border border-blue-100"
+                            >
+                                {{ proposal.bidang_kegiatan }} -
+                                {{ proposal.jenis_kegiatan }}
                             </div>
                         </div>
 
-                        <!-- Informasi Kegiatan -->
-                        <div class="bg-gray-50 rounded-lg p-6 space-y-6">
-                            <div class="bg-white p-4 rounded-lg shadow-sm">
-                                <h3
-                                    class="text-xl font-semibold text-gray-900 mb-2"
-                                >
-                                    {{ proposal.nama_kegiatan }}
-                                </h3>
-                                <div
-                                    class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-50 text-blue-700"
-                                >
-                                    {{ proposal.bidang_kegiatan }} -
-                                    {{ proposal.jenis_kegiatan }}
+                        <!-- Grid Informasi Detail -->
+                        <div
+                            class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6"
+                        >
+                            <!-- Penanggung Jawab -->
+                            <div
+                                class="bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-all duration-200"
+                            >
+                                <div class="flex items-start">
+                                    <Users
+                                        class="h-5 w-5 text-indigo-500 mt-1 mr-3"
+                                    />
+                                    <div class="flex-1">
+                                        <label
+                                            class="text-sm font-medium text-gray-700"
+                                            >Penanggung Jawab</label
+                                        >
+                                        <input
+                                            type="text"
+                                            disabled
+                                            :value="proposal.pic_name"
+                                            class="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-gray-600 text-sm"
+                                        />
+                                        <p
+                                            class="mt-2 text-sm text-indigo-600 font-medium"
+                                        >
+                                            {{ proposal.email }} |
+                                            {{ proposal.phone }}
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="grid grid-cols-1 gap-6">
-                                <div class="space-y-4">
-                                    <!-- Penanggung Jawab -->
-                                    <div
-                                        class="bg-white p-4 rounded-lg shadow-sm"
-                                    >
-                                        <div class="flex items-start">
-                                            <Users
-                                                class="h-5 w-5 text-indigo-500 mt-1 mr-3"
-                                            />
-                                            <div class="flex-1">
-                                                <label
-                                                    class="text-sm font-medium text-gray-700"
-                                                    >Penanggung Jawab</label
-                                                >
-                                                <input
-                                                    type="text"
-                                                    disabled
-                                                    :value="proposal.pic_name"
-                                                    class="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-gray-600 text-sm"
-                                                />
-                                                <p
-                                                    class="mt-1 text-sm text-indigo-600"
-                                                >
-                                                    {{ proposal.email }} |
-                                                    {{ proposal.phone }}
-                                                </p>
-                                            </div>
-                                        </div>
+                            <!-- Waktu Pelaksanaan -->
+                            <div
+                                class="bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-all duration-200"
+                            >
+                                <div class="flex items-start">
+                                    <Calendar
+                                        class="h-5 w-5 text-emerald-500 mt-1 mr-3"
+                                    />
+                                    <div class="flex-1">
+                                        <label
+                                            class="text-sm font-medium text-gray-700"
+                                            >Waktu Pelaksanaan</label
+                                        >
+                                        <input
+                                            type="text"
+                                            disabled
+                                            :value="
+                                                formatDate(
+                                                    proposal.tanggal_mulai
+                                                ) +
+                                                (proposal.tanggal_mulai !==
+                                                proposal.tanggal_akhir
+                                                    ? ' s/d ' +
+                                                      formatDate(
+                                                          proposal.tanggal_akhir
+                                                      )
+                                                    : '')
+                                            "
+                                            class="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-gray-600 text-sm"
+                                        />
                                     </div>
+                                </div>
+                            </div>
 
-                                    <!-- Waktu Pelaksanaan -->
-                                    <div
-                                        class="bg-white p-4 rounded-lg shadow-sm"
-                                    >
-                                        <div class="flex items-start">
-                                            <Calendar
-                                                class="h-5 w-5 text-emerald-500 mt-1 mr-3"
-                                            />
-                                            <div class="flex-1">
-                                                <label
-                                                    class="text-sm font-medium text-gray-700"
-                                                    >Waktu Pelaksanaan</label
-                                                >
-                                                <input
-                                                    type="text"
-                                                    disabled
-                                                    :value="
-                                                        formatDate(
-                                                            proposal.tanggal_mulai
-                                                        ) +
-                                                        (proposal.tanggal_mulai !==
-                                                        proposal.tanggal_akhir
-                                                            ? ' s/d ' +
-                                                              formatDate(
-                                                                  proposal.tanggal_akhir
-                                                              )
-                                                            : '')
-                                                    "
-                                                    class="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-gray-600 text-sm"
-                                                />
-                                            </div>
-                                        </div>
+                            <!-- Tempat Kegiatan -->
+                            <div
+                                class="bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-all duration-200"
+                            >
+                                <div class="flex items-start">
+                                    <MapPin
+                                        class="h-5 w-5 text-rose-500 mt-1 mr-3"
+                                    />
+                                    <div class="flex-1">
+                                        <label
+                                            class="text-sm font-medium text-gray-700"
+                                            >Tempat Kegiatan</label
+                                        >
+                                        <input
+                                            type="text"
+                                            disabled
+                                            :value="proposal.tempat_kegiatan"
+                                            class="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-gray-600 text-sm"
+                                        />
                                     </div>
+                                </div>
+                            </div>
 
-                                    <!-- Tempat Kegiatan -->
-                                    <div
-                                        class="bg-white p-4 rounded-lg shadow-sm"
-                                    >
-                                        <div class="flex items-start">
-                                            <MapPin
-                                                class="h-5 w-5 text-rose-500 mt-1 mr-3"
-                                            />
-                                            <div class="flex-1">
-                                                <label
-                                                    class="text-sm font-medium text-gray-700"
-                                                    >Tempat Kegiatan</label
-                                                >
-                                                <input
-                                                    type="text"
-                                                    disabled
-                                                    :value="
-                                                        proposal.tempat_kegiatan
-                                                    "
-                                                    class="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-gray-600 text-sm"
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Peserta & Panitia -->
-                                    <div
-                                        class="bg-white p-4 rounded-lg shadow-sm"
-                                    >
-                                        <div class="flex items-start">
-                                            <Users
-                                                class="h-5 w-5 text-amber-500 mt-1 mr-3"
-                                            />
-                                            <div class="flex-1">
-                                                <label
-                                                    class="text-sm font-medium text-gray-700"
-                                                    >Peserta & Panitia</label
-                                                >
+                            <!-- Peserta & Panitia -->
+                            <div
+                                class="bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-all duration-200"
+                            >
+                                <div class="flex items-start">
+                                    <Users
+                                        class="h-5 w-5 text-amber-500 mt-1 mr-3"
+                                    />
+                                    <div class="flex-1">
+                                        <label
+                                            class="text-sm font-medium text-gray-700"
+                                            >Peserta & Panitia</label
+                                        >
+                                        <div
+                                            class="mt-2 grid grid-cols-3 gap-3"
+                                        >
+                                            <div
+                                                class="bg-amber-50 px-3 py-2.5 rounded-lg text-center shadow-sm"
+                                            >
                                                 <div
-                                                    class="mt-2 grid grid-cols-3 gap-3"
+                                                    class="text-amber-700 font-semibold text-lg"
                                                 >
-                                                    <div
-                                                        class="bg-amber-50 px-3 py-2 rounded-lg text-center"
-                                                    >
-                                                        <div
-                                                            class="text-amber-700 font-semibold"
-                                                        >
-                                                            {{
-                                                                proposal.jumlah_peserta
-                                                            }}
-                                                        </div>
-                                                        <div
-                                                            class="text-xs text-amber-600"
-                                                        >
-                                                            Peserta
-                                                        </div>
-                                                    </div>
-                                                    <div
-                                                        class="bg-amber-50 px-3 py-2 rounded-lg text-center"
-                                                    >
-                                                        <div
-                                                            class="text-amber-700 font-semibold"
-                                                        >
-                                                            {{
-                                                                proposal.jumlah_panitia
-                                                            }}
-                                                        </div>
-                                                        <div
-                                                            class="text-xs text-amber-600"
-                                                        >
-                                                            Panitia
-                                                        </div>
-                                                    </div>
-                                                    <div
-                                                        class="bg-amber-50 px-3 py-2 rounded-lg text-center"
-                                                    >
-                                                        <div
-                                                            class="text-amber-700 font-semibold"
-                                                        >
-                                                            {{
-                                                                proposal.jumlah_spj
-                                                            }}
-                                                        </div>
-                                                        <div
-                                                            class="text-xs text-amber-600"
-                                                        >
-                                                            SPJ
-                                                        </div>
-                                                    </div>
+                                                    {{
+                                                        proposal.jumlah_peserta
+                                                    }}
+                                                </div>
+                                                <div
+                                                    class="text-xs text-amber-600 font-medium"
+                                                >
+                                                    Peserta
+                                                </div>
+                                            </div>
+                                            <div
+                                                class="bg-amber-50 px-3 py-2.5 rounded-lg text-center shadow-sm"
+                                            >
+                                                <div
+                                                    class="text-amber-700 font-semibold text-lg"
+                                                >
+                                                    {{
+                                                        proposal.jumlah_panitia
+                                                    }}
+                                                </div>
+                                                <div
+                                                    class="text-xs text-amber-600 font-medium"
+                                                >
+                                                    Panitia
+                                                </div>
+                                            </div>
+                                            <div
+                                                class="bg-amber-50 px-3 py-2.5 rounded-lg text-center shadow-sm"
+                                            >
+                                                <div
+                                                    class="text-amber-700 font-semibold text-lg"
+                                                >
+                                                    {{ proposal.jumlah_spj }}
+                                                </div>
+                                                <div
+                                                    class="text-xs text-amber-600 font-medium"
+                                                >
+                                                    SPJ
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
 
-                                    <!-- Pendanaan -->
-                                    <div
-                                        class="bg-white p-4 rounded-lg shadow-sm"
-                                    >
-                                        <div class="flex items-start">
-                                            <DollarSign
-                                                class="h-5 w-5 text-green-500 mt-1 mr-3"
-                                            />
-                                            <div class="flex-1">
-                                                <label
-                                                    class="text-sm font-medium text-gray-700"
-                                                    >Pendanaan</label
+                            <!-- Pendanaan -->
+                            <div
+                                class="bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 md:col-span-2"
+                            >
+                                <div class="flex items-start">
+                                    <DollarSign
+                                        class="h-5 w-5 text-green-500 mt-1 mr-3"
+                                    />
+                                    <div class="flex-1">
+                                        <label
+                                            class="text-sm font-medium text-gray-700"
+                                            >Pendanaan</label
+                                        >
+                                        <div
+                                            class="mt-2 grid grid-cols-1 sm:grid-cols-3 gap-3"
+                                        >
+                                            <div
+                                                class="bg-green-50 p-4 rounded-lg shadow-sm"
+                                            >
+                                                <div
+                                                    class="text-xs text-green-600 font-medium"
                                                 >
-                                                <div class="mt-2 space-y-2">
-                                                    <div
-                                                        class="bg-green-50 p-3 rounded-lg"
-                                                    >
-                                                        <div
-                                                            class="text-xs text-green-600"
-                                                        >
-                                                            DIPA
-                                                        </div>
-                                                        <div
-                                                            class="text-green-700 font-semibold"
-                                                        >
-                                                            {{
-                                                                formatRupiah(
-                                                                    proposal.dana_dipa_polban
-                                                                )
-                                                            }}
-                                                        </div>
-                                                    </div>
-                                                    <div
-                                                        class="bg-blue-50 p-3 rounded-lg"
-                                                    >
-                                                        <div
-                                                            class="text-xs text-blue-600"
-                                                        >
-                                                            Swadaya
-                                                        </div>
-                                                        <div
-                                                            class="text-blue-700 font-semibold"
-                                                        >
-                                                            {{
-                                                                formatRupiah(
-                                                                    proposal.dana_swadaya
-                                                                )
-                                                            }}
-                                                        </div>
-                                                    </div>
-                                                    <div
-                                                        class="bg-purple-50 p-3 rounded-lg"
-                                                    >
-                                                        <div
-                                                            class="text-xs text-purple-600"
-                                                        >
-                                                            Sponsor
-                                                        </div>
-                                                        <div
-                                                            class="text-purple-700 font-semibold"
-                                                        >
-                                                            {{
-                                                                formatRupiah(
-                                                                    proposal.dana_sponsor
-                                                                )
-                                                            }}
-                                                        </div>
-                                                    </div>
+                                                    DIPA
+                                                </div>
+                                                <div
+                                                    class="text-green-700 font-semibold text-lg mt-1"
+                                                >
+                                                    {{
+                                                        formatRupiah(
+                                                            proposal.dana_dipa_polban
+                                                        )
+                                                    }}
+                                                </div>
+                                            </div>
+                                            <div
+                                                class="bg-blue-50 p-4 rounded-lg shadow-sm"
+                                            >
+                                                <div
+                                                    class="text-xs text-blue-600 font-medium"
+                                                >
+                                                    Swadaya
+                                                </div>
+                                                <div
+                                                    class="text-blue-700 font-semibold text-lg mt-1"
+                                                >
+                                                    {{
+                                                        formatRupiah(
+                                                            proposal.dana_swadaya
+                                                        )
+                                                    }}
+                                                </div>
+                                            </div>
+                                            <div
+                                                class="bg-purple-50 p-4 rounded-lg shadow-sm"
+                                            >
+                                                <div
+                                                    class="text-xs text-purple-600 font-medium"
+                                                >
+                                                    Sponsor
+                                                </div>
+                                                <div
+                                                    class="text-purple-700 font-semibold text-lg mt-1"
+                                                >
+                                                    {{
+                                                        formatRupiah(
+                                                            proposal.dana_sponsor
+                                                        )
+                                                    }}
                                                 </div>
                                             </div>
                                         </div>
@@ -493,6 +483,125 @@ const handleIframeError = (error) => {
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <!-- Tombol Approve/Revise -->
+                <div
+                    class="flex justify-end mt-6 gap-3"
+                    v-if="
+                        $page.props.auth.user.role === 'SEKERTARIS_KABINET' &&
+                        proposal.status !== 'approved'
+                    "
+                >
+                    <button
+                        @click="showApproveModal = true"
+                        class="inline-flex items-center px-5 py-2.5 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 hover:shadow-lg"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-5 w-5 mr-2"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                        >
+                            <path
+                                fill-rule="evenodd"
+                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                clip-rule="evenodd"
+                            />
+                        </svg>
+                        Approve
+                    </button>
+                    <button
+                        @click="showReviseModal = true"
+                        class="inline-flex items-center px-5 py-2.5 bg-yellow-600 text-white text-sm font-medium rounded-lg hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-all duration-200 hover:shadow-lg"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-5 w-5 mr-2"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                        >
+                            <path
+                                d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"
+                            />
+                        </svg>
+                        Revise
+                    </button>
+                </div>
+
+                <!-- Tabel Status dan Review -->
+                <div class="mt-6 bg-white shadow-sm rounded-lg overflow-hidden">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th
+                                    scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                >
+                                    Status
+                                </th>
+                                <th
+                                    scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                >
+                                    Review By
+                                </th>
+                                <th
+                                    scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                >
+                                    Review At
+                                </th>
+                                <th
+                                    scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                >
+                                    Catatan Review
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span
+                                        :class="[
+                                            'px-2 py-1 text-xs font-semibold rounded-full',
+                                            getStatusClass(proposal.status),
+                                        ]"
+                                    >
+                                        {{ proposal.status.toUpperCase() }}
+                                    </span>
+                                </td>
+                                <td
+                                    class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
+                                >
+                                    {{
+                                        proposal.reviewer
+                                            ? proposal.reviewer.name
+                                            : "-"
+                                    }}
+                                </td>
+                                <td
+                                    class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
+                                >
+                                    {{
+                                        proposal.review_at
+                                            ? formatDate(proposal.review_at)
+                                            : "-"
+                                    }}
+                                </td>
+                                <td class="px-6 py-4 text-sm text-gray-500">
+                                    <div
+                                        v-if="proposal.revision_note"
+                                        class="bg-yellow-50 p-3 rounded-md"
+                                    >
+                                        {{ proposal.revision_note }}
+                                    </div>
+                                    <span v-else>-</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
 
                 <!-- Dokumen Section -->
@@ -601,11 +710,18 @@ const handleIframeError = (error) => {
         </div>
     </AuthenticatedLayout>
     <!-- Modal Approve -->
-    <div v-if="showApproveModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+    <div
+        v-if="showApproveModal"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+    >
         <div class="bg-white rounded-lg max-w-md w-full p-6 space-y-4">
-            <h3 class="text-lg font-semibold text-gray-900">Konfirmasi Persetujuan</h3>
-            <p class="text-gray-600">Apakah Anda yakin ingin menyetujui proposal ini?</p>
-            
+            <h3 class="text-lg font-semibold text-gray-900">
+                Konfirmasi Persetujuan
+            </h3>
+            <p class="text-gray-600">
+                Apakah Anda yakin ingin menyetujui proposal ini?
+            </p>
+
             <div class="flex justify-end space-x-3 mt-4">
                 <button
                     @click="showApproveModal = false"
@@ -618,19 +734,26 @@ const handleIframeError = (error) => {
                     :disabled="approveForm.processing"
                     class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    {{ approveForm.processing ? 'Memproses...' : 'Setuju' }}
+                    {{ approveForm.processing ? "Memproses..." : "Setuju" }}
                 </button>
             </div>
         </div>
     </div>
 
     <!-- Modal Revise -->
-    <div v-if="showReviseModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+    <div
+        v-if="showReviseModal"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+    >
         <div class="bg-white rounded-lg max-w-md w-full p-6 space-y-4">
             <h3 class="text-lg font-semibold text-gray-900">Revisi Proposal</h3>
-            
+
             <div class="space-y-2">
-                <label for="revision_note" class="block text-sm font-medium text-gray-700">Catatan Revisi</label>
+                <label
+                    for="revision_note"
+                    class="block text-sm font-medium text-gray-700"
+                    >Catatan Revisi</label
+                >
                 <textarea
                     id="revision_note"
                     v-model="reviseForm.revision_note"
@@ -638,9 +761,14 @@ const handleIframeError = (error) => {
                     class="block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500 sm:text-sm"
                     placeholder="Masukkan catatan revisi..."
                 ></textarea>
-                <p v-if="reviseForm.errors.revision_note" class="mt-1 text-sm text-red-600">{{ reviseForm.errors.revision_note }}</p>
+                <p
+                    v-if="reviseForm.errors.revision_note"
+                    class="mt-1 text-sm text-red-600"
+                >
+                    {{ reviseForm.errors.revision_note }}
+                </p>
             </div>
-            
+
             <div class="flex justify-end space-x-3 mt-4">
                 <button
                     @click="showReviseModal = false"
@@ -653,8 +781,50 @@ const handleIframeError = (error) => {
                     :disabled="reviseForm.processing"
                     class="px-4 py-2 text-sm font-medium text-white bg-yellow-600 rounded-md hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    {{ reviseForm.processing ? 'Memproses...' : 'Kirim Revisi' }}
+                    {{
+                        reviseForm.processing ? "Memproses..." : "Kirim Revisi"
+                    }}
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Poster -->
+    <div
+        v-if="showPosterModal"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+    >
+        <div
+            class="bg-white rounded-lg overflow-hidden shadow-lg max-w-md w-full"
+        >
+            <div class="flex justify-between items-center p-4 border-b">
+                <h4 class="text-lg font-semibold">Poster Kegiatan</h4>
+                <button
+                    @click="showPosterModal = false"
+                    class="text-gray-400 hover:text-gray-600"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-5 w-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12"
+                        />
+                    </svg>
+                </button>
+            </div>
+            <div class="p-4">
+                <img
+                    :src="getGoogleDriveImageUrl(proposal.poster)"
+                    :alt="proposal.nama_kegiatan"
+                    class="w-full rounded"
+                />
             </div>
         </div>
     </div>

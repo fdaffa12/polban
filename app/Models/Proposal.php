@@ -37,7 +37,9 @@ class Proposal extends Model
         'revision_note',
         'approved_at',
         'approved_by',
-        'revised_by'
+        'revised_by',
+        'review_by',
+        'review_at',
     ];
 
     public function approvedBy()
@@ -50,6 +52,11 @@ class Proposal extends Model
         return $this->belongsTo(User::class, 'revised_by');
     }
 
+    public function reviewedBy()
+    {
+        return $this->belongsTo(User::class, 'review_by');
+    }
+
     protected $casts = [
         'tanggal_mulai' => 'date',
         'tanggal_akhir' => 'date',
@@ -58,9 +65,21 @@ class Proposal extends Model
         'dana_sponsor' => 'decimal:2',
         'approved_at' => 'datetime',
     ];
-    
+
     public function department()
     {
         return $this->belongsTo(Department::class);
+    }
+
+    // Relasi untuk reviewer
+    public function reviewer()
+    {
+        return $this->belongsTo(User::class, 'review_by');
+    }
+
+    // Relasi untuk approved by
+    public function approver()
+    {
+        return $this->belongsTo(User::class, 'approved_by');
     }
 }
