@@ -46,7 +46,7 @@
                                     style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;">
                                     <tr>
                                         <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;">
-                                            <img src="{{ asset('images/logo.png') }}" alt="Logo"
+                                            <img src="{{ Storage::url($aboutUs->au_image) }}" alt="Logo"
                                                 style="width: 150px; margin-bottom: 20px;">
                                             @yield('content')
                                         </td>

@@ -12,6 +12,7 @@ import {
 } from "lucide-vue-next";
 
 import { useForm } from "@inertiajs/vue3";
+import { useToast } from "vue-toastification";
 
 const props = defineProps({
     proposal: Object,
@@ -22,6 +23,9 @@ const activeTab = ref("doc_proposal");
 const showApproveModal = ref(false);
 const showReviseModal = ref(false);
 const showPosterModal = ref(false);
+
+// Inisialisasi toast
+const toast = useToast();
 
 const approveForm = useForm({
     approved_at: new Date().toISOString(),
@@ -35,6 +39,20 @@ const handleApprove = () => {
     approveForm.put(route("proposals.approve", props.proposal.id), {
         onSuccess: () => {
             showApproveModal.value = false;
+            toast.success("Proposal berhasil disetujui!", {
+                timeout: 3000,
+                position: "top-right",
+                icon: true,
+                closeButton: true,
+            });
+        },
+        onError: () => {
+            toast.error("Gagal menyetujui proposal. Silakan coba lagi.", {
+                timeout: 3000,
+                position: "top-right",
+                icon: true,
+                closeButton: true,
+            });
         },
     });
 };
@@ -44,6 +62,20 @@ const handleRevise = () => {
         onSuccess: () => {
             showReviseModal.value = false;
             reviseForm.reset();
+            toast.success("Proposal telah dikirim untuk revisi!", {
+                timeout: 3000,
+                position: "top-right",
+                icon: true,
+                closeButton: true,
+            });
+        },
+        onError: () => {
+            toast.error("Gagal mengirim revisi. Silakan coba lagi.", {
+                timeout: 3000,
+                position: "top-right",
+                icon: true,
+                closeButton: true,
+            });
         },
     });
 };
@@ -543,6 +575,18 @@ const handleIframeError = (error) => {
                                         scope="col"
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                                     >
+                                        Approve By
+                                    </th>
+                                    <th
+                                        scope="col"
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                    >
+                                        Approve At
+                                    </th>
+                                    <th
+                                        scope="col"
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                    >
                                         Catatan Review
                                     </th>
                                 </tr>
@@ -574,6 +618,26 @@ const handleIframeError = (error) => {
                                         {{
                                             proposal.review_at
                                                 ? formatDate(proposal.review_at)
+                                                : "-"
+                                        }}
+                                    </td>
+                                    <td
+                                        class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
+                                    >
+                                        {{
+                                            proposal.approver
+                                                ? proposal.approver.name
+                                                : "-"
+                                        }}
+                                    </td>
+                                    <td
+                                        class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
+                                    >
+                                        {{
+                                            proposal.approved_at
+                                                ? formatDate(
+                                                      proposal.approved_at
+                                                  )
                                                 : "-"
                                         }}
                                     </td>
@@ -646,6 +710,44 @@ const handleIframeError = (error) => {
                                                 proposal.review_at
                                                     ? formatDate(
                                                           proposal.review_at
+                                                      )
+                                                    : "-"
+                                            }}
+                                        </span>
+                                    </div>
+
+                                    <!-- Approve By -->
+                                    <div
+                                        class="flex items-center justify-between"
+                                        v-if="proposal.status === 'approved'"
+                                    >
+                                        <span
+                                            class="text-sm font-medium text-gray-500"
+                                            >Approve By</span
+                                        >
+                                        <span class="text-sm text-gray-700">
+                                            {{
+                                                proposal.approver
+                                                    ? proposal.approver.name
+                                                    : "-"
+                                            }}
+                                        </span>
+                                    </div>
+
+                                    <!-- Approve At -->
+                                    <div
+                                        class="flex items-center justify-between"
+                                        v-if="proposal.status === 'approved'"
+                                    >
+                                        <span
+                                            class="text-sm font-medium text-gray-500"
+                                            >Approve At</span
+                                        >
+                                        <span class="text-sm text-gray-700">
+                                            {{
+                                                proposal.approved_at
+                                                    ? formatDate(
+                                                          proposal.approved_at
                                                       )
                                                     : "-"
                                             }}
