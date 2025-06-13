@@ -195,28 +195,6 @@ const handleIframeError = (error) => {
                         Detail Proposal
                     </h2>
 
-                    <!-- Tombol Lihat Poster -->
-                    <div class="flex justify-center mb-6">
-                        <button
-                            @click="showPosterModal = true"
-                            class="inline-flex items-center px-4 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transform transition-all duration-200 hover:scale-105"
-                        >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="h-5 w-5 mr-2"
-                                viewBox="0 0 20 20"
-                                fill="currentColor"
-                            >
-                                <path
-                                    fill-rule="evenodd"
-                                    d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
-                                    clip-rule="evenodd"
-                                />
-                            </svg>
-                            Lihat Poster
-                        </button>
-                    </div>
-
                     <!-- Status Badge -->
                     <div class="flex justify-between items-center mb-6">
                         <div class="flex items-center gap-4">
@@ -237,11 +215,18 @@ const handleIframeError = (error) => {
                         <div
                             class="bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200"
                         >
-                            <h3
-                                class="text-xl font-semibold text-gray-900 mb-3"
-                            >
-                                {{ proposal.nama_kegiatan }}
-                            </h3>
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-xl font-semibold text-gray-900">
+                                    {{ proposal.nama_kegiatan }}
+                                </h3>
+                                <button
+                                    @click="showPosterModal = true"
+                                    class="inline-flex items-center text-indigo-600 hover:text-indigo-700 text-sm font-medium transition-colors duration-200"
+                                >
+                                    <Eye class="h-4 w-4 mr-1.5" />
+                                    Lihat Poster
+                                </button>
+                            </div>
                             <div
                                 class="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-medium bg-blue-50 text-blue-700 border border-blue-100"
                             >
@@ -531,77 +516,164 @@ const handleIframeError = (error) => {
 
                 <!-- Tabel Status dan Review -->
                 <div class="mt-6 bg-white shadow-sm rounded-lg overflow-hidden">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th
-                                    scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                >
-                                    Status
-                                </th>
-                                <th
-                                    scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                >
-                                    Review By
-                                </th>
-                                <th
-                                    scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                >
-                                    Review At
-                                </th>
-                                <th
-                                    scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                >
-                                    Catatan Review
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span
-                                        :class="[
-                                            'px-2 py-1 text-xs font-semibold rounded-full',
-                                            getStatusClass(proposal.status),
-                                        ]"
+                    <!-- Table view untuk desktop -->
+                    <div class="hidden md:block">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th
+                                        scope="col"
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                                     >
-                                        {{ proposal.status.toUpperCase() }}
-                                    </span>
-                                </td>
-                                <td
-                                    class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
-                                >
-                                    {{
-                                        proposal.reviewer
-                                            ? proposal.reviewer.name
-                                            : "-"
-                                    }}
-                                </td>
-                                <td
-                                    class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
-                                >
-                                    {{
-                                        proposal.review_at
-                                            ? formatDate(proposal.review_at)
-                                            : "-"
-                                    }}
-                                </td>
-                                <td class="px-6 py-4 text-sm text-gray-500">
+                                        Status
+                                    </th>
+                                    <th
+                                        scope="col"
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                    >
+                                        Review By
+                                    </th>
+                                    <th
+                                        scope="col"
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                    >
+                                        Review At
+                                    </th>
+                                    <th
+                                        scope="col"
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                    >
+                                        Catatan Review
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span
+                                            :class="[
+                                                'px-2 py-1 text-xs font-semibold rounded-full',
+                                                getStatusClass(proposal.status),
+                                            ]"
+                                        >
+                                            {{ proposal.status.toUpperCase() }}
+                                        </span>
+                                    </td>
+                                    <td
+                                        class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
+                                    >
+                                        {{
+                                            proposal.reviewer
+                                                ? proposal.reviewer.name
+                                                : "-"
+                                        }}
+                                    </td>
+                                    <td
+                                        class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
+                                    >
+                                        {{
+                                            proposal.review_at
+                                                ? formatDate(proposal.review_at)
+                                                : "-"
+                                        }}
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">
+                                        <div
+                                            v-if="proposal.revision_note"
+                                            class="bg-yellow-50 p-3 rounded-md"
+                                        >
+                                            {{ proposal.revision_note }}
+                                        </div>
+                                        <span v-else>-</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Card view untuk mobile -->
+                    <div class="block md:hidden">
+                        <div class="p-4 space-y-4">
+                            <div
+                                class="bg-white rounded-lg shadow-sm border border-gray-200"
+                            >
+                                <div class="p-4 space-y-3">
+                                    <!-- Status -->
                                     <div
-                                        v-if="proposal.revision_note"
-                                        class="bg-yellow-50 p-3 rounded-md"
+                                        class="flex items-center justify-between"
                                     >
-                                        {{ proposal.revision_note }}
+                                        <span
+                                            class="text-sm font-medium text-gray-500"
+                                            >Status</span
+                                        >
+                                        <span
+                                            :class="[
+                                                'px-2 py-1 text-xs font-semibold rounded-full',
+                                                getStatusClass(proposal.status),
+                                            ]"
+                                        >
+                                            {{ proposal.status.toUpperCase() }}
+                                        </span>
                                     </div>
-                                    <span v-else>-</span>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+
+                                    <!-- Review By -->
+                                    <div
+                                        class="flex items-center justify-between"
+                                    >
+                                        <span
+                                            class="text-sm font-medium text-gray-500"
+                                            >Review By</span
+                                        >
+                                        <span class="text-sm text-gray-700">
+                                            {{
+                                                proposal.reviewer
+                                                    ? proposal.reviewer.name
+                                                    : "-"
+                                            }}
+                                        </span>
+                                    </div>
+
+                                    <!-- Review At -->
+                                    <div
+                                        class="flex items-center justify-between"
+                                    >
+                                        <span
+                                            class="text-sm font-medium text-gray-500"
+                                            >Review At</span
+                                        >
+                                        <span class="text-sm text-gray-700">
+                                            {{
+                                                proposal.review_at
+                                                    ? formatDate(
+                                                          proposal.review_at
+                                                      )
+                                                    : "-"
+                                            }}
+                                        </span>
+                                    </div>
+
+                                    <!-- Catatan Review -->
+                                    <div class="space-y-2">
+                                        <span
+                                            class="text-sm font-medium text-gray-500"
+                                            >Catatan Review</span
+                                        >
+                                        <div
+                                            v-if="proposal.revision_note"
+                                            class="mt-2 bg-yellow-50 p-3 rounded-md text-sm text-gray-700"
+                                        >
+                                            {{ proposal.revision_note }}
+                                        </div>
+                                        <span
+                                            v-else
+                                            class="block text-sm text-gray-700"
+                                            >-</span
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Dokumen Section -->
