@@ -240,4 +240,46 @@ class ProposalController extends Controller
 
         return redirect()->back()->with('success', 'Status proposal berhasil diperbarui');
     }
+
+    public function approve(Request $request, Proposal $proposal)
+    {
+        if ($request->user()->role !== 'SEKERTARIS_KABINET') {
+            return redirect()->back()->with('error', 'Unauthorized action.');
+        }
+
+        try {
+            $proposal->update([
+                'status' => 'approved',
+                'approved_at' => now(),
+                'approved_by' => $request->user()->id
+            ]);
+
+            return redirect()->back()->with('success', 'Proposal berhasil disetujui');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal menyetujui proposal: ' . $e->getMessage());
+        }
+    }
+
+    public function revise(Request $request, Proposal $proposal)
+    {
+        if ($request->user()->role !== 'SEKERTARIS_KABINET') {
+            return redirect()->back()->with('error', 'Unauthorized action.');
+        }
+
+        $request->validate([
+            'revision_note' => 'required|string'
+        ]);
+
+        try {
+            $proposal->update([
+                'status' => 'revised',
+                'revision_note' => $request->revision_note,
+                'revised_by' => $request->user()->id
+            ]);
+
+            return redirect()->back()->with('success', 'Proposal berhasil direvisi');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal merevisi proposal: ' . $e->getMessage());
+        }
+    }
 }

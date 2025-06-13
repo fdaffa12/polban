@@ -33,8 +33,22 @@ class Proposal extends Model
         'link_surat_izin_ortu',
         'poster',
         'caption_poster',
-        'status'
+        'status',
+        'revision_note',
+        'approved_at',
+        'approved_by',
+        'revised_by'
     ];
+
+    public function approvedBy()
+    {
+        return $this->belongsTo(User::class, 'approved_by');
+    }
+
+    public function revisedBy()
+    {
+        return $this->belongsTo(User::class, 'revised_by');
+    }
 
     protected $casts = [
         'tanggal_mulai' => 'date',
@@ -42,6 +56,7 @@ class Proposal extends Model
         'dana_dipa_polban' => 'decimal:2',
         'dana_swadaya' => 'decimal:2',
         'dana_sponsor' => 'decimal:2',
+        'approved_at' => 'datetime',
     ];
     
     public function department()
