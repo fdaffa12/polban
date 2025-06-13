@@ -74,4 +74,27 @@ class GoogleDriveService
             throw $e;
         }
     }
+
+    public function deleteFile($fileUrl)
+    {
+        try {
+            // Ekstrak file ID dari URL Google Drive
+            $pattern = '/[-\w]{25,}/';
+            preg_match($pattern, $fileUrl, $matches);
+
+            if (!isset($matches[0])) {
+                return false; // Return false jika file ID tidak ditemukan
+            }
+
+            $fileId = $matches[0];
+
+            // Hapus file dari Google Drive
+            $this->service->files->delete($fileId);
+
+            return true;
+        } catch (\Exception $e) {
+            Log::error('Google Drive Delete Error: ' . $e->getMessage());
+            return false; // Return false jika terjadi error
+        }
+    }
 }

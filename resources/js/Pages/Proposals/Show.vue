@@ -23,6 +23,9 @@ const activeTab = ref("doc_proposal");
 const showApproveModal = ref(false);
 const showReviseModal = ref(false);
 const showPosterModal = ref(false);
+const showUploadModal = ref(false);
+const isUploading = ref(false);
+const currentUploadData = ref(null);
 
 // Tambahkan state untuk halaman
 const currentPage = ref("details"); // 'details' atau 'documents'
@@ -36,6 +39,14 @@ const approveForm = useForm({
 
 const reviseForm = useForm({
     revision_note: "",
+});
+
+// Form untuk update dokumen
+const updateDocForm = useForm({
+    doc_proposal: null,
+    doc_berkegiatan_ketuplak: null,
+    doc_ormawa: null,
+    doc_sarana_prasarana: null,
 });
 
 const handleApprove = () => {
@@ -196,6 +207,63 @@ const handleIframeError = (error) => {
 // Fungsi untuk navigasi halaman
 const navigateToPage = (page) => {
     currentPage.value = page;
+};
+
+// Handle file upload
+const handleFileUpload = (event, docType) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    currentUploadData.value = {
+        file,
+        docType,
+        event,
+    };
+    showUploadModal.value = true;
+};
+
+const cancelUpload = () => {
+    if (currentUploadData.value) {
+        currentUploadData.value.event.target.value = "";
+    }
+    currentUploadData.value = null;
+    showUploadModal.value = false;
+};
+
+const confirmUpload = () => {
+    if (!currentUploadData.value) return;
+
+    const { file, docType, event } = currentUploadData.value;
+    const formData = new FormData();
+    formData.append(docType, file);
+
+    isUploading.value = true;
+
+    router.post(route("proposals.update", props.proposal.id), formData, {
+        preserveScroll: true,
+        onSuccess: () => {
+            toast.success("Dokumen berhasil diperbarui", {
+                timeout: 3000,
+                position: "top-right",
+                icon: true,
+                closeButton: true,
+            });
+            showUploadModal.value = false;
+            isUploading.value = false;
+            window.location.reload();
+        },
+        onError: (error) => {
+            toast.error(error.message || "Gagal memperbarui dokumen", {
+                timeout: 3000,
+                position: "top-right",
+                icon: true,
+                closeButton: true,
+            });
+            event.target.value = "";
+            showUploadModal.value = false;
+            isUploading.value = false;
+        },
+    });
 };
 </script>
 
@@ -854,7 +922,50 @@ const navigateToPage = (page) => {
                                                 )?.name
                                             }}
                                         </h3>
-                                        <div class="space-x-2">
+                                        <div
+                                            class="space-x-2 flex items-center"
+                                        >
+                                            <!-- Tombol Edit Dokumen (hanya muncul jika status revised) -->
+                                            <div
+                                                v-if="
+                                                    proposal.status ===
+                                                    'revised'
+                                                "
+                                                class="flex items-center space-x-2"
+                                            >
+                                                <input
+                                                    :id="'edit_' + activeTab"
+                                                    type="file"
+                                                    @input="
+                                                        handleFileUpload(
+                                                            $event,
+                                                            activeTab
+                                                        )
+                                                    "
+                                                    class="hidden"
+                                                    accept=".pdf"
+                                                />
+                                                <label
+                                                    :for="'edit_' + activeTab"
+                                                    class="inline-flex items-center px-4 py-2 bg-yellow-600 text-white text-sm font-medium rounded-md hover:bg-yellow-700 cursor-pointer"
+                                                >
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        class="h-4 w-4 mr-2"
+                                                        fill="none"
+                                                        viewBox="0 0 24 24"
+                                                        stroke="currentColor"
+                                                    >
+                                                        <path
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
+                                                        />
+                                                    </svg>
+                                                    Upload File Baru
+                                                </label>
+                                            </div>
                                             <button
                                                 @click="
                                                     openDocument(
@@ -1052,6 +1163,38 @@ const navigateToPage = (page) => {
             </div>
         </div>
     </div>
+
+    <!-- Modal Upload File -->
+    <div
+        v-if="showUploadModal"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+    >
+        <div class="bg-white rounded-lg max-w-md w-full p-6 space-y-4">
+            <h3 class="text-lg font-semibold text-gray-900">
+                Konfirmasi Upload File
+            </h3>
+            <p class="text-gray-600">
+                Apakah Anda yakin ingin mengganti dokumen ini? File lama akan
+                dihapus.
+            </p>
+
+            <div class="flex justify-end space-x-3 mt-4">
+                <button
+                    @click="cancelUpload"
+                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                >
+                    Batal
+                </button>
+                <button
+                    @click="confirmUpload"
+                    :disabled="isUploading"
+                    class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    {{ isUploading ? "Mengupload..." : "Upload" }}
+                </button>
+            </div>
+        </div>
+    </div>
 </template>
 
 <style scoped>
@@ -1155,5 +1298,10 @@ const navigateToPage = (page) => {
 .page-enter-from,
 .page-leave-to {
     opacity: 0;
+}
+
+/* Tambahan style untuk input file */
+.hidden {
+    display: none;
 }
 </style>

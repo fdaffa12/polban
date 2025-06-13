@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Services\GoogleDriveService;
 use App\Mail\ProposalRevision;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 
 class ProposalController extends Controller
 {
@@ -127,78 +128,72 @@ class ProposalController extends Controller
 
     public function update(Request $request, Proposal $proposal)
     {
-        $request->validate([
-            'pic_name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'phone' => 'required|string|max:20',
-            'nama_kegiatan' => 'required|string|max:255',
-            'bidang_kegiatan' => 'required|string|max:255',
-            'jenis_kegiatan' => 'required|string|in:karakter,penalaran,peminatan,pengabdian',
-            'department_id' => 'required|exists:departments,id',
-            'tanggal_mulai' => 'required|date',
-            'tanggal_akhir' => 'required|date|after_or_equal:tanggal_mulai',
-            'tempat_kegiatan' => 'required|string|max:255',
-            'jumlah_peserta' => 'required|integer|min:1',
-            'jumlah_panitia' => 'required|integer|min:1',
-            'jumlah_spj' => 'required|integer|min:0',
-            'dana_dipa_polban' => 'nullable|numeric|min:0',
-            'dana_swadaya' => 'nullable|numeric|min:0',
-            'dana_sponsor' => 'nullable|numeric|min:0',
-            'pengisi_acara' => 'required|string|max:255',
-            'sponsorship' => 'nullable|string|max:255',
-            'media_partner' => 'nullable|string|max:255',
-            'doc_proposal' => 'nullable|mimes:pdf|max:10240',
-            'doc_berkegiatan_ketuplak' => 'nullable|mimes:pdf|max:10240',
-            'doc_ormawa' => 'nullable|mimes:pdf|max:10240',
-            'doc_sarana_prasarana' => 'nullable|mimes:pdf|max:10240',
-            'link_surat_izin_ortu' => 'required|string|max:255',
-            'poster' => 'nullable|image|max:2048',
-            'caption_poster' => 'required|string',
-        ]);
-
         try {
-            $data = $request->except(['doc_proposal', 'doc_berkegiatan_ketuplak', 'doc_ormawa', 'doc_sarana_prasarana', 'poster']);
+            // Validasi file yang diupload
+            $request->validate([
+                'doc_proposal' => 'nullable|mimes:pdf|max:10240',
+                'doc_berkegiatan_ketuplak' => 'nullable|mimes:pdf|max:10240',
+                'doc_ormawa' => 'nullable|mimes:pdf|max:10240',
+                'doc_sarana_prasarana' => 'nullable|mimes:pdf|max:10240',
+            ]);
 
+            // Update file yang diupload
             if ($request->hasFile('doc_proposal')) {
-                if ($proposal->doc_proposal && Storage::disk('public')->exists($proposal->doc_proposal)) {
-                    Storage::disk('public')->delete($proposal->doc_proposal);
+                try {
+                    if ($proposal->doc_proposal) {
+                        $this->googleDrive->deleteFile($proposal->doc_proposal);
+                    }
+                    $proposal->doc_proposal = $this->googleDrive->uploadFile($request->file('doc_proposal'), 'proposal');
+                    $proposal->save();
+                } catch (\Exception $e) {
+                    Log::error('Error updating doc_proposal: ' . $e->getMessage());
+                    return redirect()->back()->with('error', 'Gagal memperbarui dokumen proposal');
                 }
-                $data['doc_proposal'] = $request->file('doc_proposal')->store('proposals/docs', 'public');
             }
 
             if ($request->hasFile('doc_berkegiatan_ketuplak')) {
-                if ($proposal->doc_berkegiatan_ketuplak && Storage::disk('public')->exists($proposal->doc_berkegiatan_ketuplak)) {
-                    Storage::disk('public')->delete($proposal->doc_berkegiatan_ketuplak);
+                try {
+                    if ($proposal->doc_berkegiatan_ketuplak) {
+                        $this->googleDrive->deleteFile($proposal->doc_berkegiatan_ketuplak);
+                    }
+                    $proposal->doc_berkegiatan_ketuplak = $this->googleDrive->uploadFile($request->file('doc_berkegiatan_ketuplak'), 'berkegiatan');
+                    $proposal->save();
+                } catch (\Exception $e) {
+                    Log::error('Error updating doc_berkegiatan_ketuplak: ' . $e->getMessage());
+                    return redirect()->back()->with('error', 'Gagal memperbarui dokumen berkegiatan');
                 }
-                $data['doc_berkegiatan_ketuplak'] = $request->file('doc_berkegiatan_ketuplak')->store('proposals/docs', 'public');
             }
 
             if ($request->hasFile('doc_ormawa')) {
-                if ($proposal->doc_ormawa && Storage::disk('public')->exists($proposal->doc_ormawa)) {
-                    Storage::disk('public')->delete($proposal->doc_ormawa);
+                try {
+                    if ($proposal->doc_ormawa) {
+                        $this->googleDrive->deleteFile($proposal->doc_ormawa);
+                    }
+                    $proposal->doc_ormawa = $this->googleDrive->uploadFile($request->file('doc_ormawa'), 'ormawa');
+                    $proposal->save();
+                } catch (\Exception $e) {
+                    Log::error('Error updating doc_ormawa: ' . $e->getMessage());
+                    return redirect()->back()->with('error', 'Gagal memperbarui dokumen ormawa');
                 }
-                $data['doc_ormawa'] = $request->file('doc_ormawa')->store('proposals/docs', 'public');
             }
 
             if ($request->hasFile('doc_sarana_prasarana')) {
-                if ($proposal->doc_sarana_prasarana && Storage::disk('public')->exists($proposal->doc_sarana_prasarana)) {
-                    Storage::disk('public')->delete($proposal->doc_sarana_prasarana);
+                try {
+                    if ($proposal->doc_sarana_prasarana) {
+                        $this->googleDrive->deleteFile($proposal->doc_sarana_prasarana);
+                    }
+                    $proposal->doc_sarana_prasarana = $this->googleDrive->uploadFile($request->file('doc_sarana_prasarana'), 'sarana');
+                    $proposal->save();
+                } catch (\Exception $e) {
+                    Log::error('Error updating doc_sarana_prasarana: ' . $e->getMessage());
+                    return redirect()->back()->with('error', 'Gagal memperbarui dokumen sarana prasarana');
                 }
-                $data['doc_sarana_prasarana'] = $request->file('doc_sarana_prasarana')->store('proposals/docs', 'public');
             }
 
-            if ($request->hasFile('poster')) {
-                if ($proposal->poster && Storage::disk('public')->exists($proposal->poster)) {
-                    Storage::disk('public')->delete($proposal->poster);
-                }
-                $data['poster'] = $request->file('poster')->store('proposals/posters', 'public');
-            }
-
-            $proposal->update($data);
-
-            return redirect()->route('proposals.index')->with('success', 'Proposal berhasil diperbarui');
+            return redirect()->back()->with('success', 'Dokumen berhasil diperbarui');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Gagal memperbarui proposal: ' . $e->getMessage());
+            Log::error('Error in update method: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal memperbarui dokumen: ' . $e->getMessage());
         }
     }
 
