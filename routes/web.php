@@ -12,6 +12,7 @@ use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\ProposalController;
 use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Mail;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -105,11 +106,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/proposals/{proposal}', [ProposalController::class, 'update'])->name('proposals.update');
     Route::delete('/proposals/{proposal}', [ProposalController::class, 'destroy'])->name('proposals.destroy');
     Route::post('/proposals/{proposal}/status', [ProposalController::class, 'updateStatus'])->name('proposals.update-status');
-    
+
     // Add these new routes
     Route::put('/proposals/{proposal}/approve', [ProposalController::class, 'approve'])->name('proposals.approve');
     Route::put('/proposals/{proposal}/revise', [ProposalController::class, 'revise'])->name('proposals.revise');
-    
+
     // User Management Routes
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
     Route::get('/users/create', [UserController::class, 'create'])->name('users.create');

@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
 use App\Services\GoogleDriveService;
+use App\Mail\ProposalRevision;
+use Illuminate\Support\Facades\Mail;
 
 class ProposalController extends Controller
 {
@@ -277,7 +279,13 @@ class ProposalController extends Controller
                 'revised_by' => $request->user()->id
             ]);
 
-            return redirect()->back()->with('success', 'Proposal berhasil direvisi');
+            try {
+                Mail::to($proposal->email)->send(new ProposalRevision($proposal));
+            } catch (\Exception $e) {
+                throw $e;
+            }
+
+            return redirect()->back()->with('success', 'Proposal berhasil direvisi dan notifikasi telah dikirim');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Gagal merevisi proposal: ' . $e->getMessage());
         }
