@@ -112,9 +112,27 @@ class ProposalController extends Controller
         }
     }
 
-    public function show(Proposal $proposal)
+    public function show(Request $request, Proposal $proposal)
     {
         $proposal->load(['department', 'reviewer', 'approver']);
+
+        // Cek role user
+        $userRole = $request->user()->role;
+
+        // Cek apakah user adalah SEKERTARIS_KABINET atau SEKERTARIS_UMUM_MPH
+        if (in_array($userRole, ['SEKERTARIS_KABINET', 'SEKERTARIS_UMUM_MPH'])) {
+            // Jika view_by belum diisi atau belum dilihat oleh SEKERTARIS_UMUM_MPH
+            if (
+                !$proposal->view_by ||
+                ($userRole === 'SEKERTARIS_UMUM_MPH' && $proposal->view_by !== 'SEKERTARIS_UMUM_MPH')
+            ) {
+                $proposal->update([
+                    'view_by' => $userRole,
+                    'view_at' => now()
+                ]);
+            }
+        }
+
         return Inertia::render('Proposals/Show', [
             'proposal' => $proposal
         ]);

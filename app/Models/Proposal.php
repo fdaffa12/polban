@@ -41,6 +41,8 @@ class Proposal extends Model
         'revised_by',
         'review_by',
         'review_at',
+        'view_by',
+        'view_at',
     ];
 
     public function approvedBy()
@@ -65,6 +67,7 @@ class Proposal extends Model
         'dana_swadaya' => 'decimal:2',
         'dana_sponsor' => 'decimal:2',
         'approved_at' => 'datetime',
+        'view_at' => 'datetime',
     ];
 
     public function department()
