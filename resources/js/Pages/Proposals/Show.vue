@@ -295,15 +295,196 @@ const confirmUpload = () => {
 
                     <!-- Status Badge -->
                     <div class="flex justify-between items-center mb-6">
-                        <div class="flex items-center gap-4">
-                            <span
-                                :class="[
-                                    'px-4 py-2 text-sm font-semibold rounded-full shadow-sm',
-                                    getStatusClass(proposal.status),
-                                ]"
+                        <div class="flex items-center space-x-4 w-full">
+                            <!-- Status Timeline -->
+                            <div
+                                class="flex items-center justify-center w-full max-w-2xl mx-auto relative"
                             >
-                                {{ proposal.status.toUpperCase() }}
-                            </span>
+                                <!-- Garis Penghubung Background -->
+                                <div
+                                    class="absolute top-6 left-[10%] right-[10%] h-1 bg-gray-200 transform -translate-y-1/2"
+                                ></div>
+
+                                <!-- Progress Bar -->
+                                <div
+                                    class="absolute top-6 left-[10%] h-1 bg-blue-500 transform -translate-y-1/2 transition-all duration-500"
+                                    :style="{
+                                        width:
+                                            proposal.status === 'approved'
+                                                ? '80%'
+                                                : proposal.status === 'revised'
+                                                ? '40%'
+                                                : '0%',
+                                    }"
+                                ></div>
+
+                                <!-- Timeline Items -->
+                                <div
+                                    class="flex justify-between w-full relative z-10"
+                                >
+                                    <!-- Submitted -->
+                                    <div class="flex flex-col items-center">
+                                        <div class="relative">
+                                            <div
+                                                class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center shadow-md"
+                                            >
+                                                <!-- Paper Airplane Icon -->
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    class="h-6 w-6 text-white"
+                                                    viewBox="0 0 24 24"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+                                                    />
+                                                </svg>
+                                            </div>
+                                            <!-- Check Badge -->
+                                            <div
+                                                class="absolute -top-1 -right-1 bg-green-500 rounded-full w-5 h-5 flex items-center justify-center shadow-sm"
+                                            >
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    class="h-3 w-3 text-white"
+                                                    viewBox="0 0 20 20"
+                                                    fill="currentColor"
+                                                >
+                                                    <path
+                                                        fill-rule="evenodd"
+                                                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                                        clip-rule="evenodd"
+                                                    />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                        <span
+                                            class="text-sm font-medium mt-2 text-gray-700"
+                                            >Submitted</span
+                                        >
+                                    </div>
+
+                                    <!-- Review -->
+                                    <div class="flex flex-col items-center">
+                                        <div class="relative">
+                                            <div
+                                                :class="[
+                                                    'w-12 h-12 rounded-full flex items-center justify-center shadow-md',
+                                                    proposal.status ===
+                                                        'revised' ||
+                                                    proposal.status ===
+                                                        'approved'
+                                                        ? 'bg-yellow-500'
+                                                        : 'bg-gray-300',
+                                                ]"
+                                            >
+                                                <!-- Document Check Icon -->
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    class="h-6 w-6 text-white"
+                                                    viewBox="0 0 24 24"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                                    />
+                                                </svg>
+                                            </div>
+                                            <!-- Check Badge (shown only if reviewed) -->
+                                            <div
+                                                v-if="
+                                                    proposal.status ===
+                                                        'revised' ||
+                                                    proposal.status ===
+                                                        'approved'
+                                                "
+                                                class="absolute -top-1 -right-1 bg-green-500 rounded-full w-5 h-5 flex items-center justify-center shadow-sm"
+                                            >
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    class="h-3 w-3 text-white"
+                                                    viewBox="0 0 20 20"
+                                                    fill="currentColor"
+                                                >
+                                                    <path
+                                                        fill-rule="evenodd"
+                                                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                                        clip-rule="evenodd"
+                                                    />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                        <span
+                                            class="text-sm font-medium mt-2 text-gray-700"
+                                            >Review</span
+                                        >
+                                    </div>
+
+                                    <!-- Approved -->
+                                    <div class="flex flex-col items-center">
+                                        <div class="relative">
+                                            <div
+                                                :class="[
+                                                    'w-12 h-12 rounded-full flex items-center justify-center shadow-md',
+                                                    proposal.status ===
+                                                    'approved'
+                                                        ? 'bg-green-500'
+                                                        : 'bg-gray-300',
+                                                ]"
+                                            >
+                                                <!-- Shield Check Icon -->
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    class="h-6 w-6 text-white"
+                                                    viewBox="0 0 24 24"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                                                    />
+                                                </svg>
+                                            </div>
+                                            <!-- Check Badge (shown only if approved) -->
+                                            <div
+                                                v-if="
+                                                    proposal.status ===
+                                                    'approved'
+                                                "
+                                                class="absolute -top-1 -right-1 bg-green-500 rounded-full w-5 h-5 flex items-center justify-center shadow-sm"
+                                            >
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    class="h-3 w-3 text-white"
+                                                    viewBox="0 0 20 20"
+                                                    fill="currentColor"
+                                                >
+                                                    <path
+                                                        fill-rule="evenodd"
+                                                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                                        clip-rule="evenodd"
+                                                    />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                        <span
+                                            class="text-sm font-medium mt-2 text-gray-700"
+                                            >Approved</span
+                                        >
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -1229,5 +1410,72 @@ const confirmUpload = () => {
 /* Pastikan truncate bekerja dengan baik */
 .truncate {
     text-overflow: ellipsis;
+}
+
+/* Tambahkan di bagian style yang sudah ada */
+.absolute.w-full.h-1 {
+    z-index: -1;
+    transition: background-color 0.5s ease;
+}
+
+/* Animasi transisi untuk perubahan warna */
+.w-12.h-12 {
+    transition: all 0.3s ease-in-out;
+    border: 2px solid transparent;
+}
+
+.w-12.h-12:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+        0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.flex.flex-col.items-center {
+    transition: transform 0.2s ease-in-out;
+}
+
+.flex.flex-col.items-center:hover {
+    transform: translateY(-2px);
+}
+
+/* Animasi untuk badge ceklis */
+.absolute.-top-1.-right-1 {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Progress bar animation */
+.bg-blue-500 {
+    transition: width 0.5s ease-in-out;
+}
+
+/* Container styling */
+.max-w-2xl {
+    padding: 0 2rem;
+}
+
+/* Timeline item spacing */
+.flex.justify-between {
+    gap: 2rem;
+}
+
+/* Smooth transitions */
+.w-12.h-12 {
+    transition: all 0.3s ease-in-out;
+}
+
+/* Progress line styling */
+.absolute.h-1 {
+    transition: all 0.3s ease-in-out;
 }
 </style>
