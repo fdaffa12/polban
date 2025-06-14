@@ -310,9 +310,11 @@ const confirmUpload = () => {
                                     class="absolute top-6 left-[10%] h-1 bg-blue-500 transform -translate-y-1/2 transition-all duration-500"
                                     :style="{
                                         width:
-                                            proposal.status === 'approved'
+                                            proposal.view_by ===
+                                            'SEKERTARIS_UMUM_MPH'
                                                 ? '80%'
-                                                : proposal.status === 'revised'
+                                                : proposal.view_by ===
+                                                  'SEKERTARIS_KABINET'
                                                 ? '40%'
                                                 : '0%',
                                     }"
@@ -368,21 +370,21 @@ const confirmUpload = () => {
                                         >
                                     </div>
 
-                                    <!-- Review -->
+                                    <!-- Sekertaris Kabinet -->
                                     <div class="flex flex-col items-center">
                                         <div class="relative">
                                             <div
                                                 :class="[
                                                     'w-12 h-12 rounded-full flex items-center justify-center shadow-md',
-                                                    proposal.status ===
-                                                        'revised' ||
-                                                    proposal.status ===
-                                                        'approved'
+                                                    proposal.view_by ===
+                                                        'SEKERTARIS_KABINET' ||
+                                                    proposal.view_by ===
+                                                        'SEKERTARIS_UMUM_MPH'
                                                         ? 'bg-yellow-500'
                                                         : 'bg-gray-300',
                                                 ]"
                                             >
-                                                <!-- Document Check Icon -->
+                                                <!-- Cabinet Icon -->
                                                 <svg
                                                     xmlns="http://www.w3.org/2000/svg"
                                                     class="h-6 w-6 text-white"
@@ -394,17 +396,17 @@ const confirmUpload = () => {
                                                         stroke-linecap="round"
                                                         stroke-linejoin="round"
                                                         stroke-width="2"
-                                                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                                                     />
                                                 </svg>
                                             </div>
-                                            <!-- Check Badge (shown only if reviewed) -->
+                                            <!-- Check Badge -->
                                             <div
                                                 v-if="
-                                                    proposal.status ===
-                                                        'revised' ||
-                                                    proposal.status ===
-                                                        'approved'
+                                                    proposal.view_by ===
+                                                        'SEKERTARIS_KABINET' ||
+                                                    proposal.view_by ===
+                                                        'SEKERTARIS_UMUM_MPH'
                                                 "
                                                 class="absolute -top-1 -right-1 bg-green-500 rounded-full w-5 h-5 flex items-center justify-center shadow-sm"
                                             >
@@ -424,23 +426,23 @@ const confirmUpload = () => {
                                         </div>
                                         <span
                                             class="text-sm font-medium mt-2 text-gray-700"
-                                            >Review</span
+                                            >Sekertaris Kabinet</span
                                         >
                                     </div>
 
-                                    <!-- Approved -->
+                                    <!-- Sekertaris Umum MPH -->
                                     <div class="flex flex-col items-center">
                                         <div class="relative">
                                             <div
                                                 :class="[
                                                     'w-12 h-12 rounded-full flex items-center justify-center shadow-md',
-                                                    proposal.status ===
-                                                    'approved'
+                                                    proposal.view_by ===
+                                                    'SEKERTARIS_UMUM_MPH'
                                                         ? 'bg-green-500'
                                                         : 'bg-gray-300',
                                                 ]"
                                             >
-                                                <!-- Shield Check Icon -->
+                                                <!-- Secretary Icon -->
                                                 <svg
                                                     xmlns="http://www.w3.org/2000/svg"
                                                     class="h-6 w-6 text-white"
@@ -452,15 +454,15 @@ const confirmUpload = () => {
                                                         stroke-linecap="round"
                                                         stroke-linejoin="round"
                                                         stroke-width="2"
-                                                        d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                                                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
                                                     />
                                                 </svg>
                                             </div>
-                                            <!-- Check Badge (shown only if approved) -->
+                                            <!-- Check Badge -->
                                             <div
                                                 v-if="
-                                                    proposal.status ===
-                                                    'approved'
+                                                    proposal.view_by ===
+                                                    'SEKERTARIS_UMUM_MPH'
                                                 "
                                                 class="absolute -top-1 -right-1 bg-green-500 rounded-full w-5 h-5 flex items-center justify-center shadow-sm"
                                             >
@@ -480,7 +482,7 @@ const confirmUpload = () => {
                                         </div>
                                         <span
                                             class="text-sm font-medium mt-2 text-gray-700"
-                                            >Approved</span
+                                            >Sekertaris Umum</span
                                         >
                                     </div>
                                 </div>
