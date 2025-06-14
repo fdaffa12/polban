@@ -39,6 +39,7 @@ class ProposalController extends Controller
     {
         $request->validate([
             'pic_name' => 'required|string|max:255',
+            'jenis_proposal' => 'required|string|in:pengajuan_pusat,pengajuan_umum',
             'email' => 'required|email|max:255',
             'phone' => 'required|string|max:20',
             'nama_kegiatan' => 'required|string|max:255',
@@ -76,6 +77,7 @@ class ProposalController extends Controller
 
             Proposal::create([
                 'pic_name' => $request->pic_name,
+                'jenis_proposal' => $request->jenis_proposal,
                 'email' => $request->email,
                 'phone' => $request->phone,
                 'nama_kegiatan' => $request->nama_kegiatan,

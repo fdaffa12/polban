@@ -14,6 +14,17 @@ const props = defineProps({
 
 const toast = useToast();
 
+// Tambahkan state untuk mengontrol tampilan
+const showProposalTypeSelection = ref(true);
+const selectedProposalType = ref(null);
+
+// Fungsi untuk menangani pemilihan jenis proposal
+const handleProposalTypeSelection = (type) => {
+    selectedProposalType.value = type;
+    form.jenis_proposal = type;
+    showProposalTypeSelection.value = false;
+};
+
 const form = useForm({
     pic_name: "",
     email: "",
@@ -41,6 +52,7 @@ const form = useForm({
     link_surat_izin_ortu: "",
     poster: null,
     caption_poster: "",
+    jenis_proposal: "",
 });
 
 const submit = () => {
@@ -159,11 +171,124 @@ const handlePosterUpload = (event) => {
     <AuthenticatedLayout title="Buat Proposal Kegiatan">
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+                <!-- Tampilan Pemilihan Jenis Proposal -->
                 <div
+                    v-if="showProposalTypeSelection"
+                    class="flex flex-col items-center justify-center space-y-8"
+                >
+                    <h2 class="text-2xl font-bold text-gray-900">
+                        Pilih Jenis Proposal
+                    </h2>
+
+                    <div
+                        class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-2xl"
+                    >
+                        <!-- Card Pengajuan Pusat -->
+                        <button
+                            @click="
+                                handleProposalTypeSelection('pengajuan_pusat')
+                            "
+                            class="flex flex-col items-center p-6 bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-200 border-2 border-transparent hover:border-blue-500"
+                        >
+                            <div
+                                class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    class="h-8 w-8 text-blue-600"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                                    />
+                                </svg>
+                            </div>
+                            <h3
+                                class="text-lg font-semibold text-gray-900 mb-2"
+                            >
+                                Pengajuan Pusat
+                            </h3>
+                            <p class="text-sm text-gray-600 text-center">
+                                Proposal untuk kegiatan yang diajukan ke pusat
+                            </p>
+                        </button>
+
+                        <!-- Card Pengajuan Umum -->
+                        <button
+                            @click="
+                                handleProposalTypeSelection('pengajuan_umum')
+                            "
+                            class="flex flex-col items-center p-6 bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-200 border-2 border-transparent hover:border-green-500"
+                        >
+                            <div
+                                class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    class="h-8 w-8 text-green-600"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                    />
+                                </svg>
+                            </div>
+                            <h3
+                                class="text-lg font-semibold text-gray-900 mb-2"
+                            >
+                                Pengajuan Umum
+                            </h3>
+                            <p class="text-sm text-gray-600 text-center">
+                                Proposal untuk kegiatan umum lainnya
+                            </p>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Form Proposal (ditampilkan setelah memilih jenis) -->
+                <div
+                    v-else
                     class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6"
                 >
+                    <!-- Tombol Kembali ke Pemilihan -->
+                    <div class="mb-6">
+                        <button
+                            @click="showProposalTypeSelection = true"
+                            class="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors duration-200"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-5 w-5 mr-2"
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                            >
+                                <path
+                                    fill-rule="evenodd"
+                                    d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+                                    clip-rule="evenodd"
+                                />
+                            </svg>
+                            Kembali
+                        </button>
+                    </div>
+
                     <h2 class="text-xl font-semibold mb-6">
-                        Form Proposal Kegiatan
+                        Form Proposal
+                        {{
+                            selectedProposalType === "pengajuan_pusat"
+                                ? "Pengajuan Pusat"
+                                : "Pengajuan Umum"
+                        }}
                     </h2>
 
                     <form @submit.prevent="submit" class="space-y-6">

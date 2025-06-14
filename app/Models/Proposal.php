@@ -8,6 +8,7 @@ class Proposal extends Model
 {
     protected $fillable = [
         'pic_name',
+        'jenis_proposal',
         'email',
         'phone',
         'nama_kegiatan',
