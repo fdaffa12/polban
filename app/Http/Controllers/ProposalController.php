@@ -118,10 +118,31 @@ class ProposalController extends Controller
 
         // Cek role user
         $userRole = $request->user()->role;
+        $isRestricted = false;
+        $restrictedMessage = '';
 
-        // Cek apakah user adalah SEKERTARIS_KABINET atau SEKERTARIS_UMUM_MPH
-        if (in_array($userRole, ['SEKERTARIS_KABINET', 'SEKERTARIS_UMUM_MPH'])) {
-            // Jika view_by belum diisi atau belum dilihat oleh SEKERTARIS_UMUM_MPH
+        // Cek jika user adalah SEKERTARIS_UMUM_MPH dan proposal adalah pengajuan pusat
+        if ($userRole === 'SEKERTARIS_UMUM_MPH' && $proposal->jenis_proposal === 'pengajuan_pusat') {
+            $isRestricted = true;
+            $restrictedMessage = 'Maaf, Anda tidak memiliki akses untuk melihat proposal pengajuan pusat.';
+        }
+        // Validasi untuk pengajuan himpunan yang belum approved
+        else if (
+            $userRole === 'SEKERTARIS_UMUM_MPH' &&
+            $proposal->jenis_proposal === 'pengajuan_himpunan' &&
+            $proposal->status !== 'approved'
+        ) {
+            // Cek jika belum ada yang melihat
+            if (!$proposal->view_by) {
+                $isRestricted = true;
+                $restrictedMessage = 'Proposal ini belum dilihat oleh Sekertaris Kabinet.';
+            } else {
+                $isRestricted = true;
+                $restrictedMessage = 'Proposal ini belum disetujui oleh Sekertaris Kabinet.';
+            }
+        }
+        // Update view_by dan view_at untuk proposal yang tidak restricted
+        else if (in_array($userRole, ['SEKERTARIS_KABINET', 'SEKERTARIS_UMUM_MPH'])) {
             if (
                 !$proposal->view_by ||
                 ($userRole === 'SEKERTARIS_UMUM_MPH' && $proposal->view_by !== 'SEKERTARIS_UMUM_MPH')
@@ -134,7 +155,9 @@ class ProposalController extends Controller
         }
 
         return Inertia::render('Proposals/Show', [
-            'proposal' => $proposal
+            'proposal' => $proposal,
+            'isRestricted' => $isRestricted,
+            'restrictedMessage' => $restrictedMessage
         ]);
     }
 

@@ -16,6 +16,10 @@ import { useToast } from "vue-toastification";
 
 const props = defineProps({
     proposal: Object,
+    message: String,
+    backUrl: String,
+    isRestricted: Boolean,
+    restrictedMessage: String,
 });
 
 // State untuk tab aktif
@@ -263,7 +267,64 @@ const confirmUpload = () => {
             <title>Proposal Management</title>
             <meta name="description" content="Manage your proposal" />
         </Head>
-        <div class="py-12">
+
+        <!-- Tampilan Restricted Message -->
+        <div v-if="isRestricted" class="py-12">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-6 text-center">
+                        <!-- Icon Restricted -->
+                        <div class="mx-auto w-24 h-24 mb-6">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="w-full h-full text-red-500"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M12 15v2m0 0v2m0-2h2m-2 0H8m4-6V4m0 0v2m0-2h2m-2 0H8m16 0a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V6z"
+                                />
+                            </svg>
+                        </div>
+
+                        <!-- Pesan Error -->
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">
+                            Akses Dibatasi
+                        </h2>
+                        <p class="text-gray-600 mb-8">
+                            {{ restrictedMessage }}
+                        </p>
+
+                        <!-- Tombol Kembali -->
+                        <Link
+                            :href="route('proposals.index')"
+                            class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-5 w-5 mr-2"
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                            >
+                                <path
+                                    fill-rule="evenodd"
+                                    d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+                                    clip-rule="evenodd"
+                                />
+                            </svg>
+                            Kembali ke Halaman Sebelumnya
+                        </Link>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Konten Normal -->
+        <div v-else class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
                 <!-- Tombol Kembali -->
                 <div class="flex items-center justify-between">
@@ -1479,5 +1540,20 @@ const confirmUpload = () => {
 /* Progress line styling */
 .absolute.h-1 {
     transition: all 0.3s ease-in-out;
+}
+
+.bg-white {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 </style>
