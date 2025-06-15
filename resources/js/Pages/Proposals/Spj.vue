@@ -194,14 +194,34 @@ const removeFile = (fieldName) => {
                                     <td class="px-6 py-4">
                                         <div class="flex space-x-2">
                                             <button
+                                                @click="
+                                                    router.visit(
+                                                        route(
+                                                            'proposals.spj.show',
+                                                            {
+                                                                proposal:
+                                                                    proposal.id,
+                                                                spj: spj.id,
+                                                            }
+                                                        )
+                                                    )
+                                                "
+                                                class="text-blue-600 hover:text-blue-800"
+                                                title="Preview"
+                                            >
+                                                <Eye class="w-5 h-5" />
+                                            </button>
+                                            <button
                                                 @click="handleEdit(spj)"
                                                 class="text-blue-600 hover:text-blue-800"
+                                                title="Edit"
                                             >
                                                 <Edit class="w-5 h-5" />
                                             </button>
                                             <button
                                                 @click="handleDelete(spj)"
                                                 class="text-red-600 hover:text-red-800"
+                                                title="Delete"
                                             >
                                                 <Trash2 class="w-5 h-5" />
                                             </button>

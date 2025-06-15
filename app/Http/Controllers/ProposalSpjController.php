@@ -133,4 +133,12 @@ class ProposalSpjController extends Controller
             return back()->with('error', 'Gagal menghapus SPJ: ' . $e->getMessage());
         }
     }
+
+    public function show(Proposal $proposal, ProposalSpj $spj)
+    {
+        return Inertia::render('Proposals/ShowSPJ', [
+            'proposal' => $proposal,
+            'spj' => $spj
+        ]);
+    }
 }

@@ -124,6 +124,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/proposals/{proposal}/spj', [ProposalSpjController::class, 'store'])->name('proposals.spj.store');
     Route::put('/proposals/spj/{spj}', [ProposalSpjController::class, 'update'])->name('proposals.spj.update');
     Route::delete('/proposals/spj/{spj}', [ProposalSpjController::class, 'destroy'])->name('proposals.spj.destroy');
+    Route::get('/proposals/{proposal}/spj/{spj}', [ProposalSpjController::class, 'show'])->name('proposals.spj.show');
 });
 
 require __DIR__ . '/auth.php';
