@@ -936,10 +936,7 @@ const confirmUpload = () => {
                                     >
                                         {{
                                             proposal.approver
-                                                ? proposal.approver.role.replace(
-                                                      /_/g,
-                                                      " "
-                                                  )
+                                                ? proposal.approver.name
                                                 : "-"
                                         }}
                                     </td>
@@ -1041,10 +1038,7 @@ const confirmUpload = () => {
                                         <span class="text-sm text-gray-700">
                                             {{
                                                 proposal.approver
-                                                    ? proposal.approver.role.replace(
-                                                          /_/g,
-                                                          " "
-                                                      )
+                                                    ? proposal.approver.name
                                                     : "-"
                                             }}
                                         </span>
