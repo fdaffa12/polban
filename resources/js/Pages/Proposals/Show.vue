@@ -371,8 +371,14 @@ const confirmUpload = () => {
                                     class="absolute top-6 left-[10%] h-1 bg-blue-500 transform -translate-y-1/2 transition-all duration-500"
                                     :style="{
                                         width:
-                                            proposal.view_by ===
-                                            'SEKERTARIS_UMUM_MPH'
+                                            proposal.jenis_proposal ===
+                                            'pengajuan_pusat'
+                                                ? proposal.view_by ===
+                                                  'SEKERTARIS_KABINET'
+                                                    ? '80%'
+                                                    : '0%'
+                                                : proposal.view_by ===
+                                                  'SEKERTARIS_UMUM_MPH'
                                                 ? '80%'
                                                 : proposal.view_by ===
                                                   'SEKERTARIS_KABINET'
@@ -492,7 +498,13 @@ const confirmUpload = () => {
                                     </div>
 
                                     <!-- Sekertaris Umum MPH -->
-                                    <div class="flex flex-col items-center">
+                                    <div
+                                        v-if="
+                                            proposal.jenis_proposal !==
+                                            'pengajuan_pusat'
+                                        "
+                                        class="flex flex-col items-center"
+                                    >
                                         <div class="relative">
                                             <div
                                                 :class="[
