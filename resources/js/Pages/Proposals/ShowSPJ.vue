@@ -1,20 +1,34 @@
 <script setup>
 import { ref } from "vue";
-import { router } from "@inertiajs/vue3";
+import { router, useForm } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Modal from "@/Components/Modal.vue";
 import { ArrowLeft, FileText, XCircle } from "lucide-vue-next";
+import { useToast } from "vue-toastification";
 
 const props = defineProps({
     spj: Object,
     proposal: Object,
 });
 
+const toast = useToast();
+
 // State untuk tab aktif
 const activeTab = ref("doc_sptp");
 const showPreviewModal = ref(false);
 const previewUrl = ref(null);
 const previewTitle = ref("");
+
+const showApproveModal = ref(false);
+const showReviseModal = ref(false);
+
+const approveForm = useForm({
+    approved_at: new Date().toISOString(),
+});
+
+const reviseForm = useForm({
+    revision_note: "",
+});
 
 // Daftar tab dokumen
 const documentTabs = [
@@ -65,6 +79,32 @@ const handleIframeLoad = (event) => {
 const handleIframeError = (error) => {
     console.clear();
 };
+
+// Tambahkan fungsi handle approve dan revise
+const handleApprove = () => {
+    approveForm.put(route("proposals.spj.approve", props.spj.id), {
+        onSuccess: () => {
+            showApproveModal.value = false;
+            toast.success("SPJ berhasil disetujui!");
+        },
+        onError: () => {
+            toast.error("Gagal menyetujui SPJ. Silakan coba lagi.");
+        },
+    });
+};
+
+const handleRevise = () => {
+    reviseForm.put(route("proposals.spj.revise", props.spj.id), {
+        onSuccess: () => {
+            showReviseModal.value = false;
+            reviseForm.reset();
+            toast.success("SPJ telah dikirim untuk revisi!");
+        },
+        onError: () => {
+            toast.error("Gagal mengirim revisi. Silakan coba lagi.");
+        },
+    });
+};
 </script>
 
 <template>
@@ -92,6 +132,47 @@ const handleIframeError = (error) => {
                             />
                         </svg>
                         Kembali
+                    </button>
+                </div>
+
+                <!-- Tombol Approve/Revise -->
+                <div
+                    v-if="$page.props.auth.user.role === 'SEKERTARIS_KABINET'"
+                    class="flex justify-end mt-6 gap-3"
+                >
+                    <button
+                        @click="showApproveModal = true"
+                        class="inline-flex items-center px-5 py-2.5 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 hover:shadow-lg"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-5 w-5 mr-2"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                        >
+                            <path
+                                fill-rule="evenodd"
+                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                clip-rule="evenodd"
+                            />
+                        </svg>
+                        Approve
+                    </button>
+                    <button
+                        @click="showReviseModal = true"
+                        class="inline-flex items-center px-5 py-2.5 bg-yellow-600 text-white text-sm font-medium rounded-lg hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-all duration-200 hover:shadow-lg"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-5 w-5 mr-2"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                        >
+                            <path
+                                d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"
+                            />
+                        </svg>
+                        Revise
                     </button>
                 </div>
 
@@ -339,6 +420,88 @@ const handleIframeError = (error) => {
                 </div>
             </div>
         </Modal>
+
+        <!-- Modal Approve -->
+        <div
+            v-if="showApproveModal"
+            class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+        >
+            <div class="bg-white rounded-lg max-w-md w-full p-6 space-y-4">
+                <h3 class="text-lg font-semibold text-gray-900">
+                    Konfirmasi Persetujuan
+                </h3>
+                <p class="text-gray-600">
+                    Apakah Anda yakin ingin menyetujui SPJ ini?
+                </p>
+
+                <div class="flex justify-end space-x-3 mt-4">
+                    <button
+                        @click="showApproveModal = false"
+                        class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                    >
+                        Batal
+                    </button>
+                    <button
+                        @click="handleApprove"
+                        :disabled="approveForm.processing"
+                        class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        {{ approveForm.processing ? "Memproses..." : "Setuju" }}
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Revise -->
+        <div
+            v-if="showReviseModal"
+            class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+        >
+            <div class="bg-white rounded-lg max-w-md w-full p-6 space-y-4">
+                <h3 class="text-lg font-semibold text-gray-900">Revisi SPJ</h3>
+
+                <div class="space-y-2">
+                    <label
+                        for="revision_note"
+                        class="block text-sm font-medium text-gray-700"
+                        >Catatan Revisi</label
+                    >
+                    <textarea
+                        id="revision_note"
+                        v-model="reviseForm.revision_note"
+                        rows="4"
+                        class="block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500 sm:text-sm"
+                        placeholder="Masukkan catatan revisi..."
+                    ></textarea>
+                    <p
+                        v-if="reviseForm.errors.revision_note"
+                        class="mt-1 text-sm text-red-600"
+                    >
+                        {{ reviseForm.errors.revision_note }}
+                    </p>
+                </div>
+
+                <div class="flex justify-end space-x-3 mt-4">
+                    <button
+                        @click="showReviseModal = false"
+                        class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                    >
+                        Batal
+                    </button>
+                    <button
+                        @click="handleRevise"
+                        :disabled="reviseForm.processing"
+                        class="px-4 py-2 text-sm font-medium text-white bg-yellow-600 rounded-md hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        {{
+                            reviseForm.processing
+                                ? "Memproses..."
+                                : "Kirim Revisi"
+                        }}
+                    </button>
+                </div>
+            </div>
+        </div>
     </AuthenticatedLayout>
 </template>
 

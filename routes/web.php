@@ -125,6 +125,9 @@ Route::middleware('auth')->group(function () {
     Route::put('/proposals/spj/{spj}', [ProposalSpjController::class, 'update'])->name('proposals.spj.update');
     Route::delete('/proposals/spj/{spj}', [ProposalSpjController::class, 'destroy'])->name('proposals.spj.destroy');
     Route::get('/proposals/{proposal}/spj/{spj}', [ProposalSpjController::class, 'show'])->name('proposals.spj.show');
+
+    Route::put('/proposals/spj/{spj}/approve', [ProposalSpjController::class, 'approve'])->name('proposals.spj.approve');
+    Route::put('/proposals/spj/{spj}/revise', [ProposalSpjController::class, 'revise'])->name('proposals.spj.revise');
 });
 
 require __DIR__ . '/auth.php';

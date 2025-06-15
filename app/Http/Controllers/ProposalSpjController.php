@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Services\GoogleDriveService;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ProposalSpjRevision;
 
 class ProposalSpjController extends Controller
 {
@@ -140,5 +142,51 @@ class ProposalSpjController extends Controller
             'proposal' => $proposal,
             'spj' => $spj
         ]);
+    }
+
+    public function approve(Request $request, ProposalSpj $spj)
+    {
+        if ($request->user()->role !== 'SEKERTARIS_KABINET') {
+            return redirect()->back()->with('error', 'Unauthorized action.');
+        }
+
+        try {
+            $spj->update([
+                'status' => 'approved',
+                'approved_at' => now(),
+                'approved_by' => $request->user()->id
+            ]);
+
+            return redirect()->back()->with('success', 'SPJ berhasil disetujui');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal menyetujui SPJ: ' . $e->getMessage());
+        }
+    }
+
+    public function revise(Request $request, ProposalSpj $spj)
+    {
+        if ($request->user()->role !== 'SEKERTARIS_KABINET') {
+            return redirect()->back()->with('error', 'Unauthorized action.');
+        }
+
+        $request->validate([
+            'revision_note' => 'required|string'
+        ]);
+
+        try {
+            $spj->update([
+                'status' => 'revised',
+                'revision_note' => $request->revision_note,
+                'review_by' => $request->user()->id,
+                'review_at' => now()
+            ]);
+
+            // Kirim email notifikasi
+            Mail::to($spj->proposal->email)->send(new ProposalSpjRevision($spj));
+
+            return redirect()->back()->with('success', 'SPJ berhasil direvisi dan notifikasi telah dikirim');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal merevisi SPJ: ' . $e->getMessage());
+        }
     }
 }

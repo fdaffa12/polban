@@ -13,7 +13,13 @@ class ProposalSpj extends Model
         'doc_berita_acara',
         'gambar_bukti_spj',
         'video',
-        'caption_video'
+        'caption_video',
+        'status',
+        'approved_at',
+        'approved_by',
+        'revision_note',
+        'review_at',
+        'review_by'
     ];
 
     public function proposal()
