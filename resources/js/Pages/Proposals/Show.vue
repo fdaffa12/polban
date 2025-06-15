@@ -822,10 +822,12 @@ const confirmUpload = () => {
                         // Kondisi 2: Sudah approve by SEKERTARIS_KABINET, hanya SEKERTARIS_UMUM_MPH yang bisa lihat tombol
                         ($page.props.auth.user.role === 'SEKERTARIS_UMUM_MPH' &&
                             proposal.approver?.role === 'SEKERTARIS_KABINET' &&
-                            proposal.status === 'approved' &&
-                            !proposal.reviewer?.role ===
-                                'SEKERTARIS_UMUM_MPH') ||
-                        // Kondisi 3: Sudah review by SEKERTARIS_UMUM_MPH, hanya SEKERTARIS_UMUM_MPH yang bisa lihat tombol
+                            proposal.status === 'approved') ||
+                        // Kondisi 3: Jika SEKERTARIS_KABINET melakukan review, tombol tetap ada untuk SEKERTARIS_KABINET
+                        ($page.props.auth.user.role === 'SEKERTARIS_KABINET' &&
+                            proposal.reviewer?.role === 'SEKERTARIS_KABINET' &&
+                            !proposal.approver) ||
+                        // Kondisi 4: Sudah review by SEKERTARIS_UMUM_MPH, hanya SEKERTARIS_UMUM_MPH yang bisa lihat tombol
                         ($page.props.auth.user.role === 'SEKERTARIS_UMUM_MPH' &&
                             proposal.reviewer?.role === 'SEKERTARIS_UMUM_MPH' &&
                             proposal.approver?.role !== 'SEKERTARIS_UMUM_MPH')

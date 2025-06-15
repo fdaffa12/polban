@@ -86,6 +86,106 @@ const formatDateRange = (startDate, endDate) => {
     const end = formatDate(endDate);
     return start === end ? start : `${start} s/d ${end}`;
 };
+
+// Tambahkan fungsi untuk menghitung progress
+const calculateProgress = (proposal) => {
+    if (proposal.jenis_proposal === "pengajuan_pusat") {
+        // Untuk pengajuan pusat
+        if (proposal.status === "approved" && proposal.approved_by) {
+            return 100; // Approved by Sekertaris Kabinet
+        }
+        if (proposal.review_by) {
+            return 60; // Review by Sekertaris Kabinet
+        }
+        if (proposal.view_by === "SEKERTARIS_KABINET") {
+            return 40; // Viewed by Sekertaris Kabinet
+        }
+        return 20; // Pending
+    } else {
+        // Untuk pengajuan himpunan
+        if (proposal.status === "approved") {
+            if (proposal.view_by === "SEKERTARIS_UMUM_MPH") {
+                return 100; // Approved by Sekertaris Umum MPH
+            }
+            if (proposal.approved_by) {
+                return 60; // Approved by Sekertaris Kabinet
+            }
+        }
+
+        // Cek review
+        if (proposal.review_by) {
+            if (proposal.view_by === "SEKERTARIS_UMUM_MPH") {
+                return 80; // Review by Sekertaris Umum MPH
+            }
+            return 40; // Review by Sekertaris Kabinet
+        }
+
+        // Cek view
+        if (proposal.view_by === "SEKERTARIS_UMUM_MPH") {
+            return 30; // Viewed by Sekertaris Umum MPH
+        }
+        if (proposal.view_by === "SEKERTARIS_KABINET") {
+            return 30; // Viewed by Sekertaris Kabinet
+        }
+
+        return 20; // Pending
+    }
+};
+
+// Tambahkan fungsi untuk mendapatkan warna progress bar
+const getProgressColor = (progress) => {
+    if (progress >= 80) return "bg-green-500";
+    if (progress >= 60) return "bg-blue-500";
+    if (progress >= 40) return "bg-yellow-500";
+    return "bg-gray-500";
+};
+
+// Tambahkan fungsi untuk mendapatkan status text yang lebih detail
+const getStatusText = (proposal) => {
+    if (proposal.jenis_proposal === "pengajuan_pusat") {
+        if (
+            proposal.status === "approved" &&
+            proposal.approver?.role === "SEKERTARIS_KABINET"
+        ) {
+            return "Disetujui oleh Sekertaris Kabinet (Final)";
+        }
+        if (proposal.review_by) {
+            return "Direview oleh Sekertaris Kabinet";
+        }
+        if (proposal.view_by === "SEKERTARIS_KABINET") {
+            return "Dilihat oleh Sekertaris Kabinet";
+        }
+        return "Menunggu Review Sekertaris Kabinet";
+    } else {
+        // Untuk pengajuan himpunan
+        if (proposal.status === "approved") {
+            if (proposal.approver?.role === "SEKERTARIS_UMUM_MPH") {
+                return "Disetujui oleh Sekertaris Umum MPH (Final)";
+            }
+            if (proposal.approver?.role === "SEKERTARIS_KABINET") {
+                return "Disetujui oleh Sekertaris Kabinet";
+            }
+        }
+
+        // Cek status review
+        if (proposal.review_by) {
+            if (proposal.view_by === "SEKERTARIS_UMUM_MPH") {
+                return "Direview oleh Sekertaris Umum MPH";
+            }
+            return "Direview oleh Sekertaris Kabinet";
+        }
+
+        // Cek status view
+        if (proposal.view_by === "SEKERTARIS_UMUM_MPH") {
+            return "Dilihat oleh Sekertaris Umum MPH";
+        }
+        if (proposal.view_by === "SEKERTARIS_KABINET") {
+            return "Dilihat oleh Sekertaris Kabinet";
+        }
+
+        return "Menunggu Review";
+    }
+};
 </script>
 
 <template>
@@ -136,11 +236,69 @@ const formatDateRange = (startDate, endDate) => {
 
                             <!-- Card Content -->
                             <div class="p-4">
+                                <!-- Progress Bar -->
+                                <div class="mb-4">
+                                    <div
+                                        class="flex justify-between items-center mb-1"
+                                    >
+                                        <span
+                                            class="text-sm font-medium text-gray-700"
+                                            >Progress</span
+                                        >
+                                        <span
+                                            class="text-sm font-medium text-gray-700"
+                                            >{{
+                                                calculateProgress(proposal)
+                                            }}%</span
+                                        >
+                                    </div>
+                                    <div
+                                        class="w-full bg-gray-200 rounded-full h-2.5"
+                                    >
+                                        <div
+                                            class="h-2.5 rounded-full transition-all duration-500"
+                                            :class="
+                                                getProgressColor(
+                                                    calculateProgress(proposal)
+                                                )
+                                            "
+                                            :style="{
+                                                width: `${calculateProgress(
+                                                    proposal
+                                                )}%`,
+                                            }"
+                                        ></div>
+                                    </div>
+                                    <p class="mt-1 text-sm text-gray-600">
+                                        {{ getStatusText(proposal) }}
+                                    </p>
+                                </div>
+
                                 <h3
                                     class="text-lg font-semibold text-gray-900 mb-2"
                                 >
                                     {{ proposal.nama_kegiatan }}
                                 </h3>
+
+                                <!-- Badge Jenis Proposal -->
+                                <div class="mb-3">
+                                    <span
+                                        :class="[
+                                            'px-2 py-1 text-xs font-medium rounded-full',
+                                            proposal.jenis_proposal ===
+                                            'pengajuan_pusat'
+                                                ? 'bg-purple-100 text-purple-800'
+                                                : 'bg-blue-100 text-blue-800',
+                                        ]"
+                                    >
+                                        {{
+                                            proposal.jenis_proposal ===
+                                            "pengajuan_pusat"
+                                                ? "Pengajuan Pusat"
+                                                : "Pengajuan Himpunan"
+                                        }}
+                                    </span>
+                                </div>
 
                                 <div class="space-y-2 text-sm text-gray-600">
                                     <div class="flex items-center">
@@ -288,3 +446,10 @@ const formatDateRange = (startDate, endDate) => {
         </div>
     </AuthenticatedLayout>
 </template>
+
+<style>
+/* Tambahkan animasi untuk progress bar */
+.h-2.5 {
+    transition: width 0.5s ease-in-out;
+}
+</style>
