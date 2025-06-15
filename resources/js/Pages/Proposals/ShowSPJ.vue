@@ -137,7 +137,10 @@ const handleRevise = () => {
 
                 <!-- Tombol Approve/Revise -->
                 <div
-                    v-if="$page.props.auth.user.role === 'SEKERTARIS_KABINET'"
+                    v-if="
+                        $page.props.auth.user.role === 'SEKERTARIS_KABINET' &&
+                        !spj.approved_at
+                    "
                     class="flex justify-end mt-6 gap-3"
                 >
                     <button
