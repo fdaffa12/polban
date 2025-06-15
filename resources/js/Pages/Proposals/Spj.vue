@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { router, useForm } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { useToast } from "vue-toastification";
@@ -29,6 +29,16 @@ const form = useForm({
 // State untuk preview image
 const imagePreview = ref({
     gambar_bukti_spj: null,
+});
+
+// Computed properties untuk statistik
+const totalSpjDibutuhkan = computed(() => props.proposal.jumlah_spj || 0);
+const totalSpjTerunggah = computed(() => props.spjList.length || 0);
+const persentaseSpj = computed(() => {
+    if (totalSpjDibutuhkan.value === 0) return 0;
+    return Math.round(
+        (totalSpjTerunggah.value / totalSpjDibutuhkan.value) * 100
+    );
 });
 
 const showToast = (icon, title) => {
@@ -145,6 +155,125 @@ const removeFile = (fieldName) => {
     <AuthenticatedLayout title="SPJ Proposal">
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <!-- Statistik Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                    <!-- Card Total SPJ Dibutuhkan -->
+                    <div
+                        class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6"
+                    >
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-blue-100">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    class="h-8 w-8 text-blue-600"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                    />
+                                </svg>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-500">
+                                    Total SPJ Dibutuhkan
+                                </p>
+                                <p class="text-2xl font-semibold text-gray-900">
+                                    {{ totalSpjDibutuhkan }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card SPJ Terunggah -->
+                    <div
+                        class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6"
+                    >
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-green-100">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    class="h-8 w-8 text-green-600"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                                    />
+                                </svg>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-500">
+                                    SPJ Terunggah
+                                </p>
+                                <p class="text-2xl font-semibold text-gray-900">
+                                    {{ totalSpjTerunggah }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card Persentase SPJ -->
+                    <div
+                        class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6"
+                    >
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-yellow-100">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    class="h-8 w-8 text-yellow-600"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"
+                                    />
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"
+                                    />
+                                </svg>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-500">
+                                    Persentase SPJ
+                                </p>
+                                <div class="flex items-baseline">
+                                    <p
+                                        class="text-2xl font-semibold text-gray-900"
+                                    >
+                                        {{ persentaseSpj }}%
+                                    </p>
+                                    <div
+                                        class="ml-4 w-full h-2 bg-gray-200 rounded-full"
+                                    >
+                                        <div
+                                            class="h-2 bg-yellow-500 rounded-full"
+                                            :style="{
+                                                width: `${persentaseSpj}%`,
+                                            }"
+                                        ></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div
                     class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6"
                 >
