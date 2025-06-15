@@ -816,11 +816,19 @@ const confirmUpload = () => {
                 <div
                     class="flex justify-end mt-6 gap-3"
                     v-if="
+                        // Kondisi 1: Status pending, hanya SEKERTARIS_KABINET yang bisa lihat tombol
                         ($page.props.auth.user.role === 'SEKERTARIS_KABINET' &&
-                            proposal.status !== 'approved') ||
+                            proposal.status === 'pending') ||
+                        // Kondisi 2: Sudah approve by SEKERTARIS_KABINET, hanya SEKERTARIS_UMUM_MPH yang bisa lihat tombol
                         ($page.props.auth.user.role === 'SEKERTARIS_UMUM_MPH' &&
                             proposal.approver?.role === 'SEKERTARIS_KABINET' &&
-                            proposal.status === 'approved')
+                            proposal.status === 'approved' &&
+                            !proposal.reviewer?.role ===
+                                'SEKERTARIS_UMUM_MPH') ||
+                        // Kondisi 3: Sudah review by SEKERTARIS_UMUM_MPH, hanya SEKERTARIS_UMUM_MPH yang bisa lihat tombol
+                        ($page.props.auth.user.role === 'SEKERTARIS_UMUM_MPH' &&
+                            proposal.reviewer?.role === 'SEKERTARIS_UMUM_MPH' &&
+                            proposal.approver?.role !== 'SEKERTARIS_UMUM_MPH')
                     "
                 >
                     <button
