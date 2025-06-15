@@ -169,12 +169,27 @@ const removeFile = (fieldName) => {
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                                     >
-                                        Dokumen
+                                        No
                                     </th>
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                                     >
-                                        Caption Video
+                                        Nama Kegiatan
+                                    </th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                    >
+                                        Status
+                                    </th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                    >
+                                        Tanggal Unggah
+                                    </th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                    >
+                                        Tahap Review
                                     </th>
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
@@ -184,48 +199,67 @@ const removeFile = (fieldName) => {
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
-                                <tr v-for="spj in spjList" :key="spj.id">
-                                    <td class="px-6 py-4">
-                                        <div class="flex flex-col space-y-2">
-                                            <a
-                                                :href="spj.doc_sptp"
-                                                target="_blank"
-                                                class="text-blue-600 hover:text-blue-800"
-                                            >
-                                                SPTP
-                                            </a>
-                                            <a
-                                                :href="spj.doc_spj"
-                                                target="_blank"
-                                                class="text-blue-600 hover:text-blue-800"
-                                            >
-                                                SPJ
-                                            </a>
-                                            <a
-                                                :href="spj.doc_berita_acara"
-                                                target="_blank"
-                                                class="text-blue-600 hover:text-blue-800"
-                                            >
-                                                Berita Acara
-                                            </a>
-                                            <a
-                                                :href="spj.gambar_bukti_spj"
-                                                target="_blank"
-                                                class="text-blue-600 hover:text-blue-800"
-                                            >
-                                                Bukti SPJ
-                                            </a>
-                                            <a
-                                                :href="spj.video"
-                                                target="_blank"
-                                                class="text-blue-600 hover:text-blue-800"
-                                            >
-                                                Video
-                                            </a>
-                                        </div>
+                                <tr
+                                    v-for="(spj, index) in spjList"
+                                    :key="spj.id"
+                                >
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        {{ index + 1 }}
                                     </td>
                                     <td class="px-6 py-4">
-                                        {{ spj.caption_video }}
+                                        {{ proposal.nama_kegiatan }}
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span
+                                            :class="{
+                                                'px-2 py-1 text-xs font-medium rounded-full': true,
+                                                'bg-yellow-100 text-yellow-800':
+                                                    spj.status === 'revised',
+                                                'bg-green-100 text-green-800':
+                                                    spj.status === 'approved',
+                                                'bg-gray-100 text-gray-800':
+                                                    !spj.status,
+                                            }"
+                                        >
+                                            {{
+                                                spj.status
+                                                    ? spj.status === "revised"
+                                                        ? "Perlu Revisi"
+                                                        : "Disetujui"
+                                                    : "Menunggu Review"
+                                            }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        {{
+                                            new Date(
+                                                spj.created_at
+                                            ).toLocaleDateString("id-ID", {
+                                                day: "numeric",
+                                                month: "long",
+                                                year: "numeric",
+                                            })
+                                        }}
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div
+                                            v-if="spj.approved_at"
+                                            class="text-sm text-gray-600"
+                                        >
+                                            Disetujui oleh Sekertaris Kabinet
+                                        </div>
+                                        <div
+                                            v-else-if="spj.review_at"
+                                            class="text-sm text-gray-600"
+                                        >
+                                            Direview oleh Sekertaris Kabinet
+                                        </div>
+                                        <div
+                                            v-else
+                                            class="text-sm text-gray-600"
+                                        >
+                                            Menunggu Review
+                                        </div>
                                     </td>
                                     <td class="px-6 py-4">
                                         <div class="flex space-x-2">
@@ -248,13 +282,7 @@ const removeFile = (fieldName) => {
                                                 <Eye class="w-5 h-5" />
                                             </button>
                                             <button
-                                                @click="handleEdit(spj)"
-                                                class="text-blue-600 hover:text-blue-800"
-                                                title="Edit"
-                                            >
-                                                <Edit class="w-5 h-5" />
-                                            </button>
-                                            <button
+                                                v-if="!spj.approved_at"
                                                 @click="handleDelete(spj)"
                                                 class="text-red-600 hover:text-red-800"
                                                 title="Delete"

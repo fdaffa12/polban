@@ -122,7 +122,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/proposals/{proposal}/spj', [ProposalSpjController::class, 'index'])->name('proposals.spj');
     Route::post('/proposals/{proposal}/spj', [ProposalSpjController::class, 'store'])->name('proposals.spj.store');
-    Route::put('/proposals/spj/{spj}', [ProposalSpjController::class, 'update'])->name('proposals.spj.update');
+    Route::post('/proposals/spj/{spj}', [ProposalSpjController::class, 'update'])->name('proposals.spj.update');
     Route::delete('/proposals/spj/{spj}', [ProposalSpjController::class, 'destroy'])->name('proposals.spj.destroy');
     Route::get('/proposals/{proposal}/spj/{spj}', [ProposalSpjController::class, 'show'])->name('proposals.spj.show');
 
