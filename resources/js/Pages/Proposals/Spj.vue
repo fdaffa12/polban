@@ -24,6 +24,11 @@ const form = useForm({
     caption_video: "",
 });
 
+// State untuk preview image
+const imagePreview = ref({
+    gambar_bukti_spj: null,
+});
+
 const handleSubmit = () => {
     form.post(route("proposals.spj.store", props.proposal.id), {
         onSuccess: () => {
@@ -63,6 +68,39 @@ const handleDelete = (spj) => {
             onSuccess: () => toast.success("SPJ berhasil dihapus"),
             onError: () => toast.error("Gagal menghapus SPJ"),
         });
+    }
+};
+
+// Handle image upload
+const handleImageUpload = (event, field) => {
+    const file = event.target.files[0];
+    if (file) {
+        form[field] = file;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            imagePreview.value[field] = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+};
+
+// Handle video upload
+const handleVideoUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+        form.video = file;
+    }
+};
+
+// Remove file
+const removeFile = (fieldName) => {
+    form[fieldName] = null;
+    if (imagePreview.value[fieldName]) {
+        imagePreview.value[fieldName] = null;
+    }
+    const fileInput = document.getElementById(fieldName);
+    if (fileInput) {
+        fileInput.value = "";
     }
 };
 </script>
@@ -222,17 +260,53 @@ const handleDelete = (spj) => {
                                 class="block text-sm font-medium text-gray-700"
                                 >Dokumen SPTP</label
                             >
-                            <div
-                                class="flex items-center justify-center w-full"
-                            >
-                                <label
-                                    class="flex flex-col w-full h-24 sm:h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer hover:bg-gray-50"
-                                >
+                            <div class="flex items-center gap-2">
+                                <div class="flex-1">
+                                    <label
+                                        class="flex flex-col w-full h-24 sm:h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer hover:bg-gray-50"
+                                    >
+                                        <div
+                                            class="flex flex-col items-center justify-center pt-3 pb-4 sm:pt-5 sm:pb-6"
+                                        >
+                                            <svg
+                                                class="w-6 h-6 sm:w-8 sm:h-8 mb-2 sm:mb-4 text-gray-500"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke="currentColor"
+                                            >
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    stroke-width="2"
+                                                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                                                />
+                                            </svg>
+                                            <p
+                                                class="mb-1 sm:mb-2 text-xs sm:text-sm text-gray-500"
+                                            >
+                                                Klik untuk upload SPTP
+                                            </p>
+                                            <p class="text-xs text-gray-500">
+                                                PDF (MAX. 10MB)
+                                            </p>
+                                        </div>
+                                        <input
+                                            type="file"
+                                            class="hidden"
+                                            @input="
+                                                form.doc_sptp =
+                                                    $event.target.files[0]
+                                            "
+                                            accept=".pdf"
+                                        />
+                                    </label>
+                                    <!-- Preview File Name -->
                                     <div
-                                        class="flex flex-col items-center justify-center pt-3 pb-4 sm:pt-5 sm:pb-6"
+                                        v-if="form.doc_sptp"
+                                        class="mt-2 flex items-center gap-2"
                                     >
                                         <svg
-                                            class="w-6 h-6 sm:w-8 sm:h-8 mb-2 sm:mb-4 text-gray-500"
+                                            class="w-5 h-5 text-gray-500"
                                             fill="none"
                                             viewBox="0 0 24 24"
                                             stroke="currentColor"
@@ -241,28 +315,36 @@ const handleDelete = (spj) => {
                                                 stroke-linecap="round"
                                                 stroke-linejoin="round"
                                                 stroke-width="2"
-                                                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                                             />
                                         </svg>
-                                        <p
-                                            class="mb-1 sm:mb-2 text-xs sm:text-sm text-gray-500"
-                                        >
-                                            Klik untuk upload SPTP
-                                        </p>
-                                        <p class="text-xs text-gray-500">
-                                            PDF (MAX. 10MB)
-                                        </p>
+                                        <span class="text-sm text-gray-600">{{
+                                            form.doc_sptp.name
+                                        }}</span>
                                     </div>
-                                    <input
-                                        type="file"
-                                        class="hidden"
-                                        @input="
-                                            form.doc_sptp =
-                                                $event.target.files[0]
-                                        "
-                                        accept=".pdf"
-                                    />
-                                </label>
+                                </div>
+                                <!-- Remove Button -->
+                                <button
+                                    v-if="form.doc_sptp"
+                                    @click="removeFile('doc_sptp')"
+                                    type="button"
+                                    class="text-red-600 hover:text-red-800"
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        class="h-6 w-6"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M6 18L18 6M6 6l12 12"
+                                        />
+                                    </svg>
+                                </button>
                             </div>
                             <div
                                 v-if="form.errors.doc_sptp"
@@ -278,17 +360,53 @@ const handleDelete = (spj) => {
                                 class="block text-sm font-medium text-gray-700"
                                 >Dokumen SPJ</label
                             >
-                            <div
-                                class="flex items-center justify-center w-full"
-                            >
-                                <label
-                                    class="flex flex-col w-full h-24 sm:h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer hover:bg-gray-50"
-                                >
+                            <div class="flex items-center gap-2">
+                                <div class="flex-1">
+                                    <label
+                                        class="flex flex-col w-full h-24 sm:h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer hover:bg-gray-50"
+                                    >
+                                        <div
+                                            class="flex flex-col items-center justify-center pt-3 pb-4 sm:pt-5 sm:pb-6"
+                                        >
+                                            <svg
+                                                class="w-6 h-6 sm:w-8 sm:h-8 mb-2 sm:mb-4 text-gray-500"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke="currentColor"
+                                            >
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    stroke-width="2"
+                                                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                                                />
+                                            </svg>
+                                            <p
+                                                class="mb-1 sm:mb-2 text-xs sm:text-sm text-gray-500"
+                                            >
+                                                Klik untuk upload SPJ
+                                            </p>
+                                            <p class="text-xs text-gray-500">
+                                                PDF (MAX. 10MB)
+                                            </p>
+                                        </div>
+                                        <input
+                                            type="file"
+                                            class="hidden"
+                                            @input="
+                                                form.doc_spj =
+                                                    $event.target.files[0]
+                                            "
+                                            accept=".pdf"
+                                        />
+                                    </label>
+                                    <!-- Preview File Name -->
                                     <div
-                                        class="flex flex-col items-center justify-center pt-3 pb-4 sm:pt-5 sm:pb-6"
+                                        v-if="form.doc_spj"
+                                        class="mt-2 flex items-center gap-2"
                                     >
                                         <svg
-                                            class="w-6 h-6 sm:w-8 sm:h-8 mb-2 sm:mb-4 text-gray-500"
+                                            class="w-5 h-5 text-gray-500"
                                             fill="none"
                                             viewBox="0 0 24 24"
                                             stroke="currentColor"
@@ -297,28 +415,36 @@ const handleDelete = (spj) => {
                                                 stroke-linecap="round"
                                                 stroke-linejoin="round"
                                                 stroke-width="2"
-                                                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                                             />
                                         </svg>
-                                        <p
-                                            class="mb-1 sm:mb-2 text-xs sm:text-sm text-gray-500"
-                                        >
-                                            Klik untuk upload SPJ
-                                        </p>
-                                        <p class="text-xs text-gray-500">
-                                            PDF (MAX. 10MB)
-                                        </p>
+                                        <span class="text-sm text-gray-600">{{
+                                            form.doc_spj.name
+                                        }}</span>
                                     </div>
-                                    <input
-                                        type="file"
-                                        class="hidden"
-                                        @input="
-                                            form.doc_spj =
-                                                $event.target.files[0]
-                                        "
-                                        accept=".pdf"
-                                    />
-                                </label>
+                                </div>
+                                <!-- Remove Button -->
+                                <button
+                                    v-if="form.doc_spj"
+                                    @click="removeFile('doc_spj')"
+                                    type="button"
+                                    class="text-red-600 hover:text-red-800"
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        class="h-6 w-6"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M6 18L18 6M6 6l12 12"
+                                        />
+                                    </svg>
+                                </button>
                             </div>
                             <div
                                 v-if="form.errors.doc_spj"
@@ -334,17 +460,53 @@ const handleDelete = (spj) => {
                                 class="block text-sm font-medium text-gray-700"
                                 >Dokumen Berita Acara</label
                             >
-                            <div
-                                class="flex items-center justify-center w-full"
-                            >
-                                <label
-                                    class="flex flex-col w-full h-24 sm:h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer hover:bg-gray-50"
-                                >
+                            <div class="flex items-center gap-2">
+                                <div class="flex-1">
+                                    <label
+                                        class="flex flex-col w-full h-24 sm:h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer hover:bg-gray-50"
+                                    >
+                                        <div
+                                            class="flex flex-col items-center justify-center pt-3 pb-4 sm:pt-5 sm:pb-6"
+                                        >
+                                            <svg
+                                                class="w-6 h-6 sm:w-8 sm:h-8 mb-2 sm:mb-4 text-gray-500"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke="currentColor"
+                                            >
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    stroke-width="2"
+                                                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                                                />
+                                            </svg>
+                                            <p
+                                                class="mb-1 sm:mb-2 text-xs sm:text-sm text-gray-500"
+                                            >
+                                                Klik untuk upload Berita Acara
+                                            </p>
+                                            <p class="text-xs text-gray-500">
+                                                PDF (MAX. 10MB)
+                                            </p>
+                                        </div>
+                                        <input
+                                            type="file"
+                                            class="hidden"
+                                            @input="
+                                                form.doc_berita_acara =
+                                                    $event.target.files[0]
+                                            "
+                                            accept=".pdf"
+                                        />
+                                    </label>
+                                    <!-- Preview File Name -->
                                     <div
-                                        class="flex flex-col items-center justify-center pt-3 pb-4 sm:pt-5 sm:pb-6"
+                                        v-if="form.doc_berita_acara"
+                                        class="mt-2 flex items-center gap-2"
                                     >
                                         <svg
-                                            class="w-6 h-6 sm:w-8 sm:h-8 mb-2 sm:mb-4 text-gray-500"
+                                            class="w-5 h-5 text-gray-500"
                                             fill="none"
                                             viewBox="0 0 24 24"
                                             stroke="currentColor"
@@ -353,28 +515,36 @@ const handleDelete = (spj) => {
                                                 stroke-linecap="round"
                                                 stroke-linejoin="round"
                                                 stroke-width="2"
-                                                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                                             />
                                         </svg>
-                                        <p
-                                            class="mb-1 sm:mb-2 text-xs sm:text-sm text-gray-500"
-                                        >
-                                            Klik untuk upload Berita Acara
-                                        </p>
-                                        <p class="text-xs text-gray-500">
-                                            PDF (MAX. 10MB)
-                                        </p>
+                                        <span class="text-sm text-gray-600">{{
+                                            form.doc_berita_acara.name
+                                        }}</span>
                                     </div>
-                                    <input
-                                        type="file"
-                                        class="hidden"
-                                        @input="
-                                            form.doc_berita_acara =
-                                                $event.target.files[0]
-                                        "
-                                        accept=".pdf"
-                                    />
-                                </label>
+                                </div>
+                                <!-- Remove Button -->
+                                <button
+                                    v-if="form.doc_berita_acara"
+                                    @click="removeFile('doc_berita_acara')"
+                                    type="button"
+                                    class="text-red-600 hover:text-red-800"
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        class="h-6 w-6"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M6 18L18 6M6 6l12 12"
+                                        />
+                                    </svg>
+                                </button>
                             </div>
                             <div
                                 v-if="form.errors.doc_berita_acara"
@@ -390,17 +560,66 @@ const handleDelete = (spj) => {
                                 class="block text-sm font-medium text-gray-700"
                                 >Gambar Bukti SPJ</label
                             >
-                            <div
-                                class="flex items-center justify-center w-full"
-                            >
-                                <label
-                                    class="flex flex-col w-full h-24 sm:h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer hover:bg-gray-50"
-                                >
+                            <div class="flex items-center gap-2">
+                                <div class="flex-1">
+                                    <label
+                                        class="flex flex-col w-full h-24 sm:h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer hover:bg-gray-50"
+                                    >
+                                        <div
+                                            class="flex flex-col items-center justify-center pt-3 pb-4 sm:pt-5 sm:pb-6"
+                                        >
+                                            <svg
+                                                class="w-6 h-6 sm:w-8 sm:h-8 mb-2 sm:mb-4 text-gray-500"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke="currentColor"
+                                            >
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    stroke-width="2"
+                                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                                />
+                                            </svg>
+                                            <p
+                                                class="mb-1 sm:mb-2 text-xs sm:text-sm text-gray-500"
+                                            >
+                                                Klik untuk upload Gambar
+                                            </p>
+                                            <p class="text-xs text-gray-500">
+                                                JPG, PNG (MAX. 2MB)
+                                            </p>
+                                        </div>
+                                        <input
+                                            type="file"
+                                            class="hidden"
+                                            @input="
+                                                handleImageUpload(
+                                                    $event,
+                                                    'gambar_bukti_spj'
+                                                )
+                                            "
+                                            accept="image/*"
+                                        />
+                                    </label>
+                                    <!-- Preview Image -->
                                     <div
-                                        class="flex flex-col items-center justify-center pt-3 pb-4 sm:pt-5 sm:pb-6"
+                                        v-if="imagePreview.gambar_bukti_spj"
+                                        class="mt-2"
+                                    >
+                                        <img
+                                            :src="imagePreview.gambar_bukti_spj"
+                                            alt="Preview"
+                                            class="max-w-xs h-auto rounded-lg shadow-sm"
+                                        />
+                                    </div>
+                                    <!-- Preview File Name -->
+                                    <div
+                                        v-if="form.gambar_bukti_spj"
+                                        class="mt-2 flex items-center gap-2"
                                     >
                                         <svg
-                                            class="w-6 h-6 sm:w-8 sm:h-8 mb-2 sm:mb-4 text-gray-500"
+                                            class="w-5 h-5 text-gray-500"
                                             fill="none"
                                             viewBox="0 0 24 24"
                                             stroke="currentColor"
@@ -412,25 +631,33 @@ const handleDelete = (spj) => {
                                                 d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
                                             />
                                         </svg>
-                                        <p
-                                            class="mb-1 sm:mb-2 text-xs sm:text-sm text-gray-500"
-                                        >
-                                            Klik untuk upload Gambar
-                                        </p>
-                                        <p class="text-xs text-gray-500">
-                                            JPG, PNG (MAX. 2MB)
-                                        </p>
+                                        <span class="text-sm text-gray-600">{{
+                                            form.gambar_bukti_spj.name
+                                        }}</span>
                                     </div>
-                                    <input
-                                        type="file"
-                                        class="hidden"
-                                        @input="
-                                            form.gambar_bukti_spj =
-                                                $event.target.files[0]
-                                        "
-                                        accept="image/*"
-                                    />
-                                </label>
+                                </div>
+                                <!-- Remove Button -->
+                                <button
+                                    v-if="form.gambar_bukti_spj"
+                                    @click="removeFile('gambar_bukti_spj')"
+                                    type="button"
+                                    class="text-red-600 hover:text-red-800"
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        class="h-6 w-6"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M6 18L18 6M6 6l12 12"
+                                        />
+                                    </svg>
+                                </button>
                             </div>
                             <div
                                 v-if="form.errors.gambar_bukti_spj"
@@ -446,17 +673,50 @@ const handleDelete = (spj) => {
                                 class="block text-sm font-medium text-gray-700"
                                 >Video Dokumentasi</label
                             >
-                            <div
-                                class="flex items-center justify-center w-full"
-                            >
-                                <label
-                                    class="flex flex-col w-full h-24 sm:h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer hover:bg-gray-50"
-                                >
+                            <div class="flex items-center gap-2">
+                                <div class="flex-1">
+                                    <label
+                                        class="flex flex-col w-full h-24 sm:h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer hover:bg-gray-50"
+                                    >
+                                        <div
+                                            class="flex flex-col items-center justify-center pt-3 pb-4 sm:pt-5 sm:pb-6"
+                                        >
+                                            <svg
+                                                class="w-6 h-6 sm:w-8 sm:h-8 mb-2 sm:mb-4 text-gray-500"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke="currentColor"
+                                            >
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    stroke-width="2"
+                                                    d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+                                                />
+                                            </svg>
+                                            <p
+                                                class="mb-1 sm:mb-2 text-xs sm:text-sm text-gray-500"
+                                            >
+                                                Klik untuk upload Video
+                                            </p>
+                                            <p class="text-xs text-gray-500">
+                                                MP4, MOV, AVI (MAX. 100MB)
+                                            </p>
+                                        </div>
+                                        <input
+                                            type="file"
+                                            class="hidden"
+                                            @input="handleVideoUpload($event)"
+                                            accept="video/*"
+                                        />
+                                    </label>
+                                    <!-- Preview Video Name -->
                                     <div
-                                        class="flex flex-col items-center justify-center pt-3 pb-4 sm:pt-5 sm:pb-6"
+                                        v-if="form.video"
+                                        class="mt-2 flex items-center gap-2"
                                     >
                                         <svg
-                                            class="w-6 h-6 sm:w-8 sm:h-8 mb-2 sm:mb-4 text-gray-500"
+                                            class="w-5 h-5 text-gray-500"
                                             fill="none"
                                             viewBox="0 0 24 24"
                                             stroke="currentColor"
@@ -468,24 +728,33 @@ const handleDelete = (spj) => {
                                                 d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
                                             />
                                         </svg>
-                                        <p
-                                            class="mb-1 sm:mb-2 text-xs sm:text-sm text-gray-500"
-                                        >
-                                            Klik untuk upload Video
-                                        </p>
-                                        <p class="text-xs text-gray-500">
-                                            MP4, MOV, AVI (MAX. 100MB)
-                                        </p>
+                                        <span class="text-sm text-gray-600">{{
+                                            form.video.name
+                                        }}</span>
                                     </div>
-                                    <input
-                                        type="file"
-                                        class="hidden"
-                                        @input="
-                                            form.video = $event.target.files[0]
-                                        "
-                                        accept="video/*"
-                                    />
-                                </label>
+                                </div>
+                                <!-- Remove Button -->
+                                <button
+                                    v-if="form.video"
+                                    @click="removeFile('video')"
+                                    type="button"
+                                    class="text-red-600 hover:text-red-800"
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        class="h-6 w-6"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M6 18L18 6M6 6l12 12"
+                                        />
+                                    </svg>
+                                </button>
                             </div>
                             <div
                                 v-if="form.errors.video"
