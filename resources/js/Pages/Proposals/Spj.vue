@@ -4,6 +4,8 @@ import { router, useForm } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { useToast } from "vue-toastification";
 import { Eye, FileText, Trash2, Edit } from "lucide-vue-next";
+import Swal from "sweetalert2";
+import PrimaryButton from "@/Components/PrimaryButton.vue";
 
 const props = defineProps({
     proposal: Object,
@@ -28,6 +30,25 @@ const form = useForm({
 const imagePreview = ref({
     gambar_bukti_spj: null,
 });
+
+const showToast = (icon, title) => {
+    const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.addEventListener("mouseenter", Swal.stopTimer);
+            toast.addEventListener("mouseleave", Swal.resumeTimer);
+        },
+    });
+
+    Toast.fire({
+        icon,
+        title,
+    });
+};
 
 const handleSubmit = () => {
     form.post(route("proposals.spj.store", props.proposal.id), {
@@ -63,12 +84,27 @@ const handleUpdate = () => {
 };
 
 const handleDelete = (spj) => {
-    if (confirm("Apakah Anda yakin ingin menghapus SPJ ini?")) {
-        router.delete(route("proposals.spj.destroy", spj.id), {
-            onSuccess: () => toast.success("SPJ berhasil dihapus"),
-            onError: () => toast.error("Gagal menghapus SPJ"),
-        });
-    }
+    Swal.fire({
+        title: "Apakah Anda yakin?",
+        text: "SPJ yang dihapus tidak dapat dikembalikan!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#EF4444",
+        cancelButtonColor: "#6B7280",
+        confirmButtonText: "Ya, hapus!",
+        cancelButtonText: "Batal",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            router.delete(route("proposals.spj.destroy", spj.id), {
+                onSuccess: () => {
+                    toast.success("SPJ berhasil dihapus");
+                },
+                onError: () => {
+                    toast.error("SPJ gagal dihapus");
+                },
+            });
+        }
+    });
 };
 
 // Handle image upload
@@ -117,12 +153,12 @@ const removeFile = (fieldName) => {
                         <h2 class="text-xl font-semibold">
                             SPJ - {{ proposal.nama_kegiatan }}
                         </h2>
-                        <button
+                        <PrimaryButton
                             @click="showAddModal = true"
                             class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
                         >
                             Tambah SPJ
-                        </button>
+                        </PrimaryButton>
                     </div>
 
                     <!-- Table -->
