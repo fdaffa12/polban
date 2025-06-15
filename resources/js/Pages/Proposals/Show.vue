@@ -816,8 +816,11 @@ const confirmUpload = () => {
                 <div
                     class="flex justify-end mt-6 gap-3"
                     v-if="
-                        $page.props.auth.user.role === 'SEKERTARIS_KABINET' &&
-                        proposal.status !== 'approved'
+                        ($page.props.auth.user.role === 'SEKERTARIS_KABINET' &&
+                            proposal.status !== 'approved') ||
+                        ($page.props.auth.user.role === 'SEKERTARIS_UMUM_MPH' &&
+                            proposal.approver?.role === 'SEKERTARIS_KABINET' &&
+                            proposal.status === 'approved')
                     "
                 >
                     <button
@@ -918,7 +921,10 @@ const confirmUpload = () => {
                                     >
                                         {{
                                             proposal.reviewer
-                                                ? proposal.reviewer.name
+                                                ? proposal.reviewer.role.replace(
+                                                      /_/g,
+                                                      " "
+                                                  )
                                                 : "-"
                                         }}
                                     </td>
@@ -936,7 +942,10 @@ const confirmUpload = () => {
                                     >
                                         {{
                                             proposal.approver
-                                                ? proposal.approver.name
+                                                ? proposal.approver.role.replace(
+                                                      /_/g,
+                                                      " "
+                                                  )
                                                 : "-"
                                         }}
                                     </td>
@@ -1001,7 +1010,10 @@ const confirmUpload = () => {
                                         <span class="text-sm text-gray-700">
                                             {{
                                                 proposal.reviewer
-                                                    ? proposal.reviewer.name
+                                                    ? proposal.reviewer.role.replace(
+                                                          /_/g,
+                                                          " "
+                                                      )
                                                     : "-"
                                             }}
                                         </span>
@@ -1038,7 +1050,10 @@ const confirmUpload = () => {
                                         <span class="text-sm text-gray-700">
                                             {{
                                                 proposal.approver
-                                                    ? proposal.approver.name
+                                                    ? proposal.approver.role.replace(
+                                                          /_/g,
+                                                          " "
+                                                      )
                                                     : "-"
                                             }}
                                         </span>

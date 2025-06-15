@@ -132,13 +132,21 @@ class ProposalController extends Controller
             $proposal->jenis_proposal === 'pengajuan_himpunan' &&
             $proposal->status !== 'approved'
         ) {
-            // Cek jika belum ada yang melihat
-            if (!$proposal->view_by) {
-                $isRestricted = true;
-                $restrictedMessage = 'Proposal ini belum dilihat oleh Sekertaris Kabinet.';
-            } else {
-                $isRestricted = true;
-                $restrictedMessage = 'Proposal ini belum disetujui oleh Sekertaris Kabinet.';
+            // Cek jika proposal sudah di-review oleh SEKERTARIS_UMUM_MPH
+            if ($proposal->reviewer && $proposal->reviewer->role === 'SEKERTARIS_UMUM_MPH') {
+                // Biarkan akses karena sudah di-review oleh SEKERTARIS_UMUM_MPH
+                $isRestricted = false;
+            }
+            // Jika belum di-review, cek kondisi lainnya
+            else {
+                // Cek jika belum ada yang melihat
+                if (!$proposal->view_by) {
+                    $isRestricted = true;
+                    $restrictedMessage = 'Proposal ini belum dilihat oleh Sekertaris Kabinet.';
+                } else {
+                    $isRestricted = true;
+                    $restrictedMessage = 'Proposal ini belum disetujui oleh Sekertaris Kabinet.';
+                }
             }
         }
         // Update view_by dan view_at untuk proposal yang tidak restricted
@@ -283,11 +291,19 @@ class ProposalController extends Controller
 
     public function approve(Request $request, Proposal $proposal)
     {
-        if ($request->user()->role !== 'SEKERTARIS_KABINET') {
+        // Izinkan SEKERTARIS_KABINET dan SEKERTARIS_UMUM_MPH
+        if (!in_array($request->user()->role, ['SEKERTARIS_KABINET', 'SEKERTARIS_UMUM_MPH'])) {
             return redirect()->back()->with('error', 'Unauthorized action.');
         }
 
         try {
+            // Jika user adalah SEKERTARIS_UMUM_MPH, pastikan proposal sudah diapprove oleh SEKERTARIS_KABINET
+            if ($request->user()->role === 'SEKERTARIS_UMUM_MPH') {
+                if (!$proposal->approver || $proposal->approver->role !== 'SEKERTARIS_KABINET') {
+                    return redirect()->back()->with('error', 'Proposal harus diapprove oleh Sekertaris Kabinet terlebih dahulu.');
+                }
+            }
+
             $proposal->update([
                 'status' => 'approved',
                 'approved_at' => now(),
@@ -302,7 +318,8 @@ class ProposalController extends Controller
 
     public function revise(Request $request, Proposal $proposal)
     {
-        if ($request->user()->role !== 'SEKERTARIS_KABINET') {
+        // Izinkan SEKERTARIS_KABINET dan SEKERTARIS_UMUM_MPH
+        if (!in_array($request->user()->role, ['SEKERTARIS_KABINET', 'SEKERTARIS_UMUM_MPH'])) {
             return redirect()->back()->with('error', 'Unauthorized action.');
         }
 
@@ -311,6 +328,13 @@ class ProposalController extends Controller
         ]);
 
         try {
+            // Jika user adalah SEKERTARIS_UMUM_MPH, pastikan proposal sudah diapprove oleh SEKERTARIS_KABINET
+            if ($request->user()->role === 'SEKERTARIS_UMUM_MPH') {
+                if (!$proposal->approver || $proposal->approver->role !== 'SEKERTARIS_KABINET') {
+                    return redirect()->back()->with('error', 'Proposal harus diapprove oleh Sekertaris Kabinet terlebih dahulu.');
+                }
+            }
+
             $proposal->update([
                 'status' => 'revised',
                 'revision_note' => $request->revision_note,
