@@ -139,53 +139,6 @@ const getProgressColor = (progress) => {
     if (progress >= 40) return "bg-yellow-500";
     return "bg-gray-500";
 };
-
-// Tambahkan fungsi untuk mendapatkan status text yang lebih detail
-const getStatusText = (proposal) => {
-    if (proposal.jenis_proposal === "pengajuan_pusat") {
-        if (
-            proposal.status === "approved" &&
-            proposal.approver?.role === "SEKERTARIS_KABINET"
-        ) {
-            return "Disetujui oleh Sekertaris Kabinet (Final)";
-        }
-        if (proposal.review_by) {
-            return "Direview oleh Sekertaris Kabinet";
-        }
-        if (proposal.view_by === "SEKERTARIS_KABINET") {
-            return "Dilihat oleh Sekertaris Kabinet";
-        }
-        return "Menunggu Review Sekertaris Kabinet";
-    } else {
-        // Untuk pengajuan himpunan
-        if (proposal.status === "approved") {
-            if (proposal.approver?.role === "SEKERTARIS_UMUM_MPH") {
-                return "Disetujui oleh Sekertaris Umum MPH (Final)";
-            }
-            if (proposal.approver?.role === "SEKERTARIS_KABINET") {
-                return "Disetujui oleh Sekertaris Kabinet";
-            }
-        }
-
-        // Cek status review
-        if (proposal.review_by) {
-            if (proposal.view_by === "SEKERTARIS_UMUM_MPH") {
-                return "Direview oleh Sekertaris Umum MPH";
-            }
-            return "Direview oleh Sekertaris Kabinet";
-        }
-
-        // Cek status view
-        if (proposal.view_by === "SEKERTARIS_UMUM_MPH") {
-            return "Dilihat oleh Sekertaris Umum MPH";
-        }
-        if (proposal.view_by === "SEKERTARIS_KABINET") {
-            return "Dilihat oleh Sekertaris Kabinet";
-        }
-
-        return "Menunggu Review";
-    }
-};
 </script>
 
 <template>
@@ -215,25 +168,6 @@ const getStatusText = (proposal) => {
                             :key="proposal.id"
                             class="bg-white border rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200"
                         >
-                            <!-- Card Header dengan Gambar -->
-                            <div class="relative">
-                                <img
-                                    :src="`/storage/${proposal.poster}`"
-                                    :alt="proposal.nama_kegiatan"
-                                    class="w-full h-48 object-cover rounded-t-lg"
-                                />
-
-                                <!-- Status Badge -->
-                                <span
-                                    :class="[
-                                        'absolute top-4 right-4 px-3 py-1 text-sm font-semibold rounded-full',
-                                        getStatusClass(proposal.status),
-                                    ]"
-                                >
-                                    {{ proposal.status.toUpperCase() }}
-                                </span>
-                            </div>
-
                             <!-- Card Content -->
                             <div class="p-4">
                                 <!-- Progress Bar -->
@@ -269,16 +203,26 @@ const getStatusText = (proposal) => {
                                             }"
                                         ></div>
                                     </div>
-                                    <p class="mt-1 text-sm text-gray-600">
-                                        {{ getStatusText(proposal) }}
-                                    </p>
                                 </div>
 
-                                <h3
-                                    class="text-lg font-semibold text-gray-900 mb-2"
+                                <!-- Status Badge dan Judul -->
+                                <div
+                                    class="flex items-center justify-between mb-3"
                                 >
-                                    {{ proposal.nama_kegiatan }}
-                                </h3>
+                                    <h3
+                                        class="text-lg font-semibold text-gray-900"
+                                    >
+                                        {{ proposal.nama_kegiatan }}
+                                    </h3>
+                                    <span
+                                        :class="[
+                                            'px-3 py-1 text-sm font-semibold rounded-full',
+                                            getStatusClass(proposal.status),
+                                        ]"
+                                    >
+                                        {{ proposal.status.toUpperCase() }}
+                                    </span>
+                                </div>
 
                                 <!-- Badge Jenis Proposal -->
                                 <div class="mb-3">
