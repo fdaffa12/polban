@@ -86,4 +86,10 @@ class Proposal extends Model
     {
         return $this->belongsTo(User::class, 'approved_by');
     }
+
+    // Tambahkan relasi untuk SPJ
+    public function spj()
+    {
+        return $this->hasMany(ProposalSpj::class);
+    }
 }

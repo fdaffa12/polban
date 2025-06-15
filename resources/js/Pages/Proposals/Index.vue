@@ -353,15 +353,15 @@ const getProgressColor = (progress) => {
                                         @click="
                                             router.visit(
                                                 route(
-                                                    'proposals.edit',
+                                                    'proposals.spj',
                                                     proposal.id
                                                 )
                                             )
                                         "
                                         class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                                     >
-                                        <Edit class="w-4 h-4 mr-1" />
-                                        Edit
+                                        <FileText class="w-4 h-4 mr-1" />
+                                        SPJ
                                     </button>
                                     <button
                                         @click="deleteProposal(proposal)"
