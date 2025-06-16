@@ -17,11 +17,6 @@ const props = defineProps({
         default: () => [],
     },
 });
-
-onMounted(() => {
-    console.log("Events length:", props.events.length);
-    console.log("First event:", props.events[0]);
-});
 </script>
 
 <template>
@@ -202,105 +197,204 @@ onMounted(() => {
             </div>
         </section>
 
-        <!-- Events Section -->
-        <section class="py-20 bg-white">
+        <!-- Update Events Section -->
+        <section
+            class="py-20 bg-gradient-to-b from-white via-blue-50/30 to-white"
+        >
             <div class="container-custom">
-                <div class="text-center max-w-3xl mx-auto mb-16">
-                    <h2 class="text-blue-600 font-semibold text-lg mb-4">
+                <!-- Header Section dengan animasi -->
+                <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                    <h2
+                        class="text-blue-600 font-semibold text-lg mb-4 animate-fade-in"
+                    >
                         Event Terbaru
                     </h2>
                     <h3
-                        class="text-3xl md:text-4xl font-bold text-gray-900 mb-6"
+                        class="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight animate-fade-in"
+                        style="animation-delay: 0.2s"
                     >
-                        Kegiatan dan Acara HMJTK
+                        Kegiatan dan Acara
+                        <span
+                            class="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600"
+                            >HMJTK</span
+                        >
                     </h3>
-                    <p class="text-responsive text-gray-600">
+                    <p
+                        class="text-lg text-gray-600 animate-fade-in"
+                        style="animation-delay: 0.3s"
+                    >
                         Temukan berbagai kegiatan menarik yang diselenggarakan
                         oleh HMJTK Polban
                     </p>
                 </div>
 
-                <!-- Debug Info -->
-                <div class="text-center mb-8">
-                    <p>Total Events: {{ events.length }}</p>
-                </div>
-
-                <!-- Carousel -->
-                <div class="max-w-6xl mx-auto">
-                    <Carousel
-                        v-if="events.length > 0"
-                        :autoplay="3000"
-                        :items-to-show="1.5"
-                        :wrap-around="true"
-                        :mouseDrag="true"
-                        :touchDrag="true"
-                        :snapAlign="'center'"
-                    >
-                        <Slide v-for="event in events" :key="event.id">
-                            <div class="carousel__item px-2">
-                                <div
-                                    class="relative h-[500px] rounded-xl overflow-hidden transition-all duration-300"
-                                >
-                                    <img
-                                        :src="event.event_flyer"
-                                        :alt="event.event_name"
-                                        class="w-full h-full object-cover"
-                                    />
-
-                                    <!-- Gradient Overlay -->
-                                    <div
-                                        class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent"
-                                    ></div>
-
-                                    <!-- Content -->
-                                    <div
-                                        class="absolute bottom-0 left-0 right-0 p-8 text-white"
-                                    >
-                                        <h4 class="text-2xl font-bold mb-3">
-                                            {{ event.event_name }}
-                                        </h4>
-                                        <p class="text-gray-200 line-clamp-3">
-                                            {{ event.event_detail }}
-                                        </p>
-
+                <div class="grid grid-cols-12 gap-4 md:gap-8">
+                    <!-- Carousel Column -->
+                    <div class="col-span-12 lg:col-span-9">
+                        <div
+                            class="bg-white rounded-3xl p-4 shadow-xl shadow-blue-100/50"
+                        >
+                            <Carousel
+                                v-if="events.length > 0"
+                                :autoplay="3000"
+                                :items-to-show="1.5"
+                                :wrap-around="true"
+                                :mouseDrag="true"
+                                :touchDrag="true"
+                                :snapAlign="'center'"
+                                class="carousel-container"
+                            >
+                                <Slide v-for="event in events" :key="event.id">
+                                    <div class="carousel__item">
                                         <div
-                                            class="mt-4 flex items-center gap-4"
+                                            class="relative h-[400px] md:h-[500px] rounded-2xl overflow-hidden"
                                         >
-                                            <span
-                                                class="bg-blue-600 px-4 py-1 rounded-full text-sm"
+                                            <!-- Image -->
+                                            <img
+                                                :src="event.event_flyer"
+                                                :alt="event.event_name"
+                                                class="w-full h-full object-cover"
+                                            />
+
+                                            <!-- Gradient Overlay -->
+                                            <div
+                                                class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent"
+                                            ></div>
+
+                                            <!-- Content -->
+                                            <div
+                                                class="absolute bottom-0 left-0 right-0 p-6 md:p-8"
                                             >
-                                                {{ event.fee_type }}
-                                            </span>
-                                            <Link
-                                                :href="`/events/${event.id}`"
-                                                class="inline-flex items-center text-blue-400 hover:text-blue-300 transition-colors"
-                                            >
-                                                Selengkapnya
-                                                <svg
-                                                    class="w-4 h-4 ml-2"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    viewBox="0 0 24 24"
-                                                >
-                                                    <path
-                                                        stroke-linecap="round"
-                                                        stroke-linejoin="round"
-                                                        stroke-width="2"
-                                                        d="M9 5l7 7-7 7"
-                                                    />
-                                                </svg>
-                                            </Link>
+                                                <div class="space-y-4">
+                                                    <!-- Badge -->
+                                                    <span
+                                                        class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-600 text-white"
+                                                    >
+                                                        {{
+                                                            event.fee_type ===
+                                                            "free"
+                                                                ? "Gratis"
+                                                                : "Berbayar"
+                                                        }}
+                                                    </span>
+
+                                                    <!-- Title -->
+                                                    <h4
+                                                        class="text-2xl md:text-3xl font-bold text-white"
+                                                    >
+                                                        {{ event.event_name }}
+                                                    </h4>
+
+                                                    <!-- Description -->
+                                                    <p
+                                                        class="text-gray-300 line-clamp-3 text-base md:text-lg"
+                                                    >
+                                                        {{ event.event_detail }}
+                                                    </p>
+
+                                                    <!-- Button -->
+                                                    <div
+                                                        class="flex items-center gap-4 pt-2"
+                                                    >
+                                                        <Link
+                                                            :href="`/events/${event.id}`"
+                                                            class="inline-flex items-center px-6 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-all duration-300"
+                                                        >
+                                                            Selengkapnya
+                                                            <svg
+                                                                class="w-5 h-5 ml-2"
+                                                                fill="none"
+                                                                stroke="currentColor"
+                                                                viewBox="0 0 24 24"
+                                                            >
+                                                                <path
+                                                                    stroke-linecap="round"
+                                                                    stroke-linejoin="round"
+                                                                    stroke-width="2"
+                                                                    d="M9 5l7 7-7 7"
+                                                                />
+                                                            </svg>
+                                                        </Link>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                        </Slide>
+                                </Slide>
 
-                        <template #addons>
-                            <Navigation />
-                            <Pagination />
-                        </template>
-                    </Carousel>
+                                <template #addons>
+                                    <Navigation />
+                                    <Pagination />
+                                </template>
+                            </Carousel>
+                        </div>
+                    </div>
+
+                    <!-- CTA Column -->
+                    <div class="col-span-12 lg:col-span-3 flex items-center">
+                        <div
+                            class="w-full h-full bg-gradient-to-br from-blue-600 to-indigo-600 p-8 rounded-3xl shadow-xl relative overflow-hidden group"
+                        >
+                            <!-- Decorative circles -->
+                            <div
+                                class="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"
+                            ></div>
+                            <div
+                                class="absolute -bottom-20 -left-20 w-60 h-60 bg-blue-400/10 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700"
+                            ></div>
+
+                            <div class="relative space-y-8">
+                                <!-- Icon Container -->
+                                <div
+                                    class="h-20 w-20 bg-white/10 backdrop-blur-xl rounded-2xl flex items-center justify-center transform group-hover:rotate-12 transition-transform duration-300"
+                                >
+                                    <svg
+                                        class="w-10 h-10 text-white"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                                        />
+                                    </svg>
+                                </div>
+
+                                <div class="space-y-4">
+                                    <h4 class="text-2xl font-bold text-white">
+                                        Jelajahi Semua Event
+                                    </h4>
+                                    <p class="text-blue-100">
+                                        Temukan lebih banyak event menarik yang
+                                        diselenggarakan oleh HMJTK Polban
+                                    </p>
+                                </div>
+
+                                <Link
+                                    href="/events"
+                                    class="inline-flex items-center justify-center w-full px-6 py-3 text-base font-medium text-blue-600 bg-white rounded-xl hover:bg-blue-50 transition-all duration-300 transform hover:scale-105 shadow-lg"
+                                >
+                                    Lihat Semua Event
+                                    <svg
+                                        class="w-5 h-5 ml-2"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M14 5l7 7m0 0l-7 7m7-7H3"
+                                        />
+                                    </svg>
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -324,34 +418,33 @@ onMounted(() => {
 </template>
 
 <style scoped>
+:deep(.carousel__viewport) {
+    @apply rounded-2xl;
+}
+
+:deep(.carousel__track) {
+    @apply rounded-2xl;
+}
+
 :deep(.carousel__slide) {
-    padding: 1px;
-    opacity: 0.5;
+    @apply rounded-2xl;
+    opacity: 0.4;
+    filter: blur(3px);
     transform: scale(0.9);
-    transition: all 0.3s ease;
-    filter: blur(2px);
+    transition: all 0.5s ease;
 }
 
 :deep(.carousel__slide--active) {
     opacity: 1;
-    transform: scale(1);
     filter: blur(0);
-}
-
-:deep(.carousel__viewport) {
-    perspective: 2000px;
-}
-
-:deep(.carousel__track) {
-    transform-style: preserve-3d;
+    transform: scale(1.05);
 }
 
 :deep(.carousel__prev),
 :deep(.carousel__next) {
-    background-color: rgba(255, 255, 255, 0.2);
-    border-radius: 50%;
-    width: 48px;
-    height: 48px;
+    @apply bg-white/20 backdrop-blur-sm rounded-full;
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -359,46 +452,58 @@ onMounted(() => {
     top: 50%;
     transform: translateY(-50%);
     cursor: pointer;
-    transition: all 0.3s;
-    backdrop-filter: blur(4px);
+    z-index: 20;
 }
 
 :deep(.carousel__prev) {
-    left: 10px;
+    left: 1rem;
 }
 
 :deep(.carousel__next) {
-    right: 10px;
-}
-
-:deep(.carousel__prev:hover),
-:deep(.carousel__next:hover) {
-    background-color: rgba(255, 255, 255, 0.3);
-    transform: translateY(-50%) scale(1.1);
+    right: 1rem;
 }
 
 :deep(.carousel__pagination) {
-    padding: 1rem 0;
+    @apply mt-4;
 }
 
 :deep(.carousel__pagination-button) {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    margin: 0 4px;
-    background-color: rgba(255, 255, 255, 0.3);
-    transition: all 0.3s;
+    @apply w-2 h-2 mx-1 rounded-full bg-gray-300 transition-all duration-300;
 }
 
 :deep(.carousel__pagination-button--active) {
-    background-color: rgb(37, 99, 235);
-    transform: scale(1.2);
+    @apply bg-blue-600 scale-110;
 }
 
+/* Tambahkan style untuk container */
+.carousel-container {
+    @apply relative z-10;
+    padding: 20px 0;
+}
+
+/* Tambahkan style untuk item */
 .carousel__item {
-    width: 100%;
-    height: 100%;
-    position: relative;
+    @apply transition-all duration-500;
+}
+
+/* Optional: Tambahkan hover effect */
+.carousel__slide--active .carousel__item {
+    @apply shadow-2xl;
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fade-in 0.6s ease-out forwards;
 }
 </style>
 
