@@ -324,7 +324,6 @@ const props = defineProps({
 
                                 <template #addons>
                                     <Navigation />
-                                    <Pagination />
                                 </template>
                             </Carousel>
                         </div>
@@ -463,30 +462,15 @@ const props = defineProps({
     right: 1rem;
 }
 
-:deep(.carousel__pagination) {
-    @apply mt-4;
-}
-
-:deep(.carousel__pagination-button) {
-    @apply w-2 h-2 mx-1 rounded-full bg-gray-300 transition-all duration-300;
-}
-
-:deep(.carousel__pagination-button--active) {
-    @apply bg-blue-600 scale-110;
-}
-
-/* Tambahkan style untuk container */
 .carousel-container {
     @apply relative z-10;
     padding: 20px 0;
 }
 
-/* Tambahkan style untuk item */
 .carousel__item {
     @apply transition-all duration-500;
 }
 
-/* Optional: Tambahkan hover effect */
 .carousel__slide--active .carousel__item {
     @apply shadow-2xl;
 }
