@@ -1,14 +1,26 @@
 <script setup>
 import GuestLayout from "@/Layouts/GuestLayout.vue";
 import { Link } from "@inertiajs/vue3";
+import "vue3-carousel/dist/carousel.css";
+import { Carousel, Slide, Pagination, Navigation } from "vue3-carousel";
+import { onMounted } from "vue";
 
-defineProps({
+const props = defineProps({
     canLogin: Boolean,
     canRegister: Boolean,
     aboutUs: {
         type: Object,
         required: true,
     },
+    events: {
+        type: Array,
+        default: () => [],
+    },
+});
+
+onMounted(() => {
+    console.log("Events length:", props.events.length);
+    console.log("First event:", props.events[0]);
 });
 </script>
 
@@ -190,48 +202,105 @@ defineProps({
             </div>
         </section>
 
-        <!-- Features Section -->
+        <!-- Events Section -->
         <section class="py-20 bg-white">
             <div class="container-custom">
                 <div class="text-center max-w-3xl mx-auto mb-16">
                     <h2 class="text-blue-600 font-semibold text-lg mb-4">
-                        Our Features
+                        Event Terbaru
                     </h2>
                     <h3
                         class="text-3xl md:text-4xl font-bold text-gray-900 mb-6"
                     >
-                        Empowering Change Through Innovation
+                        Kegiatan dan Acara HMJTK
                     </h3>
                     <p class="text-responsive text-gray-600">
-                        Discover how we're making a difference with cutting-edge
-                        solutions and collaborative approaches.
+                        Temukan berbagai kegiatan menarik yang diselenggarakan
+                        oleh HMJTK Polban
                     </p>
                 </div>
 
-                <div
-                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-                >
-                    <!-- Feature Cards -->
-                    <div
-                        v-for="(feature, index) in 3"
-                        :key="index"
-                        class="feature-card group"
+                <!-- Debug Info -->
+                <div class="text-center mb-8">
+                    <p>Total Events: {{ events.length }}</p>
+                </div>
+
+                <!-- Carousel -->
+                <div class="max-w-6xl mx-auto">
+                    <Carousel
+                        v-if="events.length > 0"
+                        :autoplay="3000"
+                        :items-to-show="1.5"
+                        :wrap-around="true"
+                        :mouseDrag="true"
+                        :touchDrag="true"
+                        :snapAlign="'center'"
                     >
-                        <div class="h-48 mb-6 overflow-hidden rounded-xl">
-                            <img
-                                src="https://images.unsplash.com/photo-1749731630653-d9b3f00573ed?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                                alt="Feature Image"
-                                class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
-                            />
-                        </div>
-                        <h4 class="text-xl font-semibold text-gray-900 mb-3">
-                            Feature Title
-                        </h4>
-                        <p class="text-gray-600">
-                            Description of the feature and its benefits to
-                            users.
-                        </p>
-                    </div>
+                        <Slide v-for="event in events" :key="event.id">
+                            <div class="carousel__item px-2">
+                                <div
+                                    class="relative h-[500px] rounded-xl overflow-hidden transition-all duration-300"
+                                >
+                                    <img
+                                        :src="event.event_flyer"
+                                        :alt="event.event_name"
+                                        class="w-full h-full object-cover"
+                                    />
+
+                                    <!-- Gradient Overlay -->
+                                    <div
+                                        class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent"
+                                    ></div>
+
+                                    <!-- Content -->
+                                    <div
+                                        class="absolute bottom-0 left-0 right-0 p-8 text-white"
+                                    >
+                                        <h4 class="text-2xl font-bold mb-3">
+                                            {{ event.event_name }}
+                                        </h4>
+                                        <p class="text-gray-200 line-clamp-3">
+                                            {{ event.event_detail }}
+                                        </p>
+
+                                        <div
+                                            class="mt-4 flex items-center gap-4"
+                                        >
+                                            <span
+                                                class="bg-blue-600 px-4 py-1 rounded-full text-sm"
+                                            >
+                                                {{ event.fee_type }}
+                                            </span>
+                                            <Link
+                                                :href="`/events/${event.id}`"
+                                                class="inline-flex items-center text-blue-400 hover:text-blue-300 transition-colors"
+                                            >
+                                                Selengkapnya
+                                                <svg
+                                                    class="w-4 h-4 ml-2"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    viewBox="0 0 24 24"
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M9 5l7 7-7 7"
+                                                    />
+                                                </svg>
+                                            </Link>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </Slide>
+
+                        <template #addons>
+                            <Navigation />
+                            <Pagination />
+                        </template>
+                    </Carousel>
                 </div>
             </div>
         </section>
@@ -253,3 +322,88 @@ defineProps({
         </section>
     </GuestLayout>
 </template>
+
+<style scoped>
+:deep(.carousel__slide) {
+    padding: 1px;
+    opacity: 0.5;
+    transform: scale(0.9);
+    transition: all 0.3s ease;
+    filter: blur(2px);
+}
+
+:deep(.carousel__slide--active) {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+}
+
+:deep(.carousel__viewport) {
+    perspective: 2000px;
+}
+
+:deep(.carousel__track) {
+    transform-style: preserve-3d;
+}
+
+:deep(.carousel__prev),
+:deep(.carousel__next) {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    transition: all 0.3s;
+    backdrop-filter: blur(4px);
+}
+
+:deep(.carousel__prev) {
+    left: 10px;
+}
+
+:deep(.carousel__next) {
+    right: 10px;
+}
+
+:deep(.carousel__prev:hover),
+:deep(.carousel__next:hover) {
+    background-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-50%) scale(1.1);
+}
+
+:deep(.carousel__pagination) {
+    padding: 1rem 0;
+}
+
+:deep(.carousel__pagination-button) {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin: 0 4px;
+    background-color: rgba(255, 255, 255, 0.3);
+    transition: all 0.3s;
+}
+
+:deep(.carousel__pagination-button--active) {
+    background-color: rgb(37, 99, 235);
+    transform: scale(1.2);
+}
+
+.carousel__item {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+</style>
+
+<style>
+.container-custom {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+</style>
