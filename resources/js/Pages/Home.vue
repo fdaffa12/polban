@@ -118,12 +118,8 @@ defineProps({
                             HMJTK'25
                         </h3>
                         <!-- Decorative Lines -->
-                        <div
-                            class="absolute -left-16 top-1/2 w-12 h-0.5 bg-gradient-to-r from-transparent to-blue-600"
-                        ></div>
-                        <div
-                            class="absolute -right-16 top-1/2 w-12 h-0.5 bg-gradient-to-l from-transparent to-blue-600"
-                        ></div>
+                        <div class="about-title-line-left"></div>
+                        <div class="about-title-line-right"></div>
                     </div>
                     <p class="text-gray-600 text-lg max-w-2xl mx-auto">
                         Himpunan Mahasiswa Jurusan Teknik Komputer dan
@@ -137,9 +133,7 @@ defineProps({
                     <!-- Image Column -->
                     <div class="relative">
                         <!-- Decorative Border -->
-                        <div
-                            class="absolute -inset-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl opacity-20 blur-lg"
-                        ></div>
+                        <div class="about-image-glow"></div>
                         <div class="relative h-[400px]">
                             <img
                                 v-if="aboutUs.image"
@@ -162,9 +156,7 @@ defineProps({
                     <div class="space-y-8">
                         <div class="relative">
                             <!-- Decorative Line -->
-                            <div
-                                class="absolute -left-6 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-500 via-purple-500 to-pink-500 rounded-full"
-                            ></div>
+                            <div class="about-content-line"></div>
 
                             <h2
                                 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6"
@@ -177,10 +169,7 @@ defineProps({
                             ></div>
                         </div>
 
-                        <Link
-                            href="/about"
-                            class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-lg"
-                        >
+                        <Link href="/about" class="about-button">
                             Baca Selengkapnya
                             <svg
                                 class="w-5 h-5 ml-2"
@@ -264,30 +253,3 @@ defineProps({
         </section>
     </GuestLayout>
 </template>
-
-<style>
-.animate-blob {
-    animation: blob 7s infinite;
-}
-.animation-delay-2000 {
-    animation-delay: 2s;
-}
-.animation-delay-4000 {
-    animation-delay: 4s;
-}
-
-@keyframes blob {
-    0% {
-        transform: translate(0px, 0px) scale(1);
-    }
-    33% {
-        transform: translate(30px, -50px) scale(1.1);
-    }
-    66% {
-        transform: translate(-20px, 20px) scale(0.9);
-    }
-    100% {
-        transform: translate(0px, 0px) scale(1);
-    }
-}
-</style>

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -13,11 +13,15 @@
 }
 
 body {
-    font-family: 'Poppins', sans-serif;
+    font-family: "Poppins", sans-serif;
 }
 
 .hero-gradient {
-    background: linear-gradient(135deg, rgba(37,99,235,0.1) 0%, rgba(37,99,235,0.02) 100%);
+    background: linear-gradient(
+        135deg,
+        rgba(37, 99, 235, 0.1) 0%,
+        rgba(37, 99, 235, 0.02) 100%
+    );
 }
 
 .text-shadow {
@@ -30,12 +34,72 @@ body {
 
 /* Custom animations */
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .animate-fade-in {
     animation: fadeIn 0.8s ease-out forwards;
+}
+
+/* Blob Animation */
+@keyframes blob {
+    0% {
+        transform: translate(0px, 0px) scale(1);
+    }
+    33% {
+        transform: translate(30px, -50px) scale(1.1);
+    }
+    66% {
+        transform: translate(-20px, 20px) scale(0.9);
+    }
+    100% {
+        transform: translate(0px, 0px) scale(1);
+    }
+}
+
+.animate-blob {
+    animation: blob 7s infinite;
+}
+
+.animation-delay-2000 {
+    animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+    animation-delay: 4s;
+}
+
+/* About Section Styles */
+.about-title-line {
+    @apply absolute top-1/2 w-12 h-0.5;
+}
+
+.about-title-line-left {
+    @apply about-title-line -left-16 bg-gradient-to-r from-transparent to-blue-600;
+}
+
+.about-title-line-right {
+    @apply about-title-line -right-16 bg-gradient-to-l from-transparent to-blue-600;
+}
+
+.about-content-line {
+    @apply absolute -left-6 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-500 via-purple-500 to-pink-500 rounded-full;
+}
+
+.about-image-glow {
+    @apply absolute -inset-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl opacity-20 blur-lg;
+}
+
+.about-button {
+    @apply inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full 
+           hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-lg;
 }
 
 /* Responsive text utilities */
@@ -43,7 +107,7 @@ body {
     .text-responsive {
         @apply text-base md:text-lg lg:text-xl;
     }
-    
+
     .heading-responsive {
         @apply text-3xl md:text-4xl lg:text-5xl xl:text-6xl;
     }
@@ -57,7 +121,11 @@ body {
 
 /* Grid Pattern */
 .bg-grid-pattern {
-    background-image: radial-gradient(circle at 1px 1px, #2563eb 1px, transparent 0);
+    background-image: radial-gradient(
+        circle at 1px 1px,
+        #2563eb 1px,
+        transparent 0
+    );
     background-size: 40px 40px;
 }
 
