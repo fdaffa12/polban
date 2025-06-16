@@ -2,6 +2,7 @@ import "../css/app.css";
 import "./bootstrap";
 import Toast from "vue-toastification";
 import "vue-toastification/dist/index.css";
+import '../css/global.css';
 
 import { createInertiaApp } from "@inertiajs/vue3";
 import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
