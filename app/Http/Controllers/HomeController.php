@@ -6,26 +6,77 @@ use App\Models\AboutUs;
 use App\Models\Event;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
     public function index()
     {
         $aboutUs = AboutUs::first();
+        $today = now();
 
-        $events = Event::with('dates')
-            ->latest()
-            ->take(5)
+        // Ambil event yang sedang berjalan dan akan datang
+        $activeAndUpcomingEvents = Event::with('dates')
+            ->whereHas('dates', function ($query) use ($today) {
+                $query->where('event_date', '>=', $today->toDateString());
+            })
+            ->orderBy(function ($query) use ($today) {
+                // Custom ordering untuk memprioritaskan event yang sedang berjalan
+                $query->select(DB::raw('
+                    CASE 
+                        WHEN EXISTS (
+                            SELECT 1 FROM event_dates 
+                            WHERE event_dates.event_id = events.id 
+                            AND event_dates.event_date = "' . $today->toDateString() . '"
+                        ) THEN 1
+                        ELSE 2
+                    END
+                '));
+            })
+            ->take(3) // Ambil 3 event aktif/upcoming
             ->get();
 
-        $mappedEvents = $events->map(function ($event) {
+        // Jika slot masih tersisa, ambil event yang sudah selesai
+        $remainingSlots = 5 - $activeAndUpcomingEvents->count();
+        $pastEvents = collect();
+
+        if ($remainingSlots > 0) {
+            $pastEvents = Event::with('dates')
+                ->whereHas('dates', function ($query) use ($today) {
+                    $query->where('event_date', '<', $today->toDateString());
+                })
+                ->latest()
+                ->take($remainingSlots)
+                ->get();
+        }
+
+        // Gabungkan dan map events
+        $events = $activeAndUpcomingEvents->concat($pastEvents);
+
+        $mappedEvents = $events->map(function ($event) use ($today) {
+            $eventDates = $event->dates->sortBy('event_date');
+            $isOngoing = $eventDates->contains(function ($date) use ($today) {
+                return $date->event_date == $today->toDateString();
+            });
+
+            $firstDate = $eventDates->first();
+            $status = 'upcoming';
+
+            if ($isOngoing) {
+                $status = 'ongoing';
+            } elseif ($firstDate && $firstDate->event_date < $today->toDateString()) {
+                $status = 'past';
+            }
+
             return [
                 'id' => $event->id,
                 'event_name' => $event->event_name,
                 'event_detail' => Str::limit(strip_tags($event->event_detail), 150),
                 'fee_type' => $event->fee_type,
                 'event_flyer' => $event->event_flyer ? "/storage/{$event->event_flyer}" : null,
-                'dates' => $event->dates
+                'dates' => $event->dates,
+                'status' => $status,
+                'start_date' => $firstDate ? $firstDate->event_date : null,
             ];
         });
 

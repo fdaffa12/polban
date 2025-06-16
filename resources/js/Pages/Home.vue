@@ -266,17 +266,43 @@ const props = defineProps({
                                                 class="absolute bottom-0 left-0 right-0 p-6 md:p-8"
                                             >
                                                 <div class="space-y-4">
-                                                    <!-- Badge -->
-                                                    <span
-                                                        class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-600 text-white"
-                                                    >
-                                                        {{
-                                                            event.fee_type ===
-                                                            "free"
-                                                                ? "Gratis"
-                                                                : "Berbayar"
-                                                        }}
-                                                    </span>
+                                                    <!-- Status Badge -->
+                                                    <div class="flex gap-2">
+                                                        <span
+                                                            class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium"
+                                                            :class="{
+                                                                'bg-green-600 text-white':
+                                                                    event.status ===
+                                                                    'ongoing',
+                                                                'bg-blue-600 text-white':
+                                                                    event.status ===
+                                                                    'upcoming',
+                                                                'bg-gray-600 text-white':
+                                                                    event.status ===
+                                                                    'past',
+                                                            }"
+                                                        >
+                                                            {{
+                                                                event.status ===
+                                                                "ongoing"
+                                                                    ? "Sedang Berlangsung"
+                                                                    : event.status ===
+                                                                      "upcoming"
+                                                                    ? "Akan Datang"
+                                                                    : "Selesai"
+                                                            }}
+                                                        </span>
+                                                        <span
+                                                            class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-600 text-white"
+                                                        >
+                                                            {{
+                                                                event.fee_type ===
+                                                                "free"
+                                                                    ? "Gratis"
+                                                                    : "Berbayar"
+                                                            }}
+                                                        </span>
+                                                    </div>
 
                                                     <!-- Title -->
                                                     <h4
@@ -284,6 +310,26 @@ const props = defineProps({
                                                     >
                                                         {{ event.event_name }}
                                                     </h4>
+
+                                                    <!-- Date -->
+                                                    <p
+                                                        class="text-blue-200 text-sm"
+                                                    >
+                                                        {{
+                                                            new Date(
+                                                                event.start_date
+                                                            ).toLocaleDateString(
+                                                                "id-ID",
+                                                                {
+                                                                    weekday:
+                                                                        "long",
+                                                                    year: "numeric",
+                                                                    month: "long",
+                                                                    day: "numeric",
+                                                                }
+                                                            )
+                                                        }}
+                                                    </p>
 
                                                     <!-- Description -->
                                                     <p
