@@ -444,16 +444,22 @@ const props = defineProps({
                                 <!-- Event Info -->
                                 <div class="space-y-3">
                                     <!-- Department Name -->
-                                    <h3 class="text-3xl font-bold text-white group-hover:text-blue-100 transition-colors duration-300">
+                                    <h3
+                                        class="text-3xl font-bold text-white group-hover:text-blue-100 transition-colors duration-300"
+                                    >
                                         {{ featuredEvent.department.name }}
                                     </h3>
-                                    
+
                                     <!-- Event Title -->
-                                    <h4 class="text-xl font-medium text-white/90 line-clamp-2 group-hover:text-blue-100 transition-colors duration-300">
+                                    <h4
+                                        class="text-xl font-medium text-white/90 line-clamp-2 group-hover:text-blue-100 transition-colors duration-300"
+                                    >
                                         {{ featuredEvent.event_name }}
                                     </h4>
 
-                                    <div class="flex items-center space-x-2 text-blue-200 text-sm">
+                                    <div
+                                        class="flex items-center space-x-2 text-blue-200 text-sm"
+                                    >
                                         <svg
                                             class="w-4 h-4"
                                             fill="none"
@@ -592,73 +598,255 @@ const props = defineProps({
         </section>
 
         <!-- News Articles Section -->
-        <section class="py-20 bg-gradient-to-b from-white via-blue-50/30 to-white">
+        <section
+            class="py-20 bg-gradient-to-b from-white via-blue-50/30 to-white"
+        >
             <div class="container-custom">
                 <!-- Header Section -->
                 <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
-                    <h2 class="text-blue-600 font-semibold text-lg mb-4 animate-fade-in">
+                    <h2
+                        class="text-blue-600 font-semibold text-lg mb-4 animate-fade-in"
+                    >
                         Berita Terbaru
                     </h2>
-                    <h3 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight animate-fade-in"
-                        style="animation-delay: 0.2s">
+                    <h3
+                        class="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight animate-fade-in"
+                        style="animation-delay: 0.2s"
+                    >
                         Kabar dan Informasi
-                        <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">HMJTK</span>
+                        <span
+                            class="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600"
+                            >HMJTK</span
+                        >
                     </h3>
-                    <p class="text-lg text-gray-600 animate-fade-in" style="animation-delay: 0.3s">
-                        Temukan berita dan informasi terkini seputar HMJTK Polban
+                    <p
+                        class="text-lg text-gray-600 animate-fade-in"
+                        style="animation-delay: 0.3s"
+                    >
+                        Temukan berita dan informasi terkini seputar HMJTK
+                        Polban
                     </p>
                 </div>
 
                 <div class="grid grid-cols-12 gap-4 md:gap-8">
+                    <!-- CTA Column -->
+                    <div class="col-span-12 lg:col-span-3 flex flex-col gap-4">
+                        <!-- View All Articles Card -->
+                        <div
+                            class="flex-grow bg-gradient-to-br from-blue-600 to-indigo-700 rounded-3xl p-6 text-white group hover:shadow-2xl hover:shadow-blue-200/50 transition-all duration-300 flex flex-col justify-between relative overflow-hidden"
+                        >
+                            <!-- Decorative Background Pattern -->
+                            <div
+                                class="absolute top-0 right-0 opacity-10 transform translate-x-8 -translate-y-8"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    class="w-32 h-32"
+                                    viewBox="0 0 24 24"
+                                    fill="currentColor"
+                                >
+                                    <path
+                                        d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"
+                                    />
+                                </svg>
+                            </div>
+
+                            <div class="relative z-10">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        class="w-8 h-8"
+                                        viewBox="0 0 24 24"
+                                        fill="currentColor"
+                                    >
+                                        <path
+                                            d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"
+                                        />
+                                    </svg>
+                                    <h3 class="text-2xl font-bold">
+                                        Artikel Terbaru
+                                    </h3>
+                                </div>
+
+                                <!-- Added Features Section -->
+                                <div class="space-y-4 mb-8">
+                                    <div class="flex items-start gap-3">
+                                        <svg
+                                            class="w-5 h-5 mt-1 text-blue-200"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                                            />
+                                        </svg>
+                                        <p class="text-sm text-blue-100">
+                                            Informasi terkini seputar kegiatan
+                                            dan prestasi HMJTK
+                                        </p>
+                                    </div>
+                                    <div class="flex items-start gap-3">
+                                        <svg
+                                            class="w-5 h-5 mt-1 text-blue-200"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M13 10V3L4 14h7v7l9-11h-7z"
+                                            />
+                                        </svg>
+                                        <p class="text-sm text-blue-100">
+                                            Update berkala tentang teknologi dan
+                                            inovasi terbaru
+                                        </p>
+                                    </div>
+                                    <div class="flex items-start gap-3">
+                                        <svg
+                                            class="w-5 h-5 mt-1 text-blue-200"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                                            />
+                                        </svg>
+                                        <p class="text-sm text-blue-100">
+                                            Artikel diperbarui secara rutin
+                                            setiap minggu
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white/10 rounded-lg p-3 mb-6">
+                                    <p class="text-sm text-blue-100 italic">
+                                        "Tetap terhubung dengan perkembangan
+                                        terkini di HMJTK melalui artikel-artikel
+                                        informatif kami"
+                                    </p>
+                                </div>
+                            </div>
+
+                            <Link
+                                href="/articles"
+                                class="relative z-10 inline-flex items-center justify-center px-6 py-3 rounded-xl bg-white text-blue-600 hover:bg-blue-50 transition-colors duration-300 font-semibold group-hover:shadow-lg"
+                            >
+                                <span>Lihat Semua Artikel</span>
+                                <svg
+                                    class="w-5 h-5 ml-2"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M14 5l7 7m0 0l-7 7m7-7H3"
+                                    />
+                                </svg>
+                            </Link>
+                        </div>
+                    </div>
                     <!-- News Carousel -->
                     <div class="col-span-12 lg:col-span-9">
-                        <div class="bg-white rounded-3xl p-4 shadow-xl shadow-blue-100/50">
-                            <Carousel v-if="newsArticles.length > 0"
+                        <div
+                            class="bg-white rounded-3xl p-4 shadow-xl shadow-blue-100/50"
+                        >
+                            <Carousel
+                                v-if="newsArticles.length > 0"
                                 :autoplay="3000"
                                 :items-to-show="1.5"
                                 :wrap-around="true"
                                 :mouseDrag="true"
                                 :touchDrag="true"
                                 :snapAlign="'center'"
-                                class="carousel-container">
-                                <Slide v-for="article in newsArticles" :key="article.id">
+                                class="carousel-container"
+                            >
+                                <Slide
+                                    v-for="article in newsArticles"
+                                    :key="article.id"
+                                >
                                     <div class="carousel__item">
-                                        <div class="relative h-[400px] md:h-[500px] rounded-2xl overflow-hidden">
+                                        <div
+                                            class="relative h-[400px] md:h-[500px] rounded-2xl overflow-hidden"
+                                        >
                                             <!-- Image -->
-                                            <img :src="article.featured_image"
+                                            <img
+                                                :src="article.featured_image"
                                                 :alt="article.title"
-                                                class="w-full h-full object-cover" />
+                                                class="w-full h-full object-cover"
+                                            />
 
                                             <!-- Gradient Overlay -->
-                                            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent"></div>
+                                            <div
+                                                class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent"
+                                            ></div>
 
                                             <!-- Content -->
-                                            <div class="absolute bottom-0 left-0 right-0 p-6 md:p-8">
+                                            <div
+                                                class="absolute bottom-0 left-0 right-0 p-6 md:p-8"
+                                            >
                                                 <div class="space-y-4">
                                                     <!-- Date & Author -->
-                                                    <div class="flex items-center gap-2 text-blue-200 text-sm">
-                                                        <span>{{ article.created_at }}</span>
+                                                    <div
+                                                        class="flex items-center gap-2 text-blue-200 text-sm"
+                                                    >
+                                                        <span>{{
+                                                            article.created_at
+                                                        }}</span>
                                                         <span>•</span>
-                                                        <span>{{ article.author }}</span>
+                                                        <span>{{
+                                                            article.author
+                                                        }}</span>
                                                     </div>
 
                                                     <!-- Title -->
-                                                    <h4 class="text-2xl md:text-3xl font-bold text-white">
+                                                    <h4
+                                                        class="text-2xl md:text-3xl font-bold text-white"
+                                                    >
                                                         {{ article.title }}
                                                     </h4>
 
                                                     <!-- Description -->
-                                                    <p class="text-gray-300 line-clamp-3 text-base md:text-lg">
+                                                    <p
+                                                        class="text-gray-300 line-clamp-3 text-base md:text-lg"
+                                                    >
                                                         {{ article.content }}
                                                     </p>
 
                                                     <!-- Button -->
-                                                    <div class="flex items-center gap-4 pt-2">
-                                                        <Link :href="`/articles/${article.id}`"
-                                                            class="inline-flex items-center px-6 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-all duration-300">
+                                                    <div
+                                                        class="flex items-center gap-4 pt-2"
+                                                    >
+                                                        <Link
+                                                            :href="`/articles/${article.id}`"
+                                                            class="inline-flex items-center px-6 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-all duration-300"
+                                                        >
                                                             Baca Selengkapnya
-                                                            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                                            <svg
+                                                                class="w-5 h-5 ml-2"
+                                                                fill="none"
+                                                                stroke="currentColor"
+                                                                viewBox="0 0 24 24"
+                                                            >
+                                                                <path
+                                                                    stroke-linecap="round"
+                                                                    stroke-linejoin="round"
+                                                                    stroke-width="2"
+                                                                    d="M9 5l7 7-7 7"
+                                                                />
                                                             </svg>
                                                         </Link>
                                                     </div>
@@ -669,27 +857,9 @@ const props = defineProps({
                                 </Slide>
                                 <template #addons>
                                     <Navigation />
-                                    <Pagination />
+                                    <!-- Removed Pagination component -->
                                 </template>
                             </Carousel>
-                        </div>
-                    </div>
-
-                    <!-- CTA Column -->
-                    <div class="col-span-12 lg:col-span-3 flex flex-col gap-4">
-                        <!-- View All Articles Card -->
-                        <div class="flex-grow bg-gradient-to-br from-blue-600 to-indigo-700 rounded-3xl p-6 text-white group hover:shadow-2xl hover:shadow-blue-200/50 transition-all duration-300 flex flex-col justify-between">
-                            <div>
-                                <h3 class="text-2xl font-bold mb-4">Artikel Terbaru</h3>
-                                <p class="text-blue-100 mb-6">Temukan berbagai artikel menarik dari HMJTK Polban</p>
-                            </div>
-                            
-                            <Link href="/articles" class="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-white text-blue-600 hover:bg-blue-50 transition-colors duration-300 font-semibold group-hover:shadow-lg">
-                                Lihat Semua Artikel
-                                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                                </svg>
-                            </Link>
                         </div>
                     </div>
                 </div>
