@@ -23,63 +23,55 @@ const setActiveImage = (index) => {
         <Head title="Lentera Restorasi" />
 
         <!-- Hero Section -->
-        <section
-            class="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-[var(--color-primary-dark)] via-[var(--color-primary)] to-[var(--color-secondary)]"
-        >
-            <!-- Animated Background Elements -->
-            <div class="absolute inset-0 overflow-hidden">
-                <!-- Gradient Overlay -->
-                <div
-                    class="absolute inset-0 bg-gradient-to-b from-black/10 to-black/30"
-                ></div>
+        <section class="py-12 bg-white">
+            <div class="container-custom">
+                <div class="grid grid-cols-12 gap-8">
+                    <!-- Text Content -->
+                    <div class="col-span-12 md:col-span-6 space-y-8">
+                        <div class="space-y-4">
+                            <h1
+                                class="text-4xl md:text-5xl font-bold text-[var(--text-color)] leading-tight"
+                            >
+                                Lentera Restorasi
+                                <span
+                                    class="block text-xl md:text-2xl font-light text-[var(--light-text)] mt-2"
+                                >
+                                    HMJTK Polban
+                                </span>
+                            </h1>
+                            <div
+                                class="w-20 h-1 bg-[var(--color-primary)]"
+                            ></div>
+                        </div>
 
-                <!-- Animated Shapes -->
-                <div class="absolute top-0 left-0 w-full h-full">
-                    <div
-                        class="animate-blob filter blur-3xl opacity-30 bg-[var(--color-secondary)] absolute top-1/4 -left-4 w-72 h-72 rounded-full mix-blend-multiply"
-                    ></div>
-                    <div
-                        class="animate-blob animation-delay-2000 filter blur-3xl opacity-30 bg-[var(--color-primary-dark)] absolute top-1/2 -right-4 w-72 h-72 rounded-full mix-blend-multiply"
-                    ></div>
-                    <div
-                        class="animate-blob animation-delay-4000 filter blur-3xl opacity-30 bg-[var(--color-primary)] absolute bottom-1/4 left-1/2 w-72 h-72 rounded-full mix-blend-multiply"
-                    ></div>
-                </div>
+                        <div class="prose prose-lg max-w-none">
+                            <p class="mb-4 text-[var(--light-text)]">
+                                The center or core of an activity or
+                                organization. The centrum is often the focal
+                                point or source of everything that happens
+                                around it.
+                            </p>
+                            <p class="mb-4 text-[var(--light-text)]">
+                                Elaboration is a further explanation of the
+                                objectives, work plans or strategies that will
+                                be implemented. Elaboration ensures that
+                                information submitted is complete, clear and can
+                                be understood by all parties involved,
+                                especially HIMATEKK ITS members.
+                            </p>
+                            <p class="italic text-[var(--light-text)]">
+                                It is hoped that Himatekk ITS can develop more
+                                advanced in the future with ocean-wide
+                                elaboration among ITS FT-IRS Chemical
+                                Engineering students so that the existence of
+                                this organization can be felt in all aspects of
+                                its benefits.
+                            </p>
+                        </div>
+                    </div>
 
-                <!-- Grid Pattern -->
-                <div class="absolute inset-0 bg-grid-pattern opacity-20"></div>
-            </div>
-
-            <!-- Content -->
-            <div class="container-custom relative z-10">
-                <div
-                    class="max-w-4xl mx-auto text-center space-y-8 animate-fade-in px-4"
-                >
-                    <span
-                        class="inline-block text-white/90 font-medium text-lg md:text-2xl tracking-wider mb-4"
-                    >
-                        Welcome to
-                    </span>
-                    <h1
-                        class="text-5xl md:text-7xl lg:text-8xl font-bold text-white leading-tight tracking-tight"
-                    >
-                        Lentera Restorasi
-                        <span
-                            class="block mt-4 text-2xl md:text-3xl font-light text-white/90 tracking-wide"
-                        >
-                            HMJTK Polban
-                        </span>
-                    </h1>
-                    <p
-                        class="text-lg md:text-xl text-white/80 max-w-2xl mx-auto font-light"
-                    >
-                        Menyinari Jalan Menuju Perubahan
-                    </p>
-
-                    <!-- Decorative Line -->
-                    <div
-                        class="w-32 h-1 bg-white/30 mx-auto rounded-full mt-8"
-                    ></div>
+                    <!-- Empty space for the right side -->
+                    <div class="hidden md:block md:col-span-6"></div>
                 </div>
             </div>
         </section>
