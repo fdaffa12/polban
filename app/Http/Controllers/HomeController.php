@@ -55,16 +55,14 @@ class HomeController extends Controller
 
         $mappedEvents = $events->map(function ($event) use ($today) {
             $eventDates = $event->dates->sortBy('event_date');
-            $isOngoing = $eventDates->contains(function ($date) use ($today) {
-                return $date->event_date == $today->toDateString();
-            });
-
             $firstDate = $eventDates->first();
+            $lastDate = $eventDates->last();
+            
+            // Determine status based on event dates
             $status = 'upcoming';
-
-            if ($isOngoing) {
+            if ($firstDate->event_date <= $today->toDateString() && $lastDate->event_date >= $today->toDateString()) {
                 $status = 'ongoing';
-            } elseif ($firstDate && $firstDate->event_date < $today->toDateString()) {
+            } elseif ($lastDate->event_date < $today->toDateString()) {
                 $status = 'past';
             }
 
@@ -77,6 +75,7 @@ class HomeController extends Controller
                 'dates' => $event->dates,
                 'status' => $status,
                 'start_date' => $firstDate ? $firstDate->event_date : null,
+                'end_date' => $lastDate && $lastDate->event_date != $firstDate->event_date ? $lastDate->event_date : null
             ];
         });
 

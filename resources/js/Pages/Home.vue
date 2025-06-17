@@ -312,22 +312,26 @@ const props = defineProps({
                                                     </h4>
 
                                                     <!-- Date -->
-                                                    <p
-                                                        class="text-blue-200 text-sm"
-                                                    >
-                                                        {{
-                                                            new Date(
-                                                                event.start_date
-                                                            ).toLocaleDateString(
-                                                                "id-ID",
-                                                                {
-                                                                    weekday:
-                                                                        "long",
-                                                                    year: "numeric",
-                                                                    month: "long",
-                                                                    day: "numeric",
-                                                                }
-                                                            )
+                                                    <p class="text-blue-200 text-sm">
+                                                        {{ 
+                                                            event.end_date ?
+                                                            `${new Date(event.start_date).toLocaleDateString('id-ID', {
+                                                                weekday: 'long',
+                                                                year: 'numeric',
+                                                                month: 'long',
+                                                                day: 'numeric'
+                                                            })} - ${new Date(event.end_date).toLocaleDateString('id-ID', {
+                                                                weekday: 'long',
+                                                                year: 'numeric',
+                                                                month: 'long',
+                                                                day: 'numeric'
+                                                            })}` :
+                                                            new Date(event.start_date).toLocaleDateString('id-ID', {
+                                                                weekday: 'long',
+                                                                year: 'numeric',
+                                                                month: 'long',
+                                                                day: 'numeric'
+                                                            })
                                                         }}
                                                     </p>
 
