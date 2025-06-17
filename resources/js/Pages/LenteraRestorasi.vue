@@ -1,0 +1,473 @@
+<script setup>
+import GuestLayout from "@/Layouts/GuestLayout.vue";
+import { Head } from "@inertiajs/vue3";
+import { Carousel, Slide, Navigation, Pagination } from "vue3-carousel";
+import "vue3-carousel/dist/carousel.css";
+
+const props = defineProps({
+    content: {
+        type: Object,
+        required: true,
+    },
+});
+</script>
+
+<template>
+    <GuestLayout title="Lentera Restorasi">
+        <Head title="Lentera Restorasi" />
+
+        <!-- Hero Section -->
+        <section
+            class="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-[var(--color-primary-dark)] via-[var(--color-primary)] to-[var(--color-secondary)]"
+        >
+            <!-- Animated Background Elements -->
+            <div class="absolute inset-0 overflow-hidden">
+                <!-- Gradient Overlay -->
+                <div
+                    class="absolute inset-0 bg-gradient-to-b from-black/10 to-black/30"
+                ></div>
+
+                <!-- Animated Shapes -->
+                <div class="absolute top-0 left-0 w-full h-full">
+                    <div
+                        class="animate-blob filter blur-3xl opacity-30 bg-[var(--color-secondary)] absolute top-1/4 -left-4 w-72 h-72 rounded-full mix-blend-multiply"
+                    ></div>
+                    <div
+                        class="animate-blob animation-delay-2000 filter blur-3xl opacity-30 bg-[var(--color-primary-dark)] absolute top-1/2 -right-4 w-72 h-72 rounded-full mix-blend-multiply"
+                    ></div>
+                    <div
+                        class="animate-blob animation-delay-4000 filter blur-3xl opacity-30 bg-[var(--color-primary)] absolute bottom-1/4 left-1/2 w-72 h-72 rounded-full mix-blend-multiply"
+                    ></div>
+                </div>
+
+                <!-- Grid Pattern -->
+                <div class="absolute inset-0 bg-grid-pattern opacity-20"></div>
+            </div>
+
+            <!-- Content -->
+            <div class="container-custom relative z-10">
+                <div
+                    class="max-w-4xl mx-auto text-center space-y-8 animate-fade-in px-4"
+                >
+                    <span
+                        class="inline-block text-white/90 font-medium text-lg md:text-2xl tracking-wider mb-4"
+                    >
+                        Welcome to
+                    </span>
+                    <h1
+                        class="text-5xl md:text-7xl lg:text-8xl font-bold text-white leading-tight tracking-tight"
+                    >
+                        Lentera Restorasi
+                        <span
+                            class="block mt-4 text-2xl md:text-3xl font-light text-white/90 tracking-wide"
+                        >
+                            HMJTK Polban
+                        </span>
+                    </h1>
+                    <p
+                        class="text-lg md:text-xl text-white/80 max-w-2xl mx-auto font-light"
+                    >
+                        Menyinari Jalan Menuju Perubahan
+                    </p>
+
+                    <!-- Decorative Line -->
+                    <div
+                        class="w-32 h-1 bg-white/30 mx-auto rounded-full mt-8"
+                    ></div>
+                </div>
+            </div>
+
+            <!-- Scroll Indicator -->
+            <div
+                class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce"
+            >
+                <svg
+                    class="w-6 h-6 text-white/60"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M19 14l-7 7m0 0l-7-7m7 7V3"
+                    />
+                </svg>
+            </div>
+        </section>
+
+        <!-- Vision & Mission Section -->
+        <section
+            class="py-20 bg-gradient-to-b from-white to-[var(--color-background)]/10"
+        >
+            <div class="container-custom">
+                <div class="max-w-7xl mx-auto">
+                    <div class="text-center max-w-3xl mx-auto mb-20 space-y-4">
+                        <span
+                            class="text-[var(--color-primary)] font-medium text-lg tracking-wide"
+                        >
+                            Our Vision & Mission
+                        </span>
+                        <h2
+                            class="text-4xl md:text-5xl font-bold text-[var(--text-color)] leading-tight"
+                        >
+                            Visi & Misi Kami
+                        </h2>
+                        <div
+                            class="w-20 h-1 bg-[var(--color-primary)] mx-auto mt-6 rounded-full"
+                        ></div>
+                    </div>
+
+                    <!-- Combined Vision & Mission Carousel -->
+                    <div class="max-w-5xl mx-auto">
+                        <Carousel
+                            :items-to-show="1"
+                            :wrap-around="true"
+                            :transition="500"
+                            :autoplay="0"
+                            class="vision-mission-carousel"
+                        >
+                            <!-- Vision Slide First -->
+                            <Slide
+                                v-for="(vision, index) in content.visions"
+                                :key="`vision-${index}`"
+                            >
+                                <div class="px-4">
+                                    <div
+                                        class="bg-white/50 backdrop-blur-sm p-8 md:p-12 rounded-2xl shadow-lg border border-white/20"
+                                    >
+                                        <div
+                                            class="flex items-center justify-center mb-6"
+                                        >
+                                            <span
+                                                class="text-[var(--color-primary)] font-semibold text-xl"
+                                            >
+                                                Visi
+                                            </span>
+                                        </div>
+                                        <p
+                                            class="text-[var(--light-text)] text-lg md:text-xl leading-relaxed text-center"
+                                            v-html="vision.content"
+                                        ></p>
+                                    </div>
+                                </div>
+                            </Slide>
+
+                            <!-- Mission Slides -->
+                            <Slide
+                                v-for="(mission, index) in content.missions"
+                                :key="`mission-${mission.id}`"
+                            >
+                                <div class="px-4">
+                                    <div
+                                        class="bg-white/50 backdrop-blur-sm p-8 md:p-12 rounded-2xl shadow-lg border border-white/20"
+                                    >
+                                        <div
+                                            class="flex items-center justify-center mb-6"
+                                        >
+                                            <span
+                                                class="text-[var(--color-primary)] font-semibold text-xl"
+                                            >
+                                                Misi {{ index + 1 }}
+                                            </span>
+                                        </div>
+                                        <p
+                                            class="text-[var(--light-text)] text-lg md:text-xl leading-relaxed text-center"
+                                            v-html="mission.content"
+                                        ></p>
+                                    </div>
+                                </div>
+                            </Slide>
+
+                            <template #addons>
+                                <Navigation />
+                                <Pagination />
+                            </template>
+                        </Carousel>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Core Values Section -->
+        <section class="py-20 bg-[var(--color-background)]/5">
+            <div class="container-custom">
+                <div class="text-center max-w-3xl mx-auto mb-20 space-y-4">
+                    <span
+                        class="text-[var(--color-primary)] font-medium text-lg tracking-wide"
+                    >
+                        Our Principles
+                    </span>
+                    <h2
+                        class="text-4xl md:text-5xl font-bold text-[var(--text-color)] leading-tight"
+                    >
+                        Core Values
+                    </h2>
+                    <div
+                        class="w-20 h-1 bg-[var(--color-primary)] mx-auto mt-6 rounded-full"
+                    ></div>
+                </div>
+
+                <div
+                    class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto"
+                >
+                    <div
+                        v-for="value in content.coreValues"
+                        :key="value.id"
+                        class="group p-8 rounded-2xl bg-white/50 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-500"
+                    >
+                        <h3
+                            class="text-2xl font-bold text-[var(--text-color)] mb-4"
+                        >
+                            {{ value.title }}
+                        </h3>
+                        <p
+                            class="text-[var(--light-text)] leading-relaxed"
+                            v-html="value.description"
+                        ></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Gallery Section -->
+        <section class="py-20 bg-white">
+            <div class="container-custom">
+                <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                    <span
+                        class="text-[var(--color-primary)] font-medium text-lg tracking-wide"
+                    >
+                        Our Gallery
+                    </span>
+                    <h2
+                        class="text-4xl md:text-5xl font-bold text-[var(--text-color)] leading-tight"
+                    >
+                        Moments & Memories
+                    </h2>
+                    <div
+                        class="w-20 h-1 bg-[var(--color-primary)] mx-auto mt-6 rounded-full"
+                    ></div>
+                </div>
+
+                <div class="max-w-7xl mx-auto">
+                    <Carousel
+                        v-if="content.images?.length"
+                        :items-to-show="4"
+                        :wrap-around="true"
+                        :transition="500"
+                        :autoplay="3000"
+                        :breakpoints="{
+                            320: {
+                                itemsToShow: 1,
+                                snapAlign: 'center',
+                            },
+                            640: {
+                                itemsToShow: 2,
+                                snapAlign: 'center',
+                            },
+                            768: {
+                                itemsToShow: 3,
+                                snapAlign: 'center',
+                            },
+                            1024: {
+                                itemsToShow: 4,
+                                snapAlign: 'center',
+                            },
+                        }"
+                        class="gallery-carousel"
+                    >
+                        <Slide
+                            v-for="image in content.images"
+                            :key="image.id"
+                            class="px-3"
+                        >
+                            <div
+                                class="relative aspect-[4/5] rounded-2xl overflow-hidden group"
+                            >
+                                <img
+                                    :src="image.image"
+                                    :alt="image.title"
+                                    class="w-full h-full object-cover transform transition duration-700 group-hover:scale-110"
+                                />
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"
+                                >
+                                    <div
+                                        class="absolute bottom-0 left-0 right-0 p-6"
+                                    >
+                                        <h4
+                                            class="text-white font-medium text-lg"
+                                        >
+                                            {{ image.title }}
+                                        </h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </Slide>
+
+                        <template #addons>
+                            <Navigation />
+                        </template>
+                    </Carousel>
+                </div>
+            </div>
+        </section>
+    </GuestLayout>
+</template>
+
+<style scoped>
+/* Copy the same carousel and animation styles from AboutUs.vue */
+.gallery-carousel :deep(.carousel__slide) {
+    @apply transform transition-all duration-700;
+    opacity: 0.6;
+    scale: 0.95;
+}
+
+.gallery-carousel :deep(.carousel__slide--active) {
+    @apply shadow-2xl;
+    opacity: 1;
+    scale: 1;
+}
+
+.gallery-carousel :deep(.carousel__prev),
+.gallery-carousel :deep(.carousel__next) {
+    @apply bg-white/90 backdrop-blur-sm rounded-full p-2 md:p-3 shadow-xl 
+           transition-all duration-300 hover:scale-110;
+    width: 40px;
+    height: 40px;
+    @screen md {
+        width: 48px;
+        height: 48px;
+    }
+}
+
+/* Vision & Mission Carousel Styles */
+.vision-carousel :deep(.carousel__slide),
+.mission-carousel :deep(.carousel__slide) {
+    @apply transform transition-all duration-700;
+    opacity: 0.6;
+    scale: 0.95;
+}
+
+.vision-carousel :deep(.carousel__slide--active),
+.mission-carousel :deep(.carousel__slide--active) {
+    @apply shadow-2xl;
+    opacity: 1;
+    scale: 1;
+}
+
+.vision-carousel :deep(.carousel__prev),
+.vision-carousel :deep(.carousel__next),
+.mission-carousel :deep(.carousel__prev),
+.mission-carousel :deep(.carousel__next) {
+    @apply bg-white/90 backdrop-blur-sm rounded-full p-2 md:p-3 shadow-xl 
+           transition-all duration-300 hover:scale-110;
+    width: 40px;
+    height: 40px;
+    @screen md {
+        width: 48px;
+        height: 48px;
+    }
+}
+
+.vision-carousel :deep(.carousel__pagination),
+.mission-carousel :deep(.carousel__pagination) {
+    @apply mt-8;
+}
+
+.vision-carousel :deep(.carousel__pagination-button),
+.mission-carousel :deep(.carousel__pagination-button) {
+    @apply w-3 h-3 rounded-full bg-gray-300 transition-all duration-300;
+}
+
+.vision-carousel :deep(.carousel__pagination-button--active),
+.mission-carousel :deep(.carousel__pagination-button--active) {
+    @apply bg-[var(--color-primary)] scale-125;
+}
+
+/* Hero Section Animations */
+@keyframes blob {
+    0%,
+    100% {
+        transform: translate(0, 0) scale(1);
+    }
+    25% {
+        transform: translate(20px, -30px) scale(1.1);
+    }
+    50% {
+        transform: translate(-20px, 20px) scale(0.9);
+    }
+    75% {
+        transform: translate(30px, 30px) scale(1.1);
+    }
+}
+
+.animate-blob {
+    animation: blob 10s infinite;
+}
+
+.animation-delay-2000 {
+    animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+    animation-delay: 4s;
+}
+
+.bg-grid-pattern {
+    background-size: 20px 20px;
+    background-image: linear-gradient(
+            to right,
+            rgba(255, 255, 255, 0.1) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            to bottom,
+            rgba(255, 255, 255, 0.1) 1px,
+            transparent 1px
+        );
+}
+
+/* Responsive navigation buttons */
+:deep(.carousel__prev),
+:deep(.carousel__next) {
+    @apply bg-white/90 backdrop-blur-sm rounded-full shadow-lg;
+    width: 36px;
+    height: 36px;
+
+    @screen sm {
+        width: 40px;
+        height: 40px;
+    }
+
+    @screen md {
+        width: 44px;
+        height: 44px;
+    }
+}
+
+:deep(.carousel__prev) {
+    @apply -left-2 md:-left-4 lg:-left-6;
+}
+
+:deep(.carousel__next) {
+    @apply -right-2 md:-right-4 lg:-right-6;
+}
+
+/* Responsive styles */
+@keyframes fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fade-in 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+</style>

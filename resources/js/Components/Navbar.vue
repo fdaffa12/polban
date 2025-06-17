@@ -8,25 +8,25 @@ const activitiesDropdownOpen = ref(false);
 
 // Update mobile menu items structure
 const mobileMenuItems = [
-    { text: 'Home', href: '/' },
-    { 
-        text: 'About',
-        dropdown: true,
-        items: [
-            { text: 'Lentera Restorasi', href: '/lentera-restorasi' },
-            { text: 'About Us', href: '/about' }
-        ]
-    },
-    { text: 'Department', href: '/department' },
-    { text: 'News', href: '/news' },
+    { text: "Home", href: "/" },
     {
-        text: 'Activities',
+        text: "About",
         dropdown: true,
         items: [
-            { text: 'Events', href: '/events' },
-            { text: 'Calendar Event', href: '/calendar' }
-        ]
-    }
+            { text: "Lentera Restorasi", href: "/ruang-optima" },
+            { text: "About Us", href: "/about" },
+        ],
+    },
+    { text: "Department", href: "/department" },
+    { text: "News", href: "/news" },
+    {
+        text: "Activities",
+        dropdown: true,
+        items: [
+            { text: "Events", href: "/events" },
+            { text: "Calendar Event", href: "/calendar" },
+        ],
+    },
 ];
 
 // Add state for mobile dropdowns
@@ -103,7 +103,7 @@ const toggleMobileDropdown = (index) => {
                         >
                             <div class="py-1">
                                 <Link
-                                    href="/lentera-restorasi"
+                                    href="/ruang-optima"
                                     class="block px-4 py-2 text-sm text-[var(--text-color)] hover:bg-[var(--color-background)] hover:text-[var(--color-primary)]"
                                 >
                                     Lentera Restorasi
@@ -211,7 +211,10 @@ const toggleMobileDropdown = (index) => {
         </div>
 
         <!-- Mobile Menu -->
-        <div v-show="isOpen" class="md:hidden bg-white border-t border-[var(--color-primary)]/10">
+        <div
+            v-show="isOpen"
+            class="md:hidden bg-white border-t border-[var(--color-primary)]/10"
+        >
             <div class="px-2 pt-2 pb-3 space-y-1">
                 <!-- Iterate through mobile menu items -->
                 <div v-for="(item, index) in mobileMenuItems" :key="index">
@@ -234,7 +237,10 @@ const toggleMobileDropdown = (index) => {
                             <span>{{ item.text }}</span>
                             <svg
                                 class="w-4 h-4 ml-2"
-                                :class="{ 'transform rotate-180': mobileDropdowns[index] }"
+                                :class="{
+                                    'transform rotate-180':
+                                        mobileDropdowns[index],
+                                }"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"

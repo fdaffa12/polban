@@ -10,6 +10,11 @@ use Inertia\Inertia;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use App\Models\Department;
+use App\Models\LenteraRestorasiVision;
+use App\Models\LenteraRestorasiMission;
+use App\Models\LenteraRestorasiCoreValue;
+use App\Models\LenteraRestorasiImage;
+use App\Models\LenteraRestorasiContent;
 
 class HomeController extends Controller
 {
@@ -199,6 +204,51 @@ class HomeController extends Controller
                     : [],
                 'au_values' => $aboutUs->au_values,
                 'history' => $aboutUs->history,
+            ]
+        ]);
+    }
+
+    public function lenteraRestorasi()
+    {
+        $visions = LenteraRestorasiVision::all();
+        $missions = LenteraRestorasiMission::all();
+        $coreValues = LenteraRestorasiCoreValue::all();
+        $images = LenteraRestorasiImage::all();
+        $content = LenteraRestorasiContent::first();
+
+        return Inertia::render('LenteraRestorasi', [
+            'content' => [
+                'title' => 'KABINET LENTERA RESTORASI',
+                'description' => $content ? nl2br($content->description) : '',
+                'visions' => $visions->map(function($vision) {
+                    return [
+                        'id' => $vision->id,
+                        'content' => nl2br($vision->vision)
+                    ];
+                }),
+                'missions' => $missions->map(function($mission, $index) {
+                    return [
+                        'id' => $mission->id,
+                        'content' => nl2br($mission->mission)
+                    ];
+                }),
+                'coreValues' => $coreValues->map(function($value) {
+                    return [
+                        'id' => $value->id,
+                        'title' => $value->title,
+                        'description' => nl2br($value->description)
+                    ];
+                }),
+                'images' => $images->map(function($image) {
+                    return [
+                        'id' => $image->id,
+                        'title' => $image->title,
+                        'image' => $image->image ? asset('storage/' . $image->image) : null
+                    ];
+                }),
+                'au_multiple_image' => collect($images)->pluck('image')->map(function($image) {
+                    return asset('storage/' . $image);
+                })->toArray()
             ]
         ]);
     }
