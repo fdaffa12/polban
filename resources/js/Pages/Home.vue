@@ -16,6 +16,10 @@ const props = defineProps({
         type: Array,
         default: () => [],
     },
+    featuredEvent: {
+        type: Object,
+        default: null
+    }
 });
 </script>
 
@@ -380,25 +384,48 @@ const props = defineProps({
                     </div>
 
                     <!-- CTA Column -->
-                    <div class="col-span-12 lg:col-span-3 flex items-center">
-                        <div
-                            class="w-full h-full bg-gradient-to-br from-blue-600 to-indigo-600 p-8 rounded-3xl shadow-xl relative overflow-hidden group"
-                        >
-                            <!-- Decorative circles -->
-                            <div
-                                class="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"
-                            ></div>
-                            <div
-                                class="absolute -bottom-20 -left-20 w-60 h-60 bg-blue-400/10 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700"
-                            ></div>
+                    <div class="col-span-12 lg:col-span-3 flex flex-col gap-4">
+                        <!-- Featured Event Card -->
+                        <div v-if="featuredEvent" class="w-full bg-gradient-to-br from-purple-600 to-blue-600 p-6 rounded-3xl shadow-xl relative overflow-hidden group hover:shadow-2xl transition-all duration-300">
+                            <!-- Decorative Elements -->
+                            <div class="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
+                            <div class="absolute -bottom-20 -left-20 w-60 h-60 bg-purple-400/10 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700"></div>
 
-                            <div class="relative space-y-8">
-                                <!-- Icon Container -->
-                                <div
-                                    class="h-20 w-20 bg-white/10 backdrop-blur-xl rounded-2xl flex items-center justify-center transform group-hover:rotate-12 transition-transform duration-300"
+                            <div class="relative space-y-4">
+                                <!-- Status Badges -->
+                                <div class="flex flex-wrap gap-2">
+                                    <div class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium" :class="featuredEvent.is_upcoming ? 'bg-green-500/30 text-green-100' : 'bg-blue-500/30 text-blue-100'">
+                                        {{ featuredEvent.is_upcoming ? 'Event Mendatang' : 'Event Terakhir' }}
+                                    </div>
+                                    <div class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-white/20 text-white backdrop-blur-sm">
+                                        {{ featuredEvent.department.name }}
+                                    </div>
+                                </div>
+
+                                <!-- Event Info -->
+                                <div class="space-y-3">
+                                    <div class="flex items-center space-x-2 text-blue-200 text-sm">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        </svg>
+                                        <span>
+                                            {{ new Date(featuredEvent.start_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long' }) }}
+                                            {{ featuredEvent.end_date ? ' - ' + new Date(featuredEvent.end_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long' }) : '' }}
+                                        </span>
+                                    </div>
+                                    <h4 class="text-2xl font-bold text-white line-clamp-2 group-hover:text-blue-100 transition-colors duration-300">
+                                        {{ featuredEvent.event_name }}
+                                    </h4>
+                                </div>
+
+                                <!-- Action Button -->
+                                <Link
+                                    :href="`/events/${featuredEvent.id}`"
+                                    class="inline-flex items-center px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white backdrop-blur-sm transition-all duration-300 group-hover:scale-105 hover:shadow-lg"
                                 >
+                                    Lihat Detail
                                     <svg
-                                        class="w-10 h-10 text-white"
+                                        class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-300"
                                         fill="none"
                                         stroke="currentColor"
                                         viewBox="0 0 24 24"
@@ -407,8 +434,32 @@ const props = defineProps({
                                             stroke-linecap="round"
                                             stroke-linejoin="round"
                                             stroke-width="2"
-                                            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                                            d="M9 5l7 7-7 7"
                                         />
+                                    </svg>
+                                </Link>
+                            </div>
+                        </div>
+                        <div v-else class="w-full bg-gradient-to-br from-gray-600 to-gray-700 p-6 rounded-3xl shadow-xl relative overflow-hidden">
+                            <div class="text-center text-white">
+                                <svg class="w-12 h-12 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                                <p class="text-lg font-medium">Tidak ada event saat ini</p>
+                            </div>
+                        </div>
+
+                        <!-- Explore All Events Card -->
+                        <div class="w-full bg-gradient-to-br from-blue-600 to-indigo-600 p-8 rounded-3xl shadow-xl relative overflow-hidden group">
+                            <!-- Decorative circles -->
+                            <div class="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
+                            <div class="absolute -bottom-20 -left-20 w-60 h-60 bg-blue-400/10 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700"></div>
+
+                            <div class="relative space-y-8">
+                                <!-- Icon Container -->
+                                <div class="h-20 w-20 bg-white/10 backdrop-blur-xl rounded-2xl flex items-center justify-center transform group-hover:rotate-12 transition-transform duration-300">
+                                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                     </svg>
                                 </div>
 
@@ -417,28 +468,14 @@ const props = defineProps({
                                         Jelajahi Semua Event
                                     </h4>
                                     <p class="text-blue-100">
-                                        Temukan lebih banyak event menarik yang
-                                        diselenggarakan oleh HMJTK Polban
+                                        Temukan lebih banyak event menarik yang diselenggarakan oleh HMJTK Polban
                                     </p>
                                 </div>
 
-                                <Link
-                                    href="/events"
-                                    class="inline-flex items-center justify-center w-full px-6 py-3 text-base font-medium text-blue-600 bg-white rounded-xl hover:bg-blue-50 transition-all duration-300 transform hover:scale-105 shadow-lg"
-                                >
+                                <Link href="/events" class="inline-flex items-center justify-center w-full px-6 py-3 text-base font-medium text-blue-600 bg-white rounded-xl hover:bg-blue-50 transition-all duration-300 transform hover:scale-105 shadow-lg">
                                     Lihat Semua Event
-                                    <svg
-                                        class="w-5 h-5 ml-2"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            stroke-width="2"
-                                            d="M14 5l7 7m0 0l-7 7m7-7H3"
-                                        />
+                                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
                                     </svg>
                                 </Link>
                             </div>

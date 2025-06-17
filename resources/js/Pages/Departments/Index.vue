@@ -250,7 +250,9 @@ const filteredDepartments = computed(() => {
                             >
                                 <div class="flex-1">
                                     <div class="flex items-center gap-4">
-                                        <div class="w-16 h-16 rounded-lg overflow-hidden">
+                                        <div
+                                            class="w-16 h-16 rounded-lg overflow-hidden"
+                                        >
                                             <img
                                                 v-if="department.image"
                                                 :src="`/storage/${department.image}`"
@@ -368,7 +370,10 @@ const filteredDepartments = computed(() => {
                 <form @submit.prevent="submitDepartment" class="mt-6">
                     <div class="space-y-4">
                         <div>
-                            <InputLabel for="dept_name" value="Department Name" />
+                            <InputLabel
+                                for="dept_name"
+                                value="Department Name"
+                            />
                             <TextInput
                                 id="dept_name"
                                 v-model="departmentForm.dept_name"
@@ -383,11 +388,17 @@ const filteredDepartments = computed(() => {
                         </div>
 
                         <div>
-                            <InputLabel for="dept_image" value="Department Image" />
+                            <InputLabel
+                                for="dept_image"
+                                value="Department Image"
+                            />
                             <input
                                 type="file"
                                 id="dept_image"
-                                @input="departmentForm.image = $event.target.files[0]"
+                                @input="
+                                    departmentForm.image =
+                                        $event.target.files[0]
+                                "
                                 accept="image/*"
                                 class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                                 :required="!editingDepartment"
