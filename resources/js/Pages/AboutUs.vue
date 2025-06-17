@@ -60,7 +60,7 @@ const props = defineProps({
 
         <!-- About & Gallery Section -->
         <section
-            class="py-32 bg-gradient-to-b from-white to-[var(--color-background)]/10"
+            class="py-16 bg-gradient-to-b from-white to-[var(--color-background)]/10"
         >
             <div class="container-custom">
                 <!-- About Content -->
@@ -161,7 +161,7 @@ const props = defineProps({
         </section>
 
         <!-- History & Values Section -->
-        <section class="py-4 bg-[var(--color-background)]/5">
+        <section class="py-16 bg-[var(--color-background)]/5">
             <div class="container-custom">
                 <!-- Center Title -->
                 <div class="text-center max-w-3xl mx-auto mb-20 space-y-4">
