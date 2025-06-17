@@ -88,26 +88,49 @@ const props = defineProps({
                 </div>
 
                 <!-- Gallery -->
-                <div class="max-w-7xl mx-auto">
-                    <!-- Add Gallery Title -->
+                <div class="max-w-7xl mx-auto mb-20">
+                    <!-- Gallery Title -->
                     <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
-                        <span class="text-[var(--color-primary)] font-medium text-lg tracking-wide">
+                        <span
+                            class="text-[var(--color-primary)] font-medium text-lg tracking-wide"
+                        >
                             Our Gallery
                         </span>
-                        <h2 class="text-4xl md:text-5xl font-bold text-[var(--text-color)] leading-tight">
+                        <h2
+                            class="text-4xl md:text-5xl font-bold text-[var(--text-color)] leading-tight"
+                        >
                             HMJTK Transformation
                         </h2>
-                        <div class="w-20 h-1 bg-[var(--color-primary)] mx-auto mt-6 rounded-full"></div>
+                        <div
+                            class="w-20 h-1 bg-[var(--color-primary)] mx-auto mt-6 rounded-full"
+                        ></div>
                     </div>
 
-                    <!-- Existing Carousel -->
+                    <!-- Responsive Carousel -->
                     <Carousel
                         v-if="about.au_multiple_image?.length"
                         :items-to-show="4"
+                        :breakpoints="{
+                            320: {
+                                itemsToShow: 1,
+                                snapAlign: 'center',
+                            },
+                            640: {
+                                itemsToShow: 2,
+                                snapAlign: 'center',
+                            },
+                            768: {
+                                itemsToShow: 3,
+                                snapAlign: 'center',
+                            },
+                            1024: {
+                                itemsToShow: 4,
+                                snapAlign: 'center',
+                            },
+                        }"
                         :wrap-around="true"
                         :transition="500"
                         :autoplay="3000"
-                        :snapAlign="'center'"
                         class="gallery-carousel"
                     >
                         <Slide
@@ -138,24 +161,33 @@ const props = defineProps({
         </section>
 
         <!-- History & Values Section -->
-        <section class="py-32 bg-[var(--color-background)]/5">
+        <section class="py-4 bg-[var(--color-background)]/5">
             <div class="container-custom">
                 <!-- Center Title -->
                 <div class="text-center max-w-3xl mx-auto mb-20 space-y-4">
-                    <span class="text-[var(--color-primary)] font-medium text-lg tracking-wide"
+                    <span
+                        class="text-[var(--color-primary)] font-medium text-lg tracking-wide"
                         >Discover Our Legacy</span
                     >
-                    <h2 class="text-4xl md:text-5xl font-bold text-[var(--text-color)] leading-tight">
+                    <h2
+                        class="text-4xl md:text-5xl font-bold text-[var(--text-color)] leading-tight"
+                    >
                         Our Journey & Core Values
                     </h2>
-                    <div class="w-20 h-1 bg-[var(--color-primary)] mx-auto mt-6 rounded-full"></div>
+                    <div
+                        class="w-20 h-1 bg-[var(--color-primary)] mx-auto mt-6 rounded-full"
+                    ></div>
                 </div>
 
                 <div class="grid md:grid-cols-2 gap-20">
                     <!-- History Column -->
-                    <div class="group hover:shadow-xl transition-all duration-500 space-y-8 backdrop-blur-sm bg-white/30 p-10 rounded-2xl shadow-lg border border-white/20">
+                    <div
+                        class="group hover:shadow-xl transition-all duration-500 space-y-8 backdrop-blur-sm bg-white/30 p-10 rounded-2xl shadow-lg border border-white/20"
+                    >
                         <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 rounded-full bg-[var(--color-primary)]/10 flex items-center justify-center">
+                            <div
+                                class="w-12 h-12 rounded-full bg-[var(--color-primary)]/10 flex items-center justify-center"
+                            >
                                 <svg
                                     class="w-6 h-6 text-[var(--color-primary)]"
                                     fill="none"
@@ -175,7 +207,9 @@ const props = defineProps({
                                     class="block text-[var(--color-primary)] font-medium text-sm tracking-wider"
                                     >Looking Back</span
                                 >
-                                <h2 class="text-2xl md:text-3xl font-bold text-[var(--text-color)]">
+                                <h2
+                                    class="text-2xl md:text-3xl font-bold text-[var(--text-color)]"
+                                >
                                     Our History
                                 </h2>
                             </div>
@@ -187,9 +221,13 @@ const props = defineProps({
                     </div>
 
                     <!-- Values Column -->
-                    <div class="group hover:shadow-xl transition-all duration-500 space-y-8 backdrop-blur-sm bg-white/30 p-10 rounded-2xl shadow-lg border border-white/20">
+                    <div
+                        class="group hover:shadow-xl transition-all duration-500 space-y-8 backdrop-blur-sm bg-white/30 p-10 rounded-2xl shadow-lg border border-white/20"
+                    >
                         <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 rounded-full bg-[var(--color-primary)]/10 flex items-center justify-center">
+                            <div
+                                class="w-12 h-12 rounded-full bg-[var(--color-primary)]/10 flex items-center justify-center"
+                            >
                                 <svg
                                     class="w-6 h-6 text-[var(--color-primary)]"
                                     fill="none"
@@ -209,7 +247,9 @@ const props = defineProps({
                                     class="block text-[var(--color-primary)] font-medium text-sm tracking-wider"
                                     >What Drives Us</span
                                 >
-                                <h2 class="text-2xl md:text-3xl font-bold text-[var(--text-color)]">
+                                <h2
+                                    class="text-2xl md:text-3xl font-bold text-[var(--text-color)]"
+                                >
                                     Our Values
                                 </h2>
                             </div>
@@ -240,10 +280,33 @@ const props = defineProps({
 
 .gallery-carousel :deep(.carousel__prev),
 .gallery-carousel :deep(.carousel__next) {
-    @apply bg-white/90 backdrop-blur-sm rounded-full p-3 shadow-xl 
+    @apply bg-white/90 backdrop-blur-sm rounded-full p-2 md:p-3 shadow-xl 
            transition-all duration-300 hover:scale-110;
-    width: 48px;
-    height: 48px;
+    width: 40px;
+    height: 40px;
+    @screen md {
+        width: 48px;
+        height: 48px;
+    }
+}
+
+/* Update carousel responsive styles */
+.gallery-carousel :deep(.carousel__viewport) {
+    @apply px-4;
+}
+
+/* Adjust navigation buttons position for mobile */
+.gallery-carousel :deep(.carousel__prev) {
+    @apply -left-2 md:-left-6;
+}
+
+.gallery-carousel :deep(.carousel__next) {
+    @apply -right-2 md:-right-6;
+}
+
+/* Adjust slide spacing for different screens */
+.gallery-carousel :deep(.carousel__slide) {
+    @apply px-2 md:px-3;
 }
 
 .prose {
