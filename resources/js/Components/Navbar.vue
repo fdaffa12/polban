@@ -1,6 +1,6 @@
 <script setup>
-import { ref } from "vue";
-import { Link } from "@inertiajs/vue3";
+import { ref, computed } from "vue";
+import { Link, usePage } from "@inertiajs/vue3";
 
 const isOpen = ref(false);
 const aboutDropdownOpen = ref(false);
@@ -55,6 +55,30 @@ const closeAllDropdowns = () => {
     aboutDropdownOpen.value = false;
     activitiesDropdownOpen.value = false;
 };
+
+// Add current route checking
+const page = usePage();
+const currentRoute = computed(() => page.url);
+
+// Update the active route checking functions
+const isActiveRoute = (path) => currentRoute.value === path;
+const isActiveParentRoute = (paths) => {
+    // Check if current route matches or starts with any of the paths
+    return paths.some(
+        (path) =>
+            currentRoute.value === path ||
+            currentRoute.value.startsWith(path + "/")
+    );
+};
+
+// Add computed properties for each section
+const isAboutActive = computed(() => {
+    return isActiveParentRoute(["/ruang-optima", "/about"]);
+});
+
+const isActivitiesActive = computed(() => {
+    return isActiveParentRoute(["/events", "/calendar"]);
+});
 </script>
 
 <template>
@@ -74,9 +98,14 @@ const closeAllDropdowns = () => {
 
                 <!-- Desktop Menu -->
                 <div class="hidden md:flex items-center space-x-8">
+                    <!-- Update Desktop Menu Links -->
                     <Link
                         href="/"
                         class="text-[var(--text-color)] hover:text-[var(--color-primary)] px-3 py-2 rounded-md text-sm font-medium"
+                        :class="{
+                            'text-[var(--color-primary)] font-semibold border-b-2 border-[var(--color-primary)]':
+                                isActiveRoute('/'),
+                        }"
                     >
                         Home
                     </Link>
@@ -85,7 +114,13 @@ const closeAllDropdowns = () => {
                     <div class="relative">
                         <button
                             @click="toggleAboutDropdown"
-                            class="text-[var(--text-color)] hover:text-[var(--color-primary)] px-3 py-2 rounded-md text-sm font-medium flex items-center"
+                            class="text-[var(--text-color)] hover:text-[var,--color-primary)] px-3 py-2 rounded-md text-sm font-medium flex items-center"
+                            :class="{
+                                'text-[var(--color-primary)] font-semibold':
+                                    isAboutActive,
+                                'border-b-2 border-[var(--color-primary)]':
+                                    isAboutActive,
+                            }"
                         >
                             About
                             <svg
@@ -112,13 +147,21 @@ const closeAllDropdowns = () => {
                             <div class="py-1">
                                 <Link
                                     href="/ruang-optima"
-                                    class="block px-4 py-2 text-sm text-[var(--text-color)] hover:bg-[var(--color-background)] hover:text-[var(--color-primary)]"
+                                    class="block px-4 py-2 text-sm text-[var(--text-color)] hover:bg-[var(--color-background)] hover:text-[var,--color-primary)]"
+                                    :class="{
+                                        'text-[var(--color-primary)] bg-[var(--color-background)]':
+                                            isActiveRoute('/ruang-optima'),
+                                    }"
                                 >
                                     Lentera Restorasi
                                 </Link>
                                 <Link
                                     href="/about"
                                     class="block px-4 py-2 text-sm text-[var(--text-color)] hover:bg-[var(--color-background)] hover:text-[var,--color-primary)]"
+                                    :class="{
+                                        'text-[var(--color-primary)] bg-[var(--color-background)]':
+                                            isActiveRoute('/about'),
+                                    }"
                                 >
                                     About Us
                                 </Link>
@@ -129,6 +172,10 @@ const closeAllDropdowns = () => {
                     <Link
                         href="/department"
                         class="text-[var(--text-color)] hover:text-[var,--color-primary)] px-3 py-2 rounded-md text-sm font-medium"
+                        :class="{
+                            'text-[var(--color-primary)] font-semibold border-b-2 border-[var(--color-primary)]':
+                                isActiveRoute('/department'),
+                        }"
                     >
                         Department
                     </Link>
@@ -136,6 +183,10 @@ const closeAllDropdowns = () => {
                     <Link
                         href="/news"
                         class="text-[var(--text-color)] hover:text-[var,--color-primary)] px-3 py-2 rounded-md text-sm font-medium"
+                        :class="{
+                            'text-[var(--color-primary)] font-semibold border-b-2 border-[var(--color-primary)]':
+                                isActiveRoute('/news'),
+                        }"
                     >
                         News
                     </Link>
@@ -145,6 +196,12 @@ const closeAllDropdowns = () => {
                         <button
                             @click="toggleActivitiesDropdown"
                             class="text-[var(--text-color)] hover:text-[var,--color-primary)] px-3 py-2 rounded-md text-sm font-medium flex items-center"
+                            :class="{
+                                'text-[var(--color-primary)] font-semibold':
+                                    isActivitiesActive,
+                                'border-b-2 border-[var(--color-primary)]':
+                                    isActivitiesActive,
+                            }"
                         >
                             Activities
                             <svg
@@ -173,12 +230,20 @@ const closeAllDropdowns = () => {
                                 <Link
                                     href="/events"
                                     class="block px-4 py-2 text-sm text-[var(--text-color)] hover:bg-[var(--color-background)] hover:text-[var,--color-primary)]"
+                                    :class="{
+                                        'text-[var(--color-primary)] bg-[var(--color-background)]':
+                                            isActiveRoute('/events'),
+                                    }"
                                 >
                                     Events
                                 </Link>
                                 <Link
                                     href="/calendar"
-                                    class="block px-4 py-2 text-sm text-[var(--text-color)] hover:bg-[var,--color-background)] hover:text-[var,--color-primary)]"
+                                    class="block px-4 py-2 text-sm text-[var,--color-primary)] hover:bg-[var,--color-background)] hover:text-[var,--color-primary)]"
+                                    :class="{
+                                        'text-[var(--color-primary)] bg-[var(--color-background)]':
+                                            isActiveRoute('/calendar'),
+                                    }"
                                 >
                                     Calendar Event
                                 </Link>
@@ -232,6 +297,10 @@ const closeAllDropdowns = () => {
                         <Link
                             :href="item.href"
                             class="block px-3 py-2 rounded-md text-base font-medium text-[var(--text-color)] hover:text-[var,--color-primary)] hover:bg-[var(--color-background)]"
+                            :class="{
+                                'text-[var(--color-primary)] bg-[var(--color-background)]':
+                                    isActiveRoute(item.href),
+                            }"
                         >
                             {{ item.text }}
                         </Link>
@@ -242,6 +311,12 @@ const closeAllDropdowns = () => {
                         <button
                             @click="toggleMobileDropdown(index)"
                             class="flex items-center justify-between w-full px-3 py-2 rounded-md text-base font-medium text-[var(--text-color)] hover:text-[var,--color-primary)] hover:bg-[var(--color-background)]"
+                            :class="{
+                                'text-[var(--color-primary)] bg-[var(--color-background)]':
+                                    (item.text === 'About' && isAboutActive) ||
+                                    (item.text === 'Activities' &&
+                                        isActivitiesActive),
+                            }"
                         >
                             <span>{{ item.text }}</span>
                             <svg
