@@ -209,23 +209,46 @@ const props = defineProps({
                     ></div>
                 </div>
 
-                <div
-                    class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto"
-                >
+                <div class="max-w-4xl mx-auto space-y-6">
                     <div
                         v-for="value in content.coreValues"
                         :key="value.id"
-                        class="group p-8 rounded-2xl bg-white/50 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-500"
+                        class="group p-8 md:p-10 rounded-2xl bg-white/50 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-500 border border-[var(--color-primary)]/10"
                     >
-                        <h3
-                            class="text-2xl font-bold text-[var(--text-color)] mb-4"
+                        <div
+                            class="flex flex-col md:flex-row md:items-start gap-6"
                         >
-                            {{ value.title }}
-                        </h3>
-                        <p
-                            class="text-[var(--light-text)] leading-relaxed"
-                            v-html="value.description"
-                        ></p>
+                            <div class="flex-shrink-0">
+                                <div
+                                    class="w-12 h-12 rounded-xl bg-[var(--color-primary)]/10 flex items-center justify-center group-hover:bg-[var(--color-primary)] transition-colors duration-500"
+                                >
+                                    <svg
+                                        class="w-6 h-6 text-[var(--color-primary)] group-hover:text-white transition-colors duration-500"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M5 13l4 4L19 7"
+                                        />
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="flex-grow space-y-4">
+                                <h3
+                                    class="text-2xl md:text-3xl font-bold text-[var(--text-color)]"
+                                >
+                                    {{ value.title }}
+                                </h3>
+                                <p
+                                    class="text-[var(--light-text)] text-lg leading-relaxed"
+                                    v-html="value.description"
+                                ></p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
