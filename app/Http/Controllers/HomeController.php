@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\AboutUs;
 use App\Models\Event;
+use App\Models\Article;
+use App\Models\Category;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
@@ -132,6 +134,30 @@ class HomeController extends Controller
             ];
         });
 
+        // Ambil kategori News
+        $newsCategory = Category::where('name', 'News')->first();
+        
+        // Ambil artikel dengan kategori News
+        $newsArticles = [];
+        if ($newsCategory) {
+            $newsArticles = Article::with(['category', 'user'])
+                ->where('category_id', $newsCategory->id)
+                ->where('status', 'publish')
+                ->latest()
+                ->take(5)
+                ->get()
+                ->map(function ($article) {
+                    return [
+                        'id' => $article->id,
+                        'title' => $article->title,
+                        'content' => Str::limit(strip_tags($article->content), 150),
+                        'featured_image' => $article->featured_image ? "/storage/{$article->featured_image}" : null,
+                        'created_at' => $article->created_at->format('d M Y'),
+                        'author' => $article->user->name,
+                    ];
+                });
+        }
+
         return Inertia::render('Home', [
             'canLogin' => true,
             'canRegister' => true,
@@ -141,7 +167,8 @@ class HomeController extends Controller
                 'image' => $aboutUs->au_image ? "/storage/{$aboutUs->au_image}" : null,
             ],
             'featuredEvent' => $featuredEvent,
-            'events' => $mappedEvents
+            'events' => $mappedEvents,
+            'newsArticles' => $newsArticles
         ]);
     }
 }

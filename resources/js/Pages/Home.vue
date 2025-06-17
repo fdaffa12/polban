@@ -20,6 +20,10 @@ const props = defineProps({
         type: Object,
         default: null,
     },
+    newsArticles: {
+        type: Array,
+        default: () => [],
+    },
 });
 </script>
 
@@ -587,18 +591,107 @@ const props = defineProps({
             </div>
         </section>
 
-        <!-- CTA Section -->
-        <section class="py-20 bg-blue-600">
+        <!-- News Articles Section -->
+        <section class="py-20 bg-gradient-to-b from-white via-blue-50/30 to-white">
             <div class="container-custom">
-                <div class="text-center text-white max-w-3xl mx-auto">
-                    <h2 class="text-3xl md:text-4xl font-bold mb-6">
-                        Ready to Start Your Journey?
+                <!-- Header Section -->
+                <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                    <h2 class="text-blue-600 font-semibold text-lg mb-4 animate-fade-in">
+                        Berita Terbaru
                     </h2>
-                    <p class="text-responsive text-blue-100 mb-8">
-                        Join us today and be part of the innovation that shapes
-                        tomorrow.
+                    <h3 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight animate-fade-in"
+                        style="animation-delay: 0.2s">
+                        Kabar dan Informasi
+                        <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">HMJTK</span>
+                    </h3>
+                    <p class="text-lg text-gray-600 animate-fade-in" style="animation-delay: 0.3s">
+                        Temukan berita dan informasi terkini seputar HMJTK Polban
                     </p>
-                    <a href="#" class="btn-white"> Get Started Now </a>
+                </div>
+
+                <div class="grid grid-cols-12 gap-4 md:gap-8">
+                    <!-- News Carousel -->
+                    <div class="col-span-12 lg:col-span-9">
+                        <div class="bg-white rounded-3xl p-4 shadow-xl shadow-blue-100/50">
+                            <Carousel v-if="newsArticles.length > 0"
+                                :autoplay="3000"
+                                :items-to-show="1.5"
+                                :wrap-around="true"
+                                :mouseDrag="true"
+                                :touchDrag="true"
+                                :snapAlign="'center'"
+                                class="carousel-container">
+                                <Slide v-for="article in newsArticles" :key="article.id">
+                                    <div class="carousel__item">
+                                        <div class="relative h-[400px] md:h-[500px] rounded-2xl overflow-hidden">
+                                            <!-- Image -->
+                                            <img :src="article.featured_image"
+                                                :alt="article.title"
+                                                class="w-full h-full object-cover" />
+
+                                            <!-- Gradient Overlay -->
+                                            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent"></div>
+
+                                            <!-- Content -->
+                                            <div class="absolute bottom-0 left-0 right-0 p-6 md:p-8">
+                                                <div class="space-y-4">
+                                                    <!-- Date & Author -->
+                                                    <div class="flex items-center gap-2 text-blue-200 text-sm">
+                                                        <span>{{ article.created_at }}</span>
+                                                        <span>•</span>
+                                                        <span>{{ article.author }}</span>
+                                                    </div>
+
+                                                    <!-- Title -->
+                                                    <h4 class="text-2xl md:text-3xl font-bold text-white">
+                                                        {{ article.title }}
+                                                    </h4>
+
+                                                    <!-- Description -->
+                                                    <p class="text-gray-300 line-clamp-3 text-base md:text-lg">
+                                                        {{ article.content }}
+                                                    </p>
+
+                                                    <!-- Button -->
+                                                    <div class="flex items-center gap-4 pt-2">
+                                                        <Link :href="`/articles/${article.id}`"
+                                                            class="inline-flex items-center px-6 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-all duration-300">
+                                                            Baca Selengkapnya
+                                                            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                                            </svg>
+                                                        </Link>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </Slide>
+                                <template #addons>
+                                    <Navigation />
+                                    <Pagination />
+                                </template>
+                            </Carousel>
+                        </div>
+                    </div>
+
+                    <!-- CTA Column -->
+                    <div class="col-span-12 lg:col-span-3 flex flex-col gap-4">
+                        <!-- View All Articles Card -->
+                        <div class="flex-grow bg-gradient-to-br from-blue-600 to-indigo-700 rounded-3xl p-6 text-white group hover:shadow-2xl hover:shadow-blue-200/50 transition-all duration-300 flex flex-col justify-between">
+                            <div>
+                                <h3 class="text-2xl font-bold mb-4">Artikel Terbaru</h3>
+                                <p class="text-blue-100 mb-6">Temukan berbagai artikel menarik dari HMJTK Polban</p>
+                            </div>
+                            
+                            <Link href="/articles" class="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-white text-blue-600 hover:bg-blue-50 transition-colors duration-300 font-semibold group-hover:shadow-lg">
+                                Lihat Semua Artikel
+                                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                </svg>
+                            </Link>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
