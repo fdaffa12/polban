@@ -88,23 +88,17 @@ const setActiveImage = (index) => {
         <section class="py-20 bg-white">
             <div class="container-custom">
                 <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
-                    <span
-                        class="text-[var(--color-primary)] font-medium text-lg tracking-wide"
-                    >
+                    <span class="text-[var(--color-primary)] font-medium text-lg tracking-wide">
                         Our Gallery
                     </span>
-                    <h2
-                        class="text-4xl md:text-5xl font-bold text-[var(--text-color)] leading-tight"
-                    >
+                    <h2 class="text-4xl md:text-5xl font-bold text-[var(--text-color)] leading-tight">
                         Moments & Memories
                     </h2>
-                    <div
-                        class="w-20 h-1 bg-[var(--color-primary)] mx-auto mt-6 rounded-full"
-                    ></div>
+                    <div class="w-20 h-1 bg-[var(--color-primary)] mx-auto mt-6 rounded-full"></div>
                 </div>
 
-                <div class="max-w-7xl mx-auto">
-                    <!-- Image Navigation -->
+                <div class="relative max-w-7xl mx-auto">
+                    <!-- Title Navigation -->
                     <div class="flex flex-wrap gap-4 mb-8 justify-center">
                         <button
                             v-for="(image, index) in content.images"
@@ -112,47 +106,57 @@ const setActiveImage = (index) => {
                             @click="setActiveImage(index)"
                             class="px-6 py-3 rounded-full transition-all duration-300 text-sm md:text-base font-medium"
                             :class="[
-                                activeImage === index
-                                    ? 'bg-[var(--color-primary)] text-white shadow-lg'
-                                    : 'bg-[var(--color-primary)]/5 text-[var(--color-primary)] hover:bg-[var(--color-primary)]/10',
+                                activeImage === index 
+                                    ? 'bg-[var(--color-primary)] text-white shadow-lg scale-110' 
+                                    : 'bg-[var(--color-primary)]/5 text-[var(--color-primary)] hover:bg-[var(--color-primary)]/10'
                             ]"
                         >
                             {{ image.title }}
                         </button>
                     </div>
 
-                    <!-- Images Grid -->
-                    <div
-                        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+                    <!-- Carousel -->
+                    <Carousel
+                        :items-to-show="3"
+                        :wrap-around="true"
+                        :transition="500"
+                        :snap-align="'center'"
+                        :modelValue="activeImage"
+                        @update:modelValue="setActiveImage"
+                        class="gallery-carousel"
                     >
-                        <div
+                        <Slide
                             v-for="(image, index) in content.images"
                             :key="image.id"
-                            class="relative aspect-[3/4] rounded-2xl overflow-hidden group cursor-pointer"
-                            :class="{
-                                'ring-4 ring-[var(--color-primary)] ring-offset-4':
-                                    activeImage === index,
-                            }"
-                            @click="setActiveImage(index)"
+                            class="px-3"
                         >
-                            <img
-                                :src="image.image"
-                                :alt="image.title"
-                                class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                            />
-                            <div
-                                class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"
+                            <div 
+                                class="relative aspect-[4/3] rounded-2xl overflow-hidden group cursor-pointer"
+                                @click="setActiveImage(index)"
                             >
-                                <div
-                                    class="absolute bottom-0 left-0 right-0 p-6 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500"
+                                <img
+                                    :src="image.image"
+                                    :alt="image.title"
+                                    class="w-full h-full object-cover transition-transform duration-700"
+                                    :class="{'scale-105': activeImage === index}"
+                                />
+                                <div 
+                                    class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"
+                                    :class="{'!opacity-100': activeImage === index}"
                                 >
-                                    <h4 class="text-white font-medium">
-                                        {{ image.title }}
-                                    </h4>
+                                    <div class="absolute bottom-0 left-0 right-0 p-6">
+                                        <h4 class="text-white font-medium text-lg md:text-xl">
+                                            {{ image.title }}
+                                        </h4>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
+                        </Slide>
+
+                        <template #addons>
+                            <Navigation />
+                        </template>
+                    </Carousel>
                 </div>
             </div>
         </section>
@@ -486,6 +490,65 @@ const setActiveImage = (index) => {
 /* Responsive adjustments */
 @media (max-width: 640px) {
     .container-custom {
+        @apply px-4;
+    }
+}
+
+/* Gallery Carousel Styles */
+.gallery-carousel :deep(.carousel__slide) {
+    @apply transform transition-all duration-500;
+    opacity: 0.4;
+    filter: blur(1px);
+    scale: 0.9;
+}
+
+.gallery-carousel :deep(.carousel__slide--active) {
+    opacity: 1;
+    filter: blur(0);
+    scale: 1;
+}
+
+.gallery-carousel :deep(.carousel__prev),
+.gallery-carousel :deep(.carousel__next) {
+    @apply bg-white/90 backdrop-blur-sm rounded-full shadow-lg border border-gray-100 
+           transition-all duration-300 hover:scale-110;
+    width: 40px;
+    height: 40px;
+}
+
+.gallery-carousel :deep(.carousel__prev) {
+    @apply -left-5 hover:-left-6;
+}
+
+.gallery-carousel :deep(.carousel__next) {
+    @apply -right-5 hover:-right-6;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .gallery-carousel :deep(.carousel__slide) {
+        opacity: 1;
+        filter: none;
+        scale: 1;
+    }
+    
+    .gallery-carousel :deep(.carousel__prev),
+    .gallery-carousel :deep(.carousel__next) {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .gallery-carousel :deep(.carousel__prev) {
+        @apply -left-4;
+    }
+    
+    .gallery-carousel :deep(.carousel__next) {
+        @apply -right-4;
+    }
+}
+
+@media (max-width: 640px) {
+    .gallery-carousel {
         @apply px-4;
     }
 }
