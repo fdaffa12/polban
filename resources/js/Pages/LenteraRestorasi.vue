@@ -3,6 +3,7 @@ import GuestLayout from "@/Layouts/GuestLayout.vue";
 import { Head } from "@inertiajs/vue3";
 import { Carousel, Slide, Navigation, Pagination } from "vue3-carousel";
 import "vue3-carousel/dist/carousel.css";
+import { ref } from "vue";
 
 const props = defineProps({
     content: {
@@ -10,6 +11,11 @@ const props = defineProps({
         required: true,
     },
 });
+
+const activeImage = ref(0);
+const setActiveImage = (index) => {
+    activeImage.value = index;
+};
 </script>
 
 <template>
@@ -76,24 +82,78 @@ const props = defineProps({
                     ></div>
                 </div>
             </div>
+        </section>
 
-            <!-- Scroll Indicator -->
-            <div
-                class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce"
-            >
-                <svg
-                    class="w-6 h-6 text-white/60"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M19 14l-7 7m0 0l-7-7m7 7V3"
-                    />
-                </svg>
+        <!-- Gallery Section -->
+        <section class="py-20 bg-white">
+            <div class="container-custom">
+                <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                    <span
+                        class="text-[var(--color-primary)] font-medium text-lg tracking-wide"
+                    >
+                        Our Gallery
+                    </span>
+                    <h2
+                        class="text-4xl md:text-5xl font-bold text-[var(--text-color)] leading-tight"
+                    >
+                        Moments & Memories
+                    </h2>
+                    <div
+                        class="w-20 h-1 bg-[var(--color-primary)] mx-auto mt-6 rounded-full"
+                    ></div>
+                </div>
+
+                <div class="max-w-7xl mx-auto">
+                    <!-- Image Navigation -->
+                    <div class="flex flex-wrap gap-4 mb-8 justify-center">
+                        <button
+                            v-for="(image, index) in content.images"
+                            :key="image.id"
+                            @click="setActiveImage(index)"
+                            class="px-6 py-3 rounded-full transition-all duration-300 text-sm md:text-base font-medium"
+                            :class="[
+                                activeImage === index
+                                    ? 'bg-[var(--color-primary)] text-white shadow-lg'
+                                    : 'bg-[var(--color-primary)]/5 text-[var(--color-primary)] hover:bg-[var(--color-primary)]/10',
+                            ]"
+                        >
+                            {{ image.title }}
+                        </button>
+                    </div>
+
+                    <!-- Images Grid -->
+                    <div
+                        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+                    >
+                        <div
+                            v-for="(image, index) in content.images"
+                            :key="image.id"
+                            class="relative aspect-[3/4] rounded-2xl overflow-hidden group cursor-pointer"
+                            :class="{
+                                'ring-4 ring-[var(--color-primary)] ring-offset-4':
+                                    activeImage === index,
+                            }"
+                            @click="setActiveImage(index)"
+                        >
+                            <img
+                                :src="image.image"
+                                :alt="image.title"
+                                class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                            />
+                            <div
+                                class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"
+                            >
+                                <div
+                                    class="absolute bottom-0 left-0 right-0 p-6 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500"
+                                >
+                                    <h4 class="text-white font-medium">
+                                        {{ image.title }}
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -253,89 +313,6 @@ const props = defineProps({
                 </div>
             </div>
         </section>
-
-        <!-- Gallery Section -->
-        <section class="py-20 bg-white">
-            <div class="container-custom">
-                <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
-                    <span
-                        class="text-[var(--color-primary)] font-medium text-lg tracking-wide"
-                    >
-                        Our Gallery
-                    </span>
-                    <h2
-                        class="text-4xl md:text-5xl font-bold text-[var(--text-color)] leading-tight"
-                    >
-                        Moments & Memories
-                    </h2>
-                    <div
-                        class="w-20 h-1 bg-[var(--color-primary)] mx-auto mt-6 rounded-full"
-                    ></div>
-                </div>
-
-                <div class="max-w-7xl mx-auto">
-                    <Carousel
-                        v-if="content.images?.length"
-                        :items-to-show="4"
-                        :wrap-around="true"
-                        :transition="500"
-                        :autoplay="3000"
-                        :breakpoints="{
-                            320: {
-                                itemsToShow: 1,
-                                snapAlign: 'center',
-                            },
-                            640: {
-                                itemsToShow: 2,
-                                snapAlign: 'center',
-                            },
-                            768: {
-                                itemsToShow: 3,
-                                snapAlign: 'center',
-                            },
-                            1024: {
-                                itemsToShow: 4,
-                                snapAlign: 'center',
-                            },
-                        }"
-                        class="gallery-carousel"
-                    >
-                        <Slide
-                            v-for="image in content.images"
-                            :key="image.id"
-                            class="px-3"
-                        >
-                            <div
-                                class="relative aspect-[4/5] rounded-2xl overflow-hidden group"
-                            >
-                                <img
-                                    :src="image.image"
-                                    :alt="image.title"
-                                    class="w-full h-full object-cover transform transition duration-700 group-hover:scale-110"
-                                />
-                                <div
-                                    class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"
-                                >
-                                    <div
-                                        class="absolute bottom-0 left-0 right-0 p-6"
-                                    >
-                                        <h4
-                                            class="text-white font-medium text-lg"
-                                        >
-                                            {{ image.title }}
-                                        </h4>
-                                    </div>
-                                </div>
-                            </div>
-                        </Slide>
-
-                        <template #addons>
-                            <Navigation />
-                        </template>
-                    </Carousel>
-                </div>
-            </div>
-        </section>
     </GuestLayout>
 </template>
 
@@ -492,5 +469,24 @@ const props = defineProps({
 
 .animate-fade-in {
     animation: fade-in 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Gallery transitions */
+.gallery-fade-enter-active,
+.gallery-fade-leave-active {
+    transition: all 0.5s ease;
+}
+
+.gallery-fade-enter-from,
+.gallery-fade-leave-to {
+    opacity: 0;
+    transform: scale(0.95);
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+    .container-custom {
+        @apply px-4;
+    }
 }
 </style>
