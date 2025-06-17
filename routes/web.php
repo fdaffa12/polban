@@ -124,4 +124,7 @@ Route::middleware('auth')->group(function () {
     Route::put('/proposals/spj/{spj}/revise', [ProposalSpjController::class, 'revise'])->name('proposals.spj.revise');
 });
 
+// New about route
+Route::get('/about', [HomeController::class, 'about'])->name('about');
+
 require __DIR__ . '/auth.php';

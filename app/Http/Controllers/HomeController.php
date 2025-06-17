@@ -182,4 +182,24 @@ class HomeController extends Controller
             'departments' => $departments,
         ]);
     }
+
+    public function about()
+    {
+        $aboutUs = AboutUs::first();
+
+        return Inertia::render('AboutUs', [
+            'about' => [
+                'title' => $aboutUs->au_title ?? 'KABINET RUANG OPTIMA',
+                'au_desc' => $aboutUs->au_desc,
+                'image' => $aboutUs->au_image ? asset('storage/' . $aboutUs->au_image) : null,
+                'au_multiple_image' => $aboutUs->au_multiple_image 
+                    ? array_map(function($image) {
+                        return asset('storage/' . $image);
+                    }, $aboutUs->au_multiple_image)
+                    : [],
+                'au_values' => $aboutUs->au_values,
+                'history' => $aboutUs->history,
+            ]
+        ]);
+    }
 }

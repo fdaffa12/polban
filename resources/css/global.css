@@ -96,7 +96,11 @@ body {
 
 .about-content-line {
     @apply absolute -left-6 top-0 bottom-0 w-1 rounded-full;
-    background: linear-gradient(to bottom, var(--color-primary-dark), var(--color-secondary));
+    background: linear-gradient(
+        to bottom,
+        var(--color-primary-dark),
+        var(--color-secondary)
+    );
 }
 
 .about-image-glow {
@@ -110,6 +114,42 @@ body {
     background: linear-gradient(to right, var(--color-primary-dark), var(--color-primary));
     &:hover {
         background: linear-gradient(to right, var(--color-primary), var(--color-secondary));
+    }
+}
+
+/* About Page Specific Styles */
+.about-hero-pattern {
+    background-image: linear-gradient(
+        30deg,
+        var(--color-primary-dark) 12%,
+        transparent 12.5%,
+        transparent 87%,
+        var(--color-primary-dark) 87.5%,
+        var(--color-primary-dark)
+    );
+    background-size: 50px 50px;
+}
+
+.about-section-title {
+    @apply relative inline-block text-3xl md:text-4xl font-bold text-[var(--text-color)] mb-8;
+    &::after {
+        content: '';
+        @apply absolute -bottom-3 left-0 w-24 h-1 bg-[var(--color-primary)] rounded-full;
+    }
+}
+
+.history-timeline {
+    @apply relative pl-8 border-l-2;
+    border-color: var(--color-primary);
+    
+    &::before {
+        content: '';
+        @apply absolute -left-2 top-0 w-4 h-4 rounded-full bg-[var(--color-primary)];
+    }
+    
+    &::after {
+        content: '';
+        @apply absolute -left-2 bottom-0 w-4 h-4 rounded-full bg-[var(--color-primary)];
     }
 }
 
@@ -178,4 +218,88 @@ body {
     &:hover {
         border-color: var(--color-secondary);
     }
+}
+
+/* Prose Customization for About Page */
+.prose {
+    @apply max-w-none;
+    h1, h2, h3, h4, h5, h6 {
+        @apply text-[var(--text-color)] font-bold;
+    }
+    p {
+        @apply text-[var(--light-text)] leading-relaxed mb-6;
+    }
+    strong {
+        @apply text-[var(--text-color)];
+    }
+    a {
+        @apply text-[var(--color-primary)] hover:text-[var(--color-primary-dark)] 
+               transition-colors duration-300;
+    }
+}
+
+/* Gallery Effects */
+.gallery-image {
+    @apply relative overflow-hidden rounded-xl shadow-lg;
+    
+    &::after {
+        content: '';
+        @apply absolute inset-0 bg-gradient-to-t from-black/60 to-transparent 
+               opacity-0 transition-opacity duration-300;
+    }
+    
+    &:hover {
+        &::after {
+            @apply opacity-100;
+        }
+        
+        img {
+            @apply scale-110;
+        }
+    }
+
+    img {
+        @apply transition-transform duration-500;
+    }
+}
+
+/* Enhanced Timeline */
+.history-timeline {
+    @apply relative pl-8 border-l-2;
+    border-color: var(--color-primary);
+    
+    &::before {
+        content: '';
+        @apply absolute -left-2 top-0 w-4 h-4 rounded-full bg-[var(--color-primary)];
+    }
+    
+    &::after {
+        content: '';
+        @apply absolute -left-2 bottom-0 w-4 h-4 rounded-full bg-[var(--color-primary)];
+    }
+}
+
+/* Section Transitions */
+.section-fade-up {
+    @apply opacity-0 translate-y-8 transition-all duration-700;
+    
+    &.visible {
+        @apply opacity-100 translate-y-0;
+    }
+}
+
+/* Slider Animations */
+.slide-fade-enter-active,
+.slide-fade-leave-active {
+    transition: all 0.5s ease;
+}
+
+.slide-fade-enter-from {
+    transform: translateX(100%);
+    opacity: 0;
+}
+
+.slide-fade-leave-to {
+    transform: translateX(-100%);
+    opacity: 0;
 }
