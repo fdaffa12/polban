@@ -17,54 +17,90 @@ const props = defineProps({
         <Head title="About Us" />
 
         <!-- Hero Section with Parallax -->
-        <section class="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
+        <section
+            class="relative min-h-[90vh] flex items-center justify-center overflow-hidden"
+        >
             <div class="absolute inset-0 z-0">
-                <img 
+                <img
                     :src="about.image"
-                    class="w-full h-full object-cover scale-105"
+                    class="w-full h-full object-cover scale-105 brightness-75"
                     alt="HMJTK Hero"
                 />
-                <div class="absolute inset-0 bg-gradient-to-br from-[var(--color-primary-dark)]/90 via-black/50 to-[var(--color-primary)]/80"></div>
-                <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--color-primary-dark)_0%,transparent_100%)] opacity-30"></div>
+                <!-- Single black overlay with reduced opacity -->
+                <div class="absolute inset-0 bg-black/50"></div>
             </div>
 
-            <div class="container-custom relative z-10">
-                <div class="max-w-4xl mx-auto text-center space-y-8 animate-fade-in px-4">
-                    <span class="inline-block text-white/80 text-lg md:text-xl tracking-wider mb-4 font-light">Welcome to</span>
-                    <h1 class="text-5xl md:text-7xl lg:text-8xl font-bold text-white leading-tight tracking-tight">
+            <div class="container-custom relative z-40">
+                <div
+                    class="max-w-4xl mx-auto text-center space-y-8 animate-fade-in px-4"
+                >
+                    <span
+                        class="text-[var(--color-primary)] font-semibold text-lg md:text-2xl tracking-wide"
+                    >
+                        Welcome to
+                    </span>
+                    <h1
+                        class="text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-tight"
+                    >
                         {{ about.title }}
-                        <span class="text-[var(--color-primary)] block mt-4 text-3xl md:text-4xl font-light">
+                        <span
+                            class="text-[var(--color-secondary)] block mt-4 text-3xl md:text-4xl font-light"
+                        >
                             HMJTK Polban
                         </span>
                     </h1>
-                    <p class="text-xl md:text-2xl text-white/80 max-w-2xl mx-auto font-light leading-relaxed">
-                        Himpunan Mahasiswa Jurusan Teknik Komputer dan Informatika
+                    <p
+                        class="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto"
+                    >
+                        Himpunan Mahasiswa Jurusan Teknik Kimia
                     </p>
                 </div>
-            </div>
-
-            <!-- Scroll Indicator -->
-            <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-                <svg class="w-6 h-6 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
-                </svg>
             </div>
         </section>
 
         <!-- About & Gallery Section -->
-        <section class="py-32 bg-gradient-to-b from-white to-[var(--color-background)]/10">
+        <section
+            class="py-32 bg-gradient-to-b from-white to-[var(--color-background)]/10"
+        >
             <div class="container-custom">
                 <!-- About Content -->
                 <div class="max-w-4xl mx-auto mb-32">
-                    <span class="block text-[var(--color-primary)] font-medium text-lg mb-4 text-center">Our Story</span>
-                    <h2 class="text-4xl md:text-5xl font-bold text-center mb-16 text-[var(--text-color)]">
-                        About Us
-                    </h2>
-                    <div class="prose prose-lg mx-auto prose-p:leading-relaxed" v-html="about.au_desc"></div>
+                    <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                        <h2
+                            class="text-[var(--color-primary)] font-semibold text-lg mb-4 animate-fade-in"
+                        >
+                            Our Story
+                        </h2>
+                        <h3
+                            class="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight animate-fade-in"
+                        >
+                            About Us
+                        </h3>
+                        <p class="text-lg text-gray-600 animate-fade-in">
+                            {{ about.description }}
+                        </p>
+                    </div>
+
+                    <div
+                        class="prose prose-lg mx-auto prose-p:leading-relaxed"
+                        v-html="about.au_desc"
+                    ></div>
                 </div>
 
                 <!-- Gallery -->
                 <div class="max-w-7xl mx-auto">
+                    <!-- Add Gallery Title -->
+                    <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                        <span class="text-[var(--color-primary)] font-medium text-lg tracking-wide">
+                            Our Gallery
+                        </span>
+                        <h2 class="text-4xl md:text-5xl font-bold text-[var(--text-color)] leading-tight">
+                            HMJTK Transformation
+                        </h2>
+                        <div class="w-20 h-1 bg-[var(--color-primary)] mx-auto mt-6 rounded-full"></div>
+                    </div>
+
+                    <!-- Existing Carousel -->
                     <Carousel
                         v-if="about.au_multiple_image?.length"
                         :items-to-show="4"
@@ -74,18 +110,22 @@ const props = defineProps({
                         :snapAlign="'center'"
                         class="gallery-carousel"
                     >
-                        <Slide 
+                        <Slide
                             v-for="(image, index) in about.au_multiple_image"
                             :key="index"
                             class="px-3"
                         >
-                            <div class="relative aspect-[4/5] rounded-2xl overflow-hidden group">
-                                <img 
+                            <div
+                                class="relative aspect-[4/5] rounded-2xl overflow-hidden group"
+                            >
+                                <img
                                     :src="image"
                                     :alt="`Gallery Image ${index + 1}`"
                                     class="w-full h-full object-cover transform transition duration-700 group-hover:scale-110"
                                 />
-                                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"
+                                ></div>
                             </div>
                         </Slide>
 
@@ -100,19 +140,84 @@ const props = defineProps({
         <!-- History & Values Section -->
         <section class="py-32 bg-[var(--color-background)]/5">
             <div class="container-custom">
+                <!-- Center Title -->
+                <div class="text-center max-w-3xl mx-auto mb-20 space-y-4">
+                    <span class="text-[var(--color-primary)] font-medium text-lg tracking-wide"
+                        >Discover Our Legacy</span
+                    >
+                    <h2 class="text-4xl md:text-5xl font-bold text-[var(--text-color)] leading-tight">
+                        Our Journey & Core Values
+                    </h2>
+                    <div class="w-20 h-1 bg-[var(--color-primary)] mx-auto mt-6 rounded-full"></div>
+                </div>
+
                 <div class="grid md:grid-cols-2 gap-20">
                     <!-- History Column -->
-                    <div class="space-y-8 backdrop-blur-sm bg-white/30 p-8 rounded-2xl shadow-lg">
-                        <span class="block text-[var(--color-primary)] font-medium">Looking Back</span>
-                        <h2 class="text-3xl font-bold text-[var(--text-color)]">Our History</h2>
-                        <div class="prose prose-lg prose-p:leading-relaxed" v-html="about.history"></div>
+                    <div class="group hover:shadow-xl transition-all duration-500 space-y-8 backdrop-blur-sm bg-white/30 p-10 rounded-2xl shadow-lg border border-white/20">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-full bg-[var(--color-primary)]/10 flex items-center justify-center">
+                                <svg
+                                    class="w-6 h-6 text-[var(--color-primary)]"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                                    />
+                                </svg>
+                            </div>
+                            <div>
+                                <span
+                                    class="block text-[var(--color-primary)] font-medium text-sm tracking-wider"
+                                    >Looking Back</span
+                                >
+                                <h2 class="text-2xl md:text-3xl font-bold text-[var(--text-color)]">
+                                    Our History
+                                </h2>
+                            </div>
+                        </div>
+                        <div
+                            class="prose prose-lg prose-p:leading-relaxed prose-p:text-[var(--light-text)]"
+                            v-html="about.history"
+                        ></div>
                     </div>
 
                     <!-- Values Column -->
-                    <div class="space-y-8 backdrop-blur-sm bg-white/30 p-8 rounded-2xl shadow-lg">
-                        <span class="block text-[var(--color-primary)] font-medium">What Drives Us</span>
-                        <h2 class="text-3xl font-bold text-[var(--text-color)]">Our Values</h2>
-                        <div class="prose prose-lg prose-p:leading-relaxed" v-html="about.au_values"></div>
+                    <div class="group hover:shadow-xl transition-all duration-500 space-y-8 backdrop-blur-sm bg-white/30 p-10 rounded-2xl shadow-lg border border-white/20">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-full bg-[var(--color-primary)]/10 flex items-center justify-center">
+                                <svg
+                                    class="w-6 h-6 text-[var(--color-primary)]"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                                    />
+                                </svg>
+                            </div>
+                            <div>
+                                <span
+                                    class="block text-[var(--color-primary)] font-medium text-sm tracking-wider"
+                                    >What Drives Us</span
+                                >
+                                <h2 class="text-2xl md:text-3xl font-bold text-[var(--text-color)]">
+                                    Our Values
+                                </h2>
+                            </div>
+                        </div>
+                        <div
+                            class="prose prose-lg prose-p:leading-relaxed prose-p:text-[var(--light-text)]"
+                            v-html="about.au_values"
+                        ></div>
                     </div>
                 </div>
             </div>
@@ -142,30 +247,75 @@ const props = defineProps({
 }
 
 .prose {
-    @apply text-[var(--light-text)];
+    @apply text-[var(--light-text)] max-w-none;
 
-    h1, h2, h3, h4, h5, h6 {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
         @apply text-[var(--text-color)] font-bold tracking-tight;
-    }
-
-    a {
-        @apply text-[var(--color-primary)] hover:text-[var(--color-primary-dark)] 
-               transition-all duration-300;
+        font-size: theme("fontSize.3xl");
+        line-height: 1.3;
     }
 
     p {
-        @apply text-lg leading-relaxed;
+        @apply text-lg leading-relaxed mb-6;
     }
 
     strong {
         @apply text-[var(--text-color)] font-semibold;
     }
+
+    a {
+        @apply text-[var(--color-primary)] hover:text-[var(--color-primary-dark)] 
+               transition-colors duration-300;
+    }
 }
 
+/* Add responsive text utilities from Home.vue */
+.text-responsive {
+    @apply text-base md:text-lg lg:text-xl;
+}
+
+.heading-responsive {
+    @apply text-3xl md:text-4xl lg:text-5xl xl:text-6xl;
+}
+
+/* Media queries for responsive text */
+@media (max-width: 640px) {
+    .text-responsive {
+        @apply text-base;
+    }
+    .heading-responsive {
+        @apply text-3xl;
+    }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+    .text-responsive {
+        @apply text-lg;
+    }
+    .heading-responsive {
+        @apply text-4xl;
+    }
+}
+
+@media (min-width: 1025px) {
+    .text-responsive {
+        @apply text-xl;
+    }
+    .heading-responsive {
+        @apply text-5xl;
+    }
+}
+
+/* Animation styles */
 @keyframes fade-in {
     from {
         opacity: 0;
-        transform: translateY(30px);
+        transform: translateY(20px);
     }
     to {
         opacity: 1;
