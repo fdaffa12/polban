@@ -22,9 +22,15 @@ class DepartmentController extends Controller
     {
         $request->validate([
             'dept_name' => 'required|string|max:255',
+            'image' => 'required|image|max:10248',
         ]);
 
-        Department::create($request->all());
+        $path = $request->file('image')->store('departments', 'public');
+
+        Department::create([
+            'dept_name' => $request->dept_name,
+            'image' => $path,
+        ]);
 
         return redirect()->back()->with('success', 'Department added successfully');
     }
@@ -33,15 +39,28 @@ class DepartmentController extends Controller
     {
         $request->validate([
             'dept_name' => 'required|string|max:255',
+            'image' => 'nullable|image|max:10248',
         ]);
 
-        $department->update($request->all());
+        if ($request->hasFile('image')) {
+            if ($department->image && Storage::disk('public')->exists($department->image)) {
+                Storage::disk('public')->delete($department->image);
+            }
+            $path = $request->file('image')->store('departments', 'public');
+            $department->image = $path;
+        }
+
+        $department->dept_name = $request->dept_name;
+        $department->save();
 
         return redirect()->back()->with('success', 'Department updated successfully');
     }
 
     public function destroyDepartment(Department $department)
     {
+        if ($department->image && Storage::disk('public')->exists($department->image)) {
+            Storage::disk('public')->delete($department->image);
+        }
         $department->delete();
 
         return redirect()->back()->with('success', 'Department deleted successfully');

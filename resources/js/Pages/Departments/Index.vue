@@ -24,12 +24,14 @@ const showDepartmentModal = ref(false);
 const editingDepartment = ref(null);
 const departmentForm = useForm({
     dept_name: "",
+    image: null,
 });
 
 const openDepartmentModal = (department = null) => {
     editingDepartment.value = department;
     if (department) {
         departmentForm.dept_name = department.dept_name;
+        departmentForm.image = null;
     } else {
         departmentForm.reset();
     }
@@ -42,6 +44,7 @@ const submitDepartment = () => {
             route("departments.update", editingDepartment.value.id),
             {
                 preserveScroll: true,
+                forceFormData: true,
                 onSuccess: () => {
                     closeDepartmentModal();
                     toast.success("Department updated successfully");
@@ -52,6 +55,7 @@ const submitDepartment = () => {
     } else {
         departmentForm.post(route("departments.store"), {
             preserveScroll: true,
+            forceFormData: true,
             onSuccess: () => {
                 closeDepartmentModal();
                 toast.success("Department added successfully");
@@ -245,9 +249,25 @@ const filteredDepartments = computed(() => {
                                 class="flex flex-col sm:flex-row justify-between items-start gap-4"
                             >
                                 <div class="flex-1">
-                                    <h3 class="text-lg font-medium mb-2">
-                                        {{ department.dept_name }}
-                                    </h3>
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-16 h-16 rounded-lg overflow-hidden">
+                                            <img
+                                                v-if="department.image"
+                                                :src="`/storage/${department.image}`"
+                                                :alt="department.dept_name"
+                                                class="w-full h-full object-cover"
+                                            />
+                                            <div
+                                                v-else
+                                                class="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400"
+                                            >
+                                                No Image
+                                            </div>
+                                        </div>
+                                        <h3 class="text-lg font-medium">
+                                            {{ department.dept_name }}
+                                        </h3>
+                                    </div>
                                 </div>
                                 <div class="flex flex-wrap gap-2">
                                     <PrimaryButton
@@ -346,19 +366,37 @@ const filteredDepartments = computed(() => {
                     }}
                 </h2>
                 <form @submit.prevent="submitDepartment" class="mt-6">
-                    <div>
-                        <InputLabel for="dept_name" value="Department Name" />
-                        <TextInput
-                            id="dept_name"
-                            v-model="departmentForm.dept_name"
-                            type="text"
-                            class="mt-1 block w-full"
-                            required
-                        />
-                        <InputError
-                            :message="departmentForm.errors.dept_name"
-                            class="mt-2"
-                        />
+                    <div class="space-y-4">
+                        <div>
+                            <InputLabel for="dept_name" value="Department Name" />
+                            <TextInput
+                                id="dept_name"
+                                v-model="departmentForm.dept_name"
+                                type="text"
+                                class="mt-1 block w-full"
+                                required
+                            />
+                            <InputError
+                                :message="departmentForm.errors.dept_name"
+                                class="mt-2"
+                            />
+                        </div>
+
+                        <div>
+                            <InputLabel for="dept_image" value="Department Image" />
+                            <input
+                                type="file"
+                                id="dept_image"
+                                @input="departmentForm.image = $event.target.files[0]"
+                                accept="image/*"
+                                class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                                :required="!editingDepartment"
+                            />
+                            <InputError
+                                :message="departmentForm.errors.image"
+                                class="mt-2"
+                            />
+                        </div>
                     </div>
 
                     <div class="mt-6 flex justify-end gap-4">
