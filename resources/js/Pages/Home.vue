@@ -901,55 +901,64 @@ const props = defineProps({
                 </div>
 
                 <!-- Department Carousel -->
-                <div class="relative">
-                    <Carousel
-                        :autoplay="5000"
-                        :items-to-show="1"
-                        :wrap-around="true"
-                        :mouseDrag="true"
-                        :touchDrag="true"
-                        :breakpoints="{
-                            640: { itemsToShow: 2 },
-                            768: { itemsToShow: 3 },
-                            1024: { itemsToShow: 4 },
-                        }"
-                        class="department-carousel"
-                    >
-                        <Slide
-                            v-for="department in departments"
-                            :key="department.id"
+                    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <Carousel
+                            :items-to-show="4"
+                            :wrap-around="true"
+                            :transition="500"
+                            :snap-align="'center'"
+                            class="-mx-2"
                         >
-                            <div class="carousel__item px-2">
+                            <template #addons>
+                                <Navigation v-slot="{ next, prev }">
+                                    <button 
+                                        @click="next"
+                                        class="absolute top-1/2 -right-4 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full bg-white shadow-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed z-10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                                    >
+                                        <svg class="w-6 h-6 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                        </svg>
+                                    </button>
+                                    <button
+                                        @click="prev"
+                                        class="absolute top-1/2 -left-4 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full bg-white shadow-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed z-10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                                    >
+                                        <svg class="w-6 h-6 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                                        </svg>
+                                    </button>
+                                </Navigation>
+                            </template>
+
+                            <Slide
+                                v-for="department in departments"
+                                :key="department.id"
+                                class="px-2 py-3"
+                            >
                                 <div
-                                    class="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group"
+                                    class="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 group overflow-hidden h-full"
                                 >
                                     <div
-                                        class="relative aspect-square rounded-xl overflow-hidden mb-4 bg-gradient-to-br from-blue-50 to-indigo-50"
+                                        class="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-blue-50/50 to-indigo-50/50"
                                     >
                                         <img
                                             :src="department.image"
                                             :alt="department.dept_name"
-                                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                                            class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                                         />
-                                        <!-- Overlay -->
-                                        <div
-                                            class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                                        ></div>
+                                        <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                                     </div>
-                                    <h4
-                                        class="text-xl font-bold text-gray-900 text-center group-hover:text-blue-600 transition-colors duration-300"
-                                    >
-                                        {{ department.dept_name }}
-                                    </h4>
+                                    <div class="p-4">
+                                        <h4
+                                            class="text-base font-semibold text-gray-800 text-center line-clamp-2 group-hover:text-blue-600 transition-colors duration-300"
+                                        >
+                                            {{ department.dept_name }}
+                                        </h4>
+                                    </div>
                                 </div>
-                            </div>
-                        </Slide>
-
-                        <template #addons>
-                            <Navigation />
-                        </template>
-                    </Carousel>
-                </div>
+                            </Slide>
+                        </Carousel>
+                    </div>
             </div>
         </section>
     </GuestLayout>
