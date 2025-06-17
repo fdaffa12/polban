@@ -35,7 +35,7 @@ const props = defineProps({
     <GuestLayout title="Home">
         <!-- Hero Section -->
         <div
-            class="relative overflow-hidden bg-gradient-to-b from-blue-50 to-white"
+            class="relative overflow-hidden bg-gradient-to-b from-[var(--color-background)] to-white"
         >
             <!-- Background Pattern -->
             <div class="absolute inset-0 z-0">
@@ -49,7 +49,7 @@ const props = defineProps({
                     <!-- Text Content -->
                     <div class="space-y-8 animate-fade-in">
                         <h3
-                            class="text-blue-600 font-semibold text-xl md:text-2xl tracking-wide"
+                            class="text-[var(--color-primary-dark)] font-semibold text-xl md:text-2xl tracking-wide"
                         >
                             Building with Light
                         </h3>
@@ -58,7 +58,9 @@ const props = defineProps({
                             class="heading-responsive font-bold text-gray-900 leading-tight"
                         >
                             Create a brighter future through
-                            <span class="text-blue-600 block mt-2">
+                            <span
+                                class="text-[var(--color-primary)] block mt-2"
+                            >
                                 innovation, collaboration, and growth
                             </span>
                         </h1>
@@ -96,7 +98,7 @@ const props = defineProps({
                         style="animation-delay: 0.2s"
                     >
                         <div
-                            class="absolute inset-0 bg-gradient-to-tr from-blue-500/10 to-purple-500/10 rounded-3xl"
+                            class="absolute inset-0 bg-gradient-to-tr from-[var(--color-primary)]/10 to-[var(--color-secondary)]/10 rounded-3xl"
                         >
                             <img
                                 src="https://images.unsplash.com/photo-1749731630653-d9b3f00573ed?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
@@ -127,12 +129,14 @@ const props = defineProps({
             <div class="container-custom relative z-10">
                 <!-- Section Header -->
                 <div class="text-center mb-16 relative">
-                    <h2 class="text-blue-600 font-semibold text-lg mb-4">
+                    <h2
+                        class="text-[var(--color-primary)] font-semibold text-lg mb-4"
+                    >
                         Tentang Kami
                     </h2>
                     <div class="relative inline-block">
                         <h3
-                            class="text-4xl md:text-5xl font-bold text-gray-900 mb-6"
+                            class="text-4xl md:text-5xl font-bold text-[var(--text-color)] mb-6"
                         >
                             HMJTK'25
                         </h3>
@@ -140,7 +144,9 @@ const props = defineProps({
                         <div class="about-title-line-left"></div>
                         <div class="about-title-line-right"></div>
                     </div>
-                    <p class="text-gray-600 text-lg max-w-2xl mx-auto">
+                    <p
+                        class="text-[var(--light-text)] text-lg max-w-2xl mx-auto"
+                    >
                         Himpunan Mahasiswa Jurusan Teknik Komputer dan
                         Informatika
                     </p>
@@ -211,13 +217,13 @@ const props = defineProps({
 
         <!-- Update Events Section -->
         <section
-            class="py-20 bg-gradient-to-b from-white via-blue-50/30 to-white"
+            class="py-20 bg-gradient-to-b from-white via-[var(--color-background)]/30 to-white"
         >
             <div class="container-custom">
                 <!-- Header Section dengan animasi -->
                 <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
                     <h2
-                        class="text-blue-600 font-semibold text-lg mb-4 animate-fade-in"
+                        class="text-[var(--color-primary)] font-semibold text-lg mb-4 animate-fade-in"
                     >
                         Event Terbaru
                     </h2>
@@ -227,9 +233,10 @@ const props = defineProps({
                     >
                         Kegiatan dan Acara
                         <span
-                            class="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600"
-                            >HMJTK</span
+                            class="bg-clip-text text-transparent bg-gradient-to-r from-[var(--color-primary-dark)] to-[var(--color-primary)]"
                         >
+                            HMJTK
+                        </span>
                     </h3>
                     <p
                         class="text-lg text-gray-600 animate-fade-in"
@@ -244,7 +251,7 @@ const props = defineProps({
                     <!-- Carousel Column -->
                     <div class="col-span-12 lg:col-span-9">
                         <div
-                            class="bg-white rounded-3xl p-4 shadow-xl shadow-blue-100/50"
+                            class="bg-white rounded-3xl p-4 shadow-xl shadow-[var(--color-primary)]/10"
                         >
                             <Carousel
                                 v-if="events.length > 0"
@@ -283,10 +290,10 @@ const props = defineProps({
                                                         <span
                                                             class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium"
                                                             :class="{
-                                                                'bg-green-600 text-white':
+                                                                'bg-[var(--color-secondary)] text-white':
                                                                     event.status ===
                                                                     'ongoing',
-                                                                'bg-blue-600 text-white':
+                                                                'bg-[var(--color-primary)] text-white':
                                                                     event.status ===
                                                                     'upcoming',
                                                                 'bg-gray-600 text-white':
@@ -305,7 +312,7 @@ const props = defineProps({
                                                             }}
                                                         </span>
                                                         <span
-                                                            class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-600 text-white"
+                                                            class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[var(--color-primary)] text-white"
                                                         >
                                                             {{
                                                                 event.fee_type ===
@@ -325,7 +332,7 @@ const props = defineProps({
 
                                                     <!-- Date -->
                                                     <p
-                                                        class="text-blue-200 text-sm"
+                                                        class="text-[var(--color-primary)]/80 text-sm"
                                                     >
                                                         {{
                                                             event.end_date
@@ -380,7 +387,7 @@ const props = defineProps({
                                                     >
                                                         <Link
                                                             :href="`/events/${event.id}`"
-                                                            class="inline-flex items-center px-6 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-all duration-300"
+                                                            class="inline-flex items-center px-6 py-2 rounded-lg bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] text-white transition-all duration-300"
                                                         >
                                                             Selengkapnya
                                                             <svg
@@ -416,119 +423,81 @@ const props = defineProps({
                         <!-- Featured Event Card -->
                         <div
                             v-if="featuredEvent"
-                            class="w-full bg-gradient-to-br from-purple-600 to-blue-600 p-6 rounded-3xl shadow-xl relative overflow-hidden group hover:shadow-2xl transition-all duration-300 flex-grow"
+                            class="w-full bg-gradient-to-br from-[var(--color-primary-dark)] to-[var(--color-primary)] p-6 rounded-3xl shadow-xl relative overflow-hidden group hover:shadow-2xl transition-all duration-300 flex-grow"
                         >
-                            <!-- Decorative Elements -->
+                            <!-- Update Status Badge -->
                             <div
-                                class="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"
-                            ></div>
+                                class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium"
+                                :class="
+                                    featuredEvent.is_upcoming
+                                        ? 'bg-[var(--color-secondary)]/30 text-white'
+                                        : 'bg-[var(--color-primary)]/30 text-white'
+                                "
+                            >
+                                {{
+                                    featuredEvent.is_upcoming
+                                        ? "Event Mendatang"
+                                        : "Event Terakhir"
+                                }}
+                            </div>
+
+                            <!-- Update Text Colors -->
+                            <h3
+                                class="text-3xl font-bold text-white group-hover:text-[var(--color-background)] transition-colors duration-300"
+                            >
+                                {{ featuredEvent.department.name }}
+                            </h3>
+                            <h4
+                                class="text-xl font-medium text-white/90 line-clamp-2 group-hover:text-[var(--color-background)] transition-colors duration-300"
+                            >
+                                {{ featuredEvent.event_name }}
+                            </h4>
+
+                            <!-- Update Date Text -->
                             <div
-                                class="absolute -bottom-20 -left-20 w-60 h-60 bg-purple-400/10 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700"
-                            ></div>
-
-                            <div class="relative space-y-4">
-                                <!-- Status Badge -->
-                                <div class="flex flex-wrap gap-2">
-                                    <div
-                                        class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium"
-                                        :class="
-                                            featuredEvent.is_upcoming
-                                                ? 'bg-green-500/30 text-green-100'
-                                                : 'bg-blue-500/30 text-blue-100'
-                                        "
-                                    >
-                                        {{
-                                            featuredEvent.is_upcoming
-                                                ? "Event Mendatang"
-                                                : "Event Terakhir"
-                                        }}
-                                    </div>
-                                </div>
-
-                                <!-- Event Info -->
-                                <div class="space-y-3">
-                                    <!-- Department Name -->
-                                    <h3
-                                        class="text-3xl font-bold text-white group-hover:text-blue-100 transition-colors duration-300"
-                                    >
-                                        {{ featuredEvent.department.name }}
-                                    </h3>
-
-                                    <!-- Event Title -->
-                                    <h4
-                                        class="text-xl font-medium text-white/90 line-clamp-2 group-hover:text-blue-100 transition-colors duration-300"
-                                    >
-                                        {{ featuredEvent.event_name }}
-                                    </h4>
-
-                                    <div
-                                        class="flex items-center space-x-2 text-blue-200 text-sm"
-                                    >
-                                        <svg
-                                            class="w-4 h-4"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <path
-                                                stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                                stroke-width="2"
-                                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                                            />
-                                        </svg>
-                                        <span>
-                                            {{
-                                                new Date(
-                                                    featuredEvent.start_date
-                                                ).toLocaleDateString("id-ID", {
-                                                    day: "numeric",
-                                                    month: "long",
-                                                })
-                                            }}
-                                            {{
-                                                featuredEvent.end_date
-                                                    ? " - " +
-                                                      new Date(
-                                                          featuredEvent.end_date
-                                                      ).toLocaleDateString(
-                                                          "id-ID",
-                                                          {
-                                                              day: "numeric",
-                                                              month: "long",
-                                                          }
-                                                      )
-                                                    : ""
-                                            }}
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <!-- Action Button -->
-                                <Link
-                                    :href="`/events/${featuredEvent.id}`"
-                                    class="inline-flex items-center px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white backdrop-blur-sm transition-all duration-300 group-hover:scale-105 hover:shadow-lg"
+                                class="flex items-center space-x-2 text-[var(--color-background)] text-sm"
+                            >
+                                <svg
+                                    class="w-4 h-4"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
                                 >
-                                    Lihat Detail
-                                    <svg
-                                        class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-300"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            stroke-width="2"
-                                            d="M9 5l7 7-7 7"
-                                        />
-                                    </svg>
-                                </Link>
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                    />
+                                </svg>
+                                <span>
+                                    {{
+                                        new Date(
+                                            featuredEvent.start_date
+                                        ).toLocaleDateString("id-ID", {
+                                            day: "numeric",
+                                            month: "long",
+                                        })
+                                    }}
+                                    {{
+                                        featuredEvent.end_date
+                                            ? " - " +
+                                              new Date(
+                                                  featuredEvent.end_date
+                                              ).toLocaleDateString("id-ID", {
+                                                  day: "numeric",
+                                                  month: "long",
+                                              })
+                                            : ""
+                                    }}
+                                </span>
                             </div>
                         </div>
+
+                        <!-- Empty State Card -->
                         <div
                             v-else
-                            class="w-full bg-gradient-to-br from-gray-600 to-gray-700 p-6 rounded-3xl shadow-xl relative overflow-hidden flex-grow"
+                            class="w-full bg-gradient-to-br from-[var(--color-primary-dark)]/60 to-[var(--color-primary)]/60 p-6 rounded-3xl shadow-xl relative overflow-hidden flex-grow"
                         >
                             <div class="text-center text-white">
                                 <svg
@@ -552,49 +521,37 @@ const props = defineProps({
 
                         <!-- Explore All Events Card -->
                         <div
-                            class="w-full bg-gradient-to-br from-blue-600 to-indigo-600 p-8 rounded-3xl shadow-xl relative overflow-hidden group flex-grow"
+                            class="w-full bg-gradient-to-br from-[var(--color-primary-dark)] to-[var(--color-primary)] p-8 rounded-3xl shadow-xl relative overflow-hidden group flex-grow"
                         >
-                            <!-- Decorative circles -->
-                            <div
-                                class="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"
-                            ></div>
-                            <div
-                                class="absolute -bottom-20 -left-20 w-60 h-60 bg-blue-400/10 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700"
-                            ></div>
+                            <!-- Update Text Colors -->
+                            <h4 class="text-2xl font-bold text-white">
+                                Jelajahi Semua Event
+                            </h4>
+                            <p class="text-[var(--color-background)]">
+                                Temukan lebih banyak event menarik yang
+                                diselenggarakan oleh HMJTK Polban
+                            </p>
 
-                            <div class="relative space-y-8">
-                                <!-- Icon Container -->
-
-                                <div class="space-y-4">
-                                    <h4 class="text-2xl font-bold text-white">
-                                        Jelajahi Semua Event
-                                    </h4>
-                                    <p class="text-blue-100">
-                                        Temukan lebih banyak event menarik yang
-                                        diselenggarakan oleh HMJTK Polban
-                                    </p>
-                                </div>
-
-                                <Link
-                                    href="/events"
-                                    class="inline-flex items-center justify-center w-full px-6 py-3 text-base font-medium text-blue-600 bg-white rounded-xl hover:bg-blue-50 transition-all duration-300 transform hover:scale-105 shadow-lg"
+                            <!-- Update Button -->
+                            <Link
+                                href="/events"
+                                class="inline-flex items-center justify-center w-full px-6 py-3 text-[var(--color-primary)] bg-white rounded-xl hover:bg-[var(--color-background)] transition-all duration-300 transform hover:scale-105 shadow-lg"
+                            >
+                                Lihat Semua Event
+                                <svg
+                                    class="w-5 h-5 ml-2"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
                                 >
-                                    Lihat Semua Event
-                                    <svg
-                                        class="w-5 h-5 ml-2"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            stroke-width="2"
-                                            d="M14 5l7 7m0 0l-7 7m7-7H3"
-                                        />
-                                    </svg>
-                                </Link>
-                            </div>
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M14 5l7 7m0 0l-7 7m7-7H3"
+                                    />
+                                </svg>
+                            </Link>
                         </div>
                     </div>
                 </div>
@@ -603,13 +560,13 @@ const props = defineProps({
 
         <!-- News Articles Section -->
         <section
-            class="py-20 bg-gradient-to-b from-white via-blue-50/30 to-white"
+            class="py-20 bg-gradient-to-b from-white via-[var(--color-background)]/30 to-white"
         >
             <div class="container-custom">
                 <!-- Header Section -->
                 <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
                     <h2
-                        class="text-blue-600 font-semibold text-lg mb-4 animate-fade-in"
+                        class="text-[var(--color-primary)] font-semibold text-lg mb-4 animate-fade-in"
                     >
                         Berita Terbaru
                     </h2>
@@ -619,9 +576,10 @@ const props = defineProps({
                     >
                         Kabar dan Informasi
                         <span
-                            class="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600"
-                            >HMJTK</span
+                            class="bg-clip-text text-transparent bg-gradient-to-r from-[var(--color-primary-dark)] to-[var(--color-primary)]"
                         >
+                            HMJTK
+                        </span>
                     </h3>
                     <p
                         class="text-lg text-gray-600 animate-fade-in"
@@ -637,7 +595,7 @@ const props = defineProps({
                     <div class="col-span-12 lg:col-span-3 flex flex-col gap-4">
                         <!-- View All Articles Card -->
                         <div
-                            class="flex-grow bg-gradient-to-br from-blue-600 to-indigo-700 rounded-3xl p-6 text-white group hover:shadow-2xl hover:shadow-blue-200/50 transition-all duration-300 flex flex-col justify-between relative overflow-hidden"
+                            class="flex-grow bg-gradient-to-br from-[var(--color-primary-dark)] to-[var(--color-primary)] rounded-3xl p-6 text-white group hover:shadow-2xl hover:shadow-[var(--color-primary)]/50 transition-all duration-300 flex flex-col justify-between relative overflow-hidden"
                         >
                             <!-- Decorative Background Pattern -->
                             <div
@@ -688,7 +646,9 @@ const props = defineProps({
                                                 d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                                             />
                                         </svg>
-                                        <p class="text-sm text-blue-100">
+                                        <p
+                                            class="text-sm text-[var(--color-background)]"
+                                        >
                                             Informasi terkini seputar kegiatan
                                             dan prestasi HMJTK
                                         </p>
@@ -707,7 +667,9 @@ const props = defineProps({
                                                 d="M13 10V3L4 14h7v7l9-11h-7z"
                                             />
                                         </svg>
-                                        <p class="text-sm text-blue-100">
+                                        <p
+                                            class="text-sm text-[var(--color-background)]"
+                                        >
                                             Update berkala tentang teknologi dan
                                             inovasi terbaru
                                         </p>
@@ -726,7 +688,9 @@ const props = defineProps({
                                                 d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                                             />
                                         </svg>
-                                        <p class="text-sm text-blue-100">
+                                        <p
+                                            class="text-sm text-[var(--color-background)]"
+                                        >
                                             Artikel diperbarui secara rutin
                                             setiap minggu
                                         </p>
@@ -734,7 +698,9 @@ const props = defineProps({
                                 </div>
 
                                 <div class="bg-white/10 rounded-lg p-3 mb-6">
-                                    <p class="text-sm text-blue-100 italic">
+                                    <p
+                                        class="text-sm text-[var(--color-background)] italic"
+                                    >
                                         "Tetap terhubung dengan perkembangan
                                         terkini di HMJTK melalui artikel-artikel
                                         informatif kami"
@@ -744,7 +710,7 @@ const props = defineProps({
 
                             <Link
                                 href="/articles"
-                                class="relative z-10 inline-flex items-center justify-center px-6 py-3 rounded-xl bg-white text-blue-600 hover:bg-blue-50 transition-colors duration-300 font-semibold group-hover:shadow-lg"
+                                class="relative z-10 inline-flex items-center justify-center px-6 py-3 rounded-xl bg-white text-[var(--color-primary)] hover:bg-[var(--color-background)] transition-colors duration-300 font-semibold group-hover:shadow-lg"
                             >
                                 <span>Lihat Semua Artikel</span>
                                 <svg
@@ -766,7 +732,7 @@ const props = defineProps({
                     <!-- News Carousel -->
                     <div class="col-span-12 lg:col-span-9">
                         <div
-                            class="bg-white rounded-3xl p-4 shadow-xl shadow-blue-100/50"
+                            class="bg-white rounded-3xl p-4 shadow-xl shadow-[var(--color-primary)]/10"
                         >
                             <Carousel
                                 v-if="newsArticles.length > 0"
@@ -805,7 +771,7 @@ const props = defineProps({
                                                 <div class="space-y-4">
                                                     <!-- Date & Author -->
                                                     <div
-                                                        class="flex items-center gap-2 text-blue-200 text-sm"
+                                                        class="flex items-center gap-2 text-[var(--color-secondary)] text-sm"
                                                     >
                                                         <span>{{
                                                             article.created_at
@@ -836,7 +802,7 @@ const props = defineProps({
                                                     >
                                                         <Link
                                                             :href="`/articles/${article.id}`"
-                                                            class="inline-flex items-center px-6 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-all duration-300"
+                                                            class="inline-flex items-center px-6 py-2 rounded-lg bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] text-white transition-all duration-300"
                                                         >
                                                             Baca Selengkapnya
                                                             <svg
@@ -861,7 +827,6 @@ const props = defineProps({
                                 </Slide>
                                 <template #addons>
                                     <Navigation />
-                                    <!-- Removed Pagination component -->
                                 </template>
                             </Carousel>
                         </div>
@@ -877,7 +842,7 @@ const props = defineProps({
                 <!-- Header Section -->
                 <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
                     <h2
-                        class="text-blue-600 font-semibold text-lg mb-4 animate-fade-in"
+                        class="text-[var(--color-primary)] font-semibold text-lg mb-4 animate-fade-in"
                     >
                         Departemen HMJTK
                     </h2>
@@ -887,9 +852,10 @@ const props = defineProps({
                     >
                         Struktur
                         <span
-                            class="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600"
-                            >Organisasi</span
+                            class="bg-clip-text text-transparent bg-gradient-to-r from-[var(--color-primary-dark)] to-[var(--color-primary)]"
                         >
+                            Organisasi
+                        </span>
                     </h3>
                     <p
                         class="text-lg text-gray-600 animate-fade-in"
@@ -901,64 +867,86 @@ const props = defineProps({
                 </div>
 
                 <!-- Department Carousel -->
-                    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <Carousel
-                            :items-to-show="4"
-                            :wrap-around="true"
-                            :transition="500"
-                            :snap-align="'center'"
-                            class="-mx-2"
-                        >
-                            <template #addons>
-                                <Navigation v-slot="{ next, prev }">
-                                    <button 
-                                        @click="next"
-                                        class="absolute top-1/2 -right-4 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full bg-white shadow-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed z-10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <Carousel
+                        :items-to-show="4"
+                        :wrap-around="true"
+                        :transition="500"
+                        :snap-align="'center'"
+                        class="-mx-2"
+                    >
+                        <template #addons>
+                            <Navigation v-slot="{ next, prev }">
+                                <button
+                                    @click="next"
+                                    class="absolute top-1/2 -right-4 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full bg-white shadow-md hover:bg-[var(--color-background)] disabled:opacity-50 disabled:cursor-not-allowed z-10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:ring-offset-2"
+                                >
+                                    <svg
+                                        class="w-6 h-6 text-[var(--color-primary-dark)]"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
                                     >
-                                        <svg class="w-6 h-6 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                                        </svg>
-                                    </button>
-                                    <button
-                                        @click="prev"
-                                        class="absolute top-1/2 -left-4 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full bg-white shadow-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed z-10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M9 5l7 7-7 7"
+                                        />
+                                    </svg>
+                                </button>
+                                <button
+                                    @click="prev"
+                                    class="absolute top-1/2 -left-4 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full bg-white shadow-md hover:bg-[var(--color-background)] disabled:opacity-50 disabled:cursor-not-allowed z-10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:ring-offset-2"
+                                >
+                                    <svg
+                                        class="w-6 h-6 text-[var(--color-primary-dark)]"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
                                     >
-                                        <svg class="w-6 h-6 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                                        </svg>
-                                    </button>
-                                </Navigation>
-                            </template>
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M15 19l-7-7 7-7"
+                                        />
+                                    </svg>
+                                </button>
+                            </Navigation>
+                        </template>
 
-                            <Slide
-                                v-for="department in departments"
-                                :key="department.id"
-                                class="px-2 py-3"
+                        <Slide
+                            v-for="department in departments"
+                            :key="department.id"
+                            class="px-2 py-3"
+                        >
+                            <div
+                                class="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 group overflow-hidden h-full"
                             >
                                 <div
-                                    class="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 group overflow-hidden h-full"
+                                    class="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-[var(--color-secondary)]/10 to-[var(--color-primary)]/10"
                                 >
+                                    <img
+                                        :src="department.image"
+                                        :alt="department.dept_name"
+                                        class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                    />
                                     <div
-                                        class="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-blue-50/50 to-indigo-50/50"
-                                    >
-                                        <img
-                                            :src="department.image"
-                                            :alt="department.dept_name"
-                                            class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                                        />
-                                        <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                                    </div>
-                                    <div class="p-4">
-                                        <h4
-                                            class="text-base font-semibold text-gray-800 text-center line-clamp-2 group-hover:text-blue-600 transition-colors duration-300"
-                                        >
-                                            {{ department.dept_name }}
-                                        </h4>
-                                    </div>
+                                        class="absolute inset-0 bg-gradient-to-t from-[var(--color-primary-dark)]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                                    ></div>
                                 </div>
-                            </Slide>
-                        </Carousel>
-                    </div>
+                                <div class="p-4">
+                                    <h4
+                                        class="text-base font-semibold text-gray-800 text-center line-clamp-2 group-hover:text-[var(--color-primary)] transition-colors duration-300"
+                                    >
+                                        {{ department.dept_name }}
+                                    </h4>
+                                </div>
+                            </div>
+                        </Slide>
+                    </Carousel>
+                </div>
             </div>
         </section>
     </GuestLayout>
