@@ -88,13 +88,19 @@ const setActiveImage = (index) => {
         <section class="py-20 bg-white">
             <div class="container-custom">
                 <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
-                    <span class="text-[var(--color-primary)] font-medium text-lg tracking-wide">
+                    <span
+                        class="text-[var(--color-primary)] font-medium text-lg tracking-wide"
+                    >
                         Our Gallery
                     </span>
-                    <h2 class="text-4xl md:text-5xl font-bold text-[var(--text-color)] leading-tight">
+                    <h2
+                        class="text-4xl md:text-5xl font-bold text-[var(--text-color)] leading-tight"
+                    >
                         Moments & Memories
                     </h2>
-                    <div class="w-20 h-1 bg-[var(--color-primary)] mx-auto mt-6 rounded-full"></div>
+                    <div
+                        class="w-20 h-1 bg-[var(--color-primary)] mx-auto mt-6 rounded-full"
+                    ></div>
                 </div>
 
                 <div class="relative max-w-7xl mx-auto">
@@ -106,9 +112,9 @@ const setActiveImage = (index) => {
                             @click="setActiveImage(index)"
                             class="px-6 py-3 rounded-full transition-all duration-300 text-sm md:text-base font-medium"
                             :class="[
-                                activeImage === index 
-                                    ? 'bg-[var(--color-primary)] text-white shadow-lg scale-110' 
-                                    : 'bg-[var(--color-primary)]/5 text-[var(--color-primary)] hover:bg-[var(--color-primary)]/10'
+                                activeImage === index
+                                    ? 'bg-[var(--color-primary)] text-white shadow-lg scale-110'
+                                    : 'bg-[var(--color-primary)]/5 text-[var(--color-primary)] hover:bg-[var(--color-primary)]/10',
                             ]"
                         >
                             {{ image.title }}
@@ -123,6 +129,24 @@ const setActiveImage = (index) => {
                         :snap-align="'center'"
                         :modelValue="activeImage"
                         @update:modelValue="setActiveImage"
+                        :breakpoints="{
+                            320: {
+                                itemsToShow: 1,
+                                snapAlign: 'center',
+                            },
+                            640: {
+                                itemsToShow: 2,
+                                snapAlign: 'center',
+                            },
+                            768: {
+                                itemsToShow: 2,
+                                snapAlign: 'center',
+                            },
+                            1024: {
+                                itemsToShow: 3,
+                                snapAlign: 'center',
+                            },
+                        }"
                         class="gallery-carousel"
                     >
                         <Slide
@@ -130,7 +154,7 @@ const setActiveImage = (index) => {
                             :key="image.id"
                             class="px-3"
                         >
-                            <div 
+                            <div
                                 class="relative aspect-[4/3] rounded-2xl overflow-hidden group cursor-pointer"
                                 @click="setActiveImage(index)"
                             >
@@ -138,14 +162,22 @@ const setActiveImage = (index) => {
                                     :src="image.image"
                                     :alt="image.title"
                                     class="w-full h-full object-cover transition-transform duration-700"
-                                    :class="{'scale-105': activeImage === index}"
+                                    :class="{
+                                        'scale-105': activeImage === index,
+                                    }"
                                 />
-                                <div 
+                                <div
                                     class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"
-                                    :class="{'!opacity-100': activeImage === index}"
+                                    :class="{
+                                        '!opacity-100': activeImage === index,
+                                    }"
                                 >
-                                    <div class="absolute bottom-0 left-0 right-0 p-6">
-                                        <h4 class="text-white font-medium text-lg md:text-xl">
+                                    <div
+                                        class="absolute bottom-0 left-0 right-0 p-6"
+                                    >
+                                        <h4
+                                            class="text-white font-medium text-lg md:text-xl"
+                                        >
                                             {{ image.title }}
                                         </h4>
                                     </div>
@@ -494,9 +526,9 @@ const setActiveImage = (index) => {
     }
 }
 
-/* Gallery Carousel Styles */
+/* Update Gallery Carousel Styles */
 .gallery-carousel :deep(.carousel__slide) {
-    @apply transform transition-all duration-500;
+    @apply transform transition-all duration-500 px-2 md:px-3;
     opacity: 0.4;
     filter: blur(1px);
     scale: 0.9;
@@ -516,40 +548,53 @@ const setActiveImage = (index) => {
     height: 40px;
 }
 
-.gallery-carousel :deep(.carousel__prev) {
-    @apply -left-5 hover:-left-6;
-}
-
-.gallery-carousel :deep(.carousel__next) {
-    @apply -right-5 hover:-right-6;
-}
-
-/* Responsive styles */
+/* Update responsive styles */
 @media (max-width: 768px) {
     .gallery-carousel :deep(.carousel__slide) {
-        opacity: 1;
+        opacity: 0.8;
         filter: none;
+        scale: 0.95;
+    }
+
+    .gallery-carousel :deep(.carousel__slide--active) {
+        opacity: 1;
         scale: 1;
     }
-    
+
     .gallery-carousel :deep(.carousel__prev),
     .gallery-carousel :deep(.carousel__next) {
         width: 36px;
         height: 36px;
     }
-    
-    .gallery-carousel :deep(.carousel__prev) {
-        @apply -left-4;
+}
+
+/* Update container spacing for mobile */
+@media (max-width: 640px) {
+    .gallery-carousel {
+        @apply px-2;
     }
-    
+
+    .gallery-carousel :deep(.carousel__prev) {
+        @apply -left-2;
+    }
+
     .gallery-carousel :deep(.carousel__next) {
-        @apply -right-4;
+        @apply -right-2;
+    }
+
+    /* Adjust title navigation for mobile */
+    .flex.flex-wrap.gap-4.mb-8 {
+        @apply gap-2 px-4;
+    }
+
+    .flex.flex-wrap.gap-4.mb-8 button {
+        @apply px-4 py-2 text-sm;
     }
 }
 
-@media (max-width: 640px) {
-    .gallery-carousel {
-        @apply px-4;
-    }
+/* Additional container adjustments */
+.container-custom {
+    @apply px-4 sm:px-6 lg:px-8 mx-auto;
+    max-width: 1280px;
 }
 </style>

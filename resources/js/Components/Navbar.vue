@@ -38,14 +38,22 @@ const toggleMenu = () => {
 
 const toggleAboutDropdown = () => {
     aboutDropdownOpen.value = !aboutDropdownOpen.value;
+    activitiesDropdownOpen.value = false; // Tutup dropdown lain
 };
 
 const toggleActivitiesDropdown = () => {
     activitiesDropdownOpen.value = !activitiesDropdownOpen.value;
+    aboutDropdownOpen.value = false; // Tutup dropdown lain
 };
 
 const toggleMobileDropdown = (index) => {
     mobileDropdowns.value[index] = !mobileDropdowns.value[index];
+};
+
+// Tambahkan method untuk menutup semua dropdown
+const closeAllDropdowns = () => {
+    aboutDropdownOpen.value = false;
+    activitiesDropdownOpen.value = false;
 };
 </script>
 
@@ -74,17 +82,17 @@ const toggleMobileDropdown = (index) => {
                     </Link>
 
                     <!-- About Dropdown -->
-                    <div
-                        class="relative"
-                        @mouseleave="aboutDropdownOpen = false"
-                    >
+                    <div class="relative">
                         <button
-                            @mouseover="aboutDropdownOpen = true"
+                            @click="toggleAboutDropdown"
                             class="text-[var(--text-color)] hover:text-[var(--color-primary)] px-3 py-2 rounded-md text-sm font-medium flex items-center"
                         >
                             About
                             <svg
                                 class="ml-1 w-4 h-4"
+                                :class="{
+                                    'transform rotate-180': aboutDropdownOpen,
+                                }"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -110,7 +118,7 @@ const toggleMobileDropdown = (index) => {
                                 </Link>
                                 <Link
                                     href="/about"
-                                    class="block px-4 py-2 text-sm text-[var(--text-color)] hover:bg-[var(--color-background)] hover:text-[var(--color-primary)]"
+                                    class="block px-4 py-2 text-sm text-[var(--text-color)] hover:bg-[var(--color-background)] hover:text-[var,--color-primary)]"
                                 >
                                     About Us
                                 </Link>
@@ -127,23 +135,24 @@ const toggleMobileDropdown = (index) => {
 
                     <Link
                         href="/news"
-                        class="text-[var(--text-color)] hover:text-[var(--color-primary)] px-3 py-2 rounded-md text-sm font-medium"
+                        class="text-[var(--text-color)] hover:text-[var,--color-primary)] px-3 py-2 rounded-md text-sm font-medium"
                     >
                         News
                     </Link>
 
                     <!-- Activities Dropdown -->
-                    <div
-                        class="relative"
-                        @mouseleave="activitiesDropdownOpen = false"
-                    >
+                    <div class="relative">
                         <button
-                            @mouseover="activitiesDropdownOpen = true"
-                            class="text-[var(--text-color)] hover:text-[var(--color-primary)] px-3 py-2 rounded-md text-sm font-medium flex items-center"
+                            @click="toggleActivitiesDropdown"
+                            class="text-[var(--text-color)] hover:text-[var,--color-primary)] px-3 py-2 rounded-md text-sm font-medium flex items-center"
                         >
                             Activities
                             <svg
                                 class="ml-1 w-4 h-4"
+                                :class="{
+                                    'transform rotate-180':
+                                        activitiesDropdownOpen,
+                                }"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -163,13 +172,13 @@ const toggleMobileDropdown = (index) => {
                             <div class="py-1">
                                 <Link
                                     href="/events"
-                                    class="block px-4 py-2 text-sm text-[var(--text-color)] hover:bg-[var(--color-background)] hover:text-[var(--color-primary)]"
+                                    class="block px-4 py-2 text-sm text-[var(--text-color)] hover:bg-[var(--color-background)] hover:text-[var,--color-primary)]"
                                 >
                                     Events
                                 </Link>
                                 <Link
                                     href="/calendar"
-                                    class="block px-4 py-2 text-sm text-[var(--text-color)] hover:bg-[var(--color-background)] hover:text-[var(--color-primary)]"
+                                    class="block px-4 py-2 text-sm text-[var(--text-color)] hover:bg-[var,--color-background)] hover:text-[var,--color-primary)]"
                                 >
                                     Calendar Event
                                 </Link>
@@ -182,7 +191,7 @@ const toggleMobileDropdown = (index) => {
                 <div class="md:hidden flex items-center">
                     <button
                         @click="toggleMenu"
-                        class="inline-flex items-center justify-center p-2 rounded-md text-[var(--text-color)] hover:text-[var(--color-primary)] focus:outline-none"
+                        class="inline-flex items-center justify-center p-2 rounded-md text-[var(--text-color)] hover:text-[var,--color-primary)] focus:outline-none"
                     >
                         <svg
                             class="h-6 w-6"
@@ -222,7 +231,7 @@ const toggleMobileDropdown = (index) => {
                     <template v-if="!item.dropdown">
                         <Link
                             :href="item.href"
-                            class="block px-3 py-2 rounded-md text-base font-medium text-[var(--text-color)] hover:text-[var(--color-primary)] hover:bg-[var(--color-background)]"
+                            class="block px-3 py-2 rounded-md text-base font-medium text-[var(--text-color)] hover:text-[var,--color-primary)] hover:bg-[var(--color-background)]"
                         >
                             {{ item.text }}
                         </Link>
@@ -232,7 +241,7 @@ const toggleMobileDropdown = (index) => {
                     <template v-else>
                         <button
                             @click="toggleMobileDropdown(index)"
-                            class="flex items-center justify-between w-full px-3 py-2 rounded-md text-base font-medium text-[var(--text-color)] hover:text-[var(--color-primary)] hover:bg-[var(--color-background)]"
+                            class="flex items-center justify-between w-full px-3 py-2 rounded-md text-base font-medium text-[var(--text-color)] hover:text-[var,--color-primary)] hover:bg-[var(--color-background)]"
                         >
                             <span>{{ item.text }}</span>
                             <svg
@@ -263,7 +272,7 @@ const toggleMobileDropdown = (index) => {
                                 v-for="(subItem, subIndex) in item.items"
                                 :key="subIndex"
                                 :href="subItem.href"
-                                class="block px-3 py-2 rounded-md text-sm font-medium text-[var(--text-color)] hover:text-[var(--color-primary)] hover:bg-[var(--color-background)]"
+                                class="block px-3 py-2 rounded-md text-sm font-medium text-[var(--text-color)] hover:text-[var,--color-primary)] hover:bg-[var(--color-background)]"
                             >
                                 {{ subItem.text }}
                             </Link>
