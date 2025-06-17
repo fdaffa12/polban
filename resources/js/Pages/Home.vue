@@ -24,6 +24,10 @@ const props = defineProps({
         type: Array,
         default: () => [],
     },
+    departments: {
+        type: Array,
+        default: () => [],
+    },
 });
 </script>
 
@@ -865,6 +869,89 @@ const props = defineProps({
                 </div>
             </div>
         </section>
+
+        <section
+            class="py-20 bg-gradient-to-b from-white via-blue-50/30 to-white"
+        >
+            <div class="container-custom">
+                <!-- Header Section -->
+                <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                    <h2
+                        class="text-blue-600 font-semibold text-lg mb-4 animate-fade-in"
+                    >
+                        Departemen HMJTK
+                    </h2>
+                    <h3
+                        class="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight animate-fade-in"
+                        style="animation-delay: 0.2s"
+                    >
+                        Struktur
+                        <span
+                            class="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600"
+                            >Organisasi</span
+                        >
+                    </h3>
+                    <p
+                        class="text-lg text-gray-600 animate-fade-in"
+                        style="animation-delay: 0.3s"
+                    >
+                        Kenali lebih dekat departemen-departemen yang ada di
+                        HMJTK Polban
+                    </p>
+                </div>
+
+                <!-- Department Carousel -->
+                <div class="relative">
+                    <Carousel
+                        :autoplay="5000"
+                        :items-to-show="1"
+                        :wrap-around="true"
+                        :mouseDrag="true"
+                        :touchDrag="true"
+                        :breakpoints="{
+                            640: { itemsToShow: 2 },
+                            768: { itemsToShow: 3 },
+                            1024: { itemsToShow: 4 },
+                        }"
+                        class="department-carousel"
+                    >
+                        <Slide
+                            v-for="department in departments"
+                            :key="department.id"
+                        >
+                            <div class="carousel__item px-2">
+                                <div
+                                    class="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group"
+                                >
+                                    <div
+                                        class="relative aspect-square rounded-xl overflow-hidden mb-4 bg-gradient-to-br from-blue-50 to-indigo-50"
+                                    >
+                                        <img
+                                            :src="department.image"
+                                            :alt="department.dept_name"
+                                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                                        />
+                                        <!-- Overlay -->
+                                        <div
+                                            class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                                        ></div>
+                                    </div>
+                                    <h4
+                                        class="text-xl font-bold text-gray-900 text-center group-hover:text-blue-600 transition-colors duration-300"
+                                    >
+                                        {{ department.dept_name }}
+                                    </h4>
+                                </div>
+                            </div>
+                        </Slide>
+
+                        <template #addons>
+                            <Navigation />
+                        </template>
+                    </Carousel>
+                </div>
+            </div>
+        </section>
     </GuestLayout>
 </template>
 
@@ -940,6 +1027,46 @@ const props = defineProps({
 
 .animate-fade-in {
     animation: fade-in 0.6s ease-out forwards;
+}
+
+.department-carousel .carousel__slide {
+    padding: 1rem;
+}
+
+.department-carousel .carousel__viewport {
+    perspective: 2000px;
+}
+
+.department-carousel .carousel__track {
+    transform-style: preserve-3d;
+}
+
+.department-carousel .carousel__slide--sliding {
+    transition: 0.5s;
+}
+
+.department-carousel .carousel__slide {
+    opacity: 0.9;
+    transform: rotateY(-20deg) scale(0.9);
+}
+
+.department-carousel .carousel__slide--active ~ .carousel__slide {
+    transform: rotateY(20deg) scale(0.9);
+}
+
+.department-carousel .carousel__slide--prev {
+    opacity: 1;
+    transform: rotateY(-10deg) scale(0.95);
+}
+
+.department-carousel .carousel__slide--next {
+    opacity: 1;
+    transform: rotateY(10deg) scale(0.95);
+}
+
+.department-carousel .carousel__slide--active {
+    opacity: 1;
+    transform: rotateY(0) scale(1);
 }
 </style>
 

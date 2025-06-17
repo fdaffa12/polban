@@ -9,6 +9,7 @@ use App\Models\Category;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use App\Models\Department;
 
 class HomeController extends Controller
 {
@@ -158,6 +159,15 @@ class HomeController extends Controller
                 });
         }
 
+        // Fetch departments
+        $departments = Department::all()->map(function ($department) {
+            return [
+                'id' => $department->id,
+                'dept_name' => $department->dept_name,
+                'image' => $department->image ? "/storage/{$department->image}" : null,
+            ];
+        });
+
         return Inertia::render('Home', [
             'canLogin' => true,
             'canRegister' => true,
@@ -168,7 +178,8 @@ class HomeController extends Controller
             ],
             'featuredEvent' => $featuredEvent,
             'events' => $mappedEvents,
-            'newsArticles' => $newsArticles
+            'newsArticles' => $newsArticles,
+            'departments' => $departments,
         ]);
     }
 }
