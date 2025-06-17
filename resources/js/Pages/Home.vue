@@ -35,77 +35,78 @@ const props = defineProps({
     <GuestLayout title="Home">
         <!-- Hero Section -->
         <div
-            class="relative overflow-hidden bg-gradient-to-b from-[var(--color-background)] to-white"
+            class="relative min-h-screen flex items-center justify-center overflow-hidden bg-gray-900"
         >
-            <!-- Background Pattern -->
+            <!-- Background Image with Overlay -->
             <div class="absolute inset-0 z-0">
-                <div class="absolute inset-0 bg-grid-pattern opacity-5"></div>
+                <img
+                    src="https://images.unsplash.com/photo-1749731630653-d9b3f00573ed?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                    alt="Hero Background"
+                    class="w-full h-full object-cover"
+                />
+                <div
+                    class="absolute inset-0 bg-gradient-to-b from-gray-900/70 via-gray-900/60 to-gray-900/80"
+                ></div>
+                <!-- Optional Pattern Overlay -->
+                <div class="absolute inset-0 bg-grid-pattern opacity-10"></div>
             </div>
 
-            <div class="container-custom relative z-10">
+            <!-- Content -->
+            <div class="container-custom relative z-10 py-20">
                 <div
-                    class="grid grid-cols-1 lg:grid-cols-2 gap-12 min-h-[calc(100vh-80px)] items-center py-20"
+                    class="max-w-4xl mx-auto text-center space-y-8 animate-fade-in px-4"
                 >
-                    <!-- Text Content -->
-                    <div class="space-y-8 animate-fade-in">
-                        <h3
-                            class="text-[var(--color-primary-dark)] font-semibold text-xl md:text-2xl tracking-wide"
-                        >
-                            Building with Light
-                        </h3>
-
-                        <h1
-                            class="heading-responsive font-bold text-gray-900 leading-tight"
-                        >
-                            Create a brighter future through
-                            <span
-                                class="text-[var(--color-primary)] block mt-2"
-                            >
-                                innovation, collaboration, and growth
-                            </span>
-                        </h1>
-
-                        <p class="text-responsive text-gray-600 max-w-xl">
-                            Join us in our mission to illuminate paths, foster
-                            innovation, and build sustainable solutions for
-                            tomorrow's challenges.
-                        </p>
-
-                        <div class="flex flex-col sm:flex-row gap-4 pt-4">
-                            <a href="#" class="btn-primary">
-                                Get Started
-                                <svg
-                                    class="w-5 h-5 ml-2"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M14 5l7 7m0 0l-7 7m7-7H3"
-                                    />
-                                </svg>
-                            </a>
-                            <a href="#" class="btn-secondary"> Learn More </a>
-                        </div>
-                    </div>
-
-                    <!-- Hero Image -->
-                    <div
-                        class="relative h-[400px] lg:h-[600px] animate-fade-in"
-                        style="animation-delay: 0.2s"
+                    <h3
+                        class="text-[var(--color-primary)] font-semibold text-xl md:text-2xl tracking-wide"
                     >
-                        <div
-                            class="absolute inset-0 bg-gradient-to-tr from-[var(--color-primary)]/10 to-[var(--color-secondary)]/10 rounded-3xl"
+                        Building with Light
+                    </h3>
+
+                    <h1
+                        class="text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-tight"
+                    >
+                        Create a brighter future through
+                        <span class="text-[var(--color-primary)] block mt-2">
+                            innovation, collaboration, and growth
+                        </span>
+                    </h1>
+
+                    <p
+                        class="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto"
+                    >
+                        Join us in our mission to illuminate paths, foster
+                        innovation, and build sustainable solutions for
+                        tomorrow's challenges.
+                    </p>
+
+                    <div
+                        class="flex flex-col sm:flex-row gap-4 justify-center pt-4"
+                    >
+                        <a
+                            href="#"
+                            class="btn-primary backdrop-blur-sm hover:backdrop-blur-0"
                         >
-                            <img
-                                src="https://images.unsplash.com/photo-1749731630653-d9b3f00573ed?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                                alt="Innovation Illustration"
-                                class="w-full h-full object-cover rounded-3xl shadow-2xl"
-                            />
-                        </div>
+                            Get Started
+                            <svg
+                                class="w-5 h-5 ml-2"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M14 5l7 7m0 0l-7 7m7-7H3"
+                                />
+                            </svg>
+                        </a>
+                        <a
+                            href="#"
+                            class="btn-secondary bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white border-white/20"
+                        >
+                            Learn More
+                        </a>
                     </div>
                 </div>
             </div>
@@ -1064,6 +1065,59 @@ const props = defineProps({
 .department-carousel .carousel__slide--active {
     opacity: 1;
     transform: rotateY(0) scale(1);
+}
+
+/* Add to existing styles */
+.btn-primary {
+    @apply inline-flex items-center px-6 py-3 rounded-lg bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] text-white transition-all duration-300 transform hover:scale-105;
+}
+
+.btn-secondary {
+    @apply inline-flex items-center px-6 py-3 rounded-lg border transition-all duration-300 transform hover:scale-105;
+}
+
+@keyframes bounce {
+    0%,
+    100% {
+        transform: translateY(-25%);
+        animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+    }
+    50% {
+        transform: translateY(0);
+        animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+    }
+}
+
+.animate-bounce {
+    animation: bounce 1s infinite;
+}
+
+/* Responsive text adjustments */
+@media (max-width: 640px) {
+    .text-responsive {
+        @apply text-base;
+    }
+    .heading-responsive {
+        @apply text-3xl;
+    }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+    .text-responsive {
+        @apply text-lg;
+    }
+    .heading-responsive {
+        @apply text-4xl;
+    }
+}
+
+@media (min-width: 1025px) {
+    .text-responsive {
+        @apply text-xl;
+    }
+    .heading-responsive {
+        @apply text-5xl;
+    }
 }
 </style>
 
