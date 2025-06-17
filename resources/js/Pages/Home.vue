@@ -40,8 +40,9 @@ const props = defineProps({
             <!-- Background Image with Overlay -->
             <div class="absolute inset-0 z-0">
                 <img
-                    src="https://images.unsplash.com/photo-1749731630653-d9b3f00573ed?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                    alt="Hero Background"
+                    v-if="aboutUs.image"
+                    :src="aboutUs.image"
+                    :alt="aboutUs.title"
                     class="w-full h-full object-cover"
                 />
                 <div
@@ -56,58 +57,14 @@ const props = defineProps({
                 <div
                     class="max-w-4xl mx-auto text-center space-y-8 animate-fade-in px-4"
                 >
-                    <h3
-                        class="text-[var(--color-primary)] font-semibold text-xl md:text-2xl tracking-wide"
-                    >
-                        Building with Light
-                    </h3>
-
                     <h1
                         class="text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-tight"
                     >
-                        Create a brighter future through
+                        Selamat Datang di Website
                         <span class="text-[var(--color-primary)] block mt-2">
-                            innovation, collaboration, and growth
+                            Himpunan Mahasiswa Teknik Kimia POLBAN
                         </span>
                     </h1>
-
-                    <p
-                        class="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto"
-                    >
-                        Join us in our mission to illuminate paths, foster
-                        innovation, and build sustainable solutions for
-                        tomorrow's challenges.
-                    </p>
-
-                    <div
-                        class="flex flex-col sm:flex-row gap-4 justify-center pt-4"
-                    >
-                        <a
-                            href="#"
-                            class="btn-primary backdrop-blur-sm hover:backdrop-blur-0"
-                        >
-                            Get Started
-                            <svg
-                                class="w-5 h-5 ml-2"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M14 5l7 7m0 0l-7 7m7-7H3"
-                                />
-                            </svg>
-                        </a>
-                        <a
-                            href="#"
-                            class="btn-secondary bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white border-white/20"
-                        >
-                            Learn More
-                        </a>
-                    </div>
                 </div>
             </div>
         </div>
@@ -148,8 +105,8 @@ const props = defineProps({
                     <p
                         class="text-[var(--light-text)] text-lg max-w-2xl mx-auto"
                     >
-                        Himpunan Mahasiswa Jurusan Teknik Komputer dan
-                        Informatika
+                        Himpunan Mahasiswa Jurusan Teknik Kimia Politeknik
+                        Bandung
                     </p>
                 </div>
 
@@ -874,6 +831,24 @@ const props = defineProps({
                         :wrap-around="true"
                         :transition="500"
                         :snap-align="'center'"
+                        :breakpoints="{
+                            320: {
+                                itemsToShow: 1,
+                                snapAlign: 'center',
+                            },
+                            640: {
+                                itemsToShow: 2,
+                                snapAlign: 'center',
+                            },
+                            768: {
+                                itemsToShow: 3,
+                                snapAlign: 'center',
+                            },
+                            1024: {
+                                itemsToShow: 4,
+                                snapAlign: 'center',
+                            },
+                        }"
                         class="-mx-2"
                     >
                         <template #addons>
@@ -1028,95 +1003,71 @@ const props = defineProps({
 }
 
 .department-carousel .carousel__slide {
-    padding: 1rem;
+    @apply px-2 py-3;
 }
 
-.department-carousel .carousel__viewport {
-    perspective: 2000px;
-}
+/* Responsive navigation buttons */
+:deep(.carousel__prev),
+:deep(.carousel__next) {
+    @apply bg-white/90 backdrop-blur-sm rounded-full shadow-lg;
+    width: 36px;
+    height: 36px;
 
-.department-carousel .carousel__track {
-    transform-style: preserve-3d;
-}
-
-.department-carousel .carousel__slide--sliding {
-    transition: 0.5s;
-}
-
-.department-carousel .carousel__slide {
-    opacity: 0.9;
-    transform: rotateY(-20deg) scale(0.9);
-}
-
-.department-carousel .carousel__slide--active ~ .carousel__slide {
-    transform: rotateY(20deg) scale(0.9);
-}
-
-.department-carousel .carousel__slide--prev {
-    opacity: 1;
-    transform: rotateY(-10deg) scale(0.95);
-}
-
-.department-carousel .carousel__slide--next {
-    opacity: 1;
-    transform: rotateY(10deg) scale(0.95);
-}
-
-.department-carousel .carousel__slide--active {
-    opacity: 1;
-    transform: rotateY(0) scale(1);
-}
-
-/* Add to existing styles */
-.btn-primary {
-    @apply inline-flex items-center px-6 py-3 rounded-lg bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] text-white transition-all duration-300 transform hover:scale-105;
-}
-
-.btn-secondary {
-    @apply inline-flex items-center px-6 py-3 rounded-lg border transition-all duration-300 transform hover:scale-105;
-}
-
-@keyframes bounce {
-    0%,
-    100% {
-        transform: translateY(-25%);
-        animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+    @screen sm {
+        width: 40px;
+        height: 40px;
     }
-    50% {
-        transform: translateY(0);
-        animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+
+    @screen md {
+        width: 44px;
+        height: 44px;
     }
 }
 
-.animate-bounce {
-    animation: bounce 1s infinite;
+:deep(.carousel__prev) {
+    @apply -left-2 md:-left-4 lg:-left-6;
 }
 
-/* Responsive text adjustments */
+:deep(.carousel__next) {
+    @apply -right-2 md:-right-4 lg:-right-6;
+}
+
+/* Responsive slide sizing */
+:deep(.carousel__slide) {
+    @apply px-2 md:px-3;
+
+    img {
+        @apply rounded-xl;
+        height: 200px;
+
+        @screen sm {
+            height: 220px;
+        }
+
+        @screen md {
+            height: 240px;
+        }
+
+        @screen lg {
+            height: 260px;
+        }
+    }
+}
+
+/* Update slide transforms for mobile */
 @media (max-width: 640px) {
-    .text-responsive {
-        @apply text-base;
+    .department-carousel .carousel__slide {
+        transform: none;
+        opacity: 1;
     }
-    .heading-responsive {
-        @apply text-3xl;
-    }
-}
 
-@media (min-width: 641px) and (max-width: 1024px) {
-    .text-responsive {
-        @apply text-lg;
+    .department-carousel .carousel__slide--active {
+        transform: none;
     }
-    .heading-responsive {
-        @apply text-4xl;
-    }
-}
 
-@media (min-width: 1025px) {
-    .text-responsive {
-        @apply text-xl;
-    }
-    .heading-responsive {
-        @apply text-5xl;
+    .department-carousel .carousel__slide--prev,
+    .department-carousel .carousel__slide--next {
+        transform: scale(0.95);
     }
 }
 </style>
