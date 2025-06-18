@@ -93,19 +93,41 @@ const editArticle = (article) => {
     articleForm.title = article.title;
     articleForm.content = article.content;
     articleForm.category_id = article.category_id;
-    articleForm.tags = article.tags.map((tag) => tag.name);
     articleForm.status = article.status;
+    articleForm.tags = article.tags.map((tag) => tag.name);
     showArticleModal.value = true;
 };
 
 const updateArticle = () => {
-    articleForm.put(route("articles.update", editingArticle.value.id), {
+    if (!editingArticle.value?.id) return;
+
+    const formData = new FormData();
+    formData.append("_method", "PUT");
+    formData.append("title", articleForm.title);
+    formData.append("content", articleForm.content);
+    formData.append("category_id", articleForm.category_id);
+    formData.append("status", articleForm.status);
+
+    // Convert tags to array if it's not already
+    const tags = Array.isArray(articleForm.tags) ? articleForm.tags : [];
+    formData.append("tags", JSON.stringify(tags));
+
+    if (articleForm.featured_image instanceof File) {
+        formData.append("featured_image", articleForm.featured_image);
+    }
+
+    router.post(`/articles/${editingArticle.value.id}`, formData, {
         onSuccess: () => {
             showArticleModal.value = false;
             articleForm.reset();
             editingArticle.value = null;
             toast.success("Article updated successfully!");
         },
+        onError: (errors) => {
+            console.error(errors);
+            toast.error("Error updating article");
+        },
+        preserveScroll: true,
     });
 };
 
@@ -303,6 +325,13 @@ const resetFilters = () => {
     selectedCategory.value = "";
     selectedTag.value = "";
     selectedStatus.value = ""; // Update resetFilters
+};
+
+// Reset form when modal is closed
+const closeArticleModal = () => {
+    showArticleModal.value = false;
+    articleForm.reset();
+    editingArticle.value = null;
 };
 </script>
 
@@ -698,7 +727,7 @@ const resetFilters = () => {
         </Modal>
 
         <!-- Article Modal -->
-        <Modal :show="showArticleModal" @close="showArticleModal = false">
+        <Modal :show="showArticleModal" @close="closeArticleModal">
             <div class="p-6">
                 <h2 class="text-lg font-medium text-gray-900">
                     {{ editingArticle ? "Edit Article" : "Create Article" }}

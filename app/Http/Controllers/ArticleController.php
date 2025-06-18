@@ -116,35 +116,42 @@ class ArticleController extends Controller
             'content' => 'required|string',
             'category_id' => 'required|exists:categories,id',
             'featured_image' => 'nullable|image|max:2048',
-            'tags' => 'array',
+            'tags' => 'required|json', // Changed to validate JSON string
             'status' => 'required|in:draft,publish,highlight'
         ]);
 
-        $data = $request->except('featured_image', 'tags');
+        $data = $request->except(['featured_image', 'tags']);
 
-        // Only update slug if title changed
-        if ($article->title !== $request->title) {
-            $data['slug'] = $this->generateUniqueSlug($request->title, $article->id);
-        }
-
+        // Handle featured image
         if ($request->hasFile('featured_image')) {
-            Storage::disk('public')->delete($article->featured_image);
+            if ($article->featured_image) {
+                Storage::disk('public')->delete($article->featured_image);
+            }
             $path = $request->file('featured_image')->store('articles', 'public');
             $data['featured_image'] = $path;
+        }
+
+        // Update slug if title changed
+        if ($article->title !== $request->title) {
+            $data['slug'] = $this->generateUniqueSlug($request->title, $article->id);
         }
 
         $article->update($data);
 
         // Handle tags
-        if ($request->has('tags')) {
-            $tags = collect($request->tags)->map(function ($tagName) {
-                return Tag::firstOrCreate(['name' => $tagName, 'slug' => Str::slug($tagName)]);
+        $tagsArray = json_decode($request->tags, true);
+        if (is_array($tagsArray)) {
+            $tags = collect($tagsArray)->map(function ($tagName) {
+                return Tag::firstOrCreate([
+                    'name' => $tagName,
+                    'slug' => Str::slug($tagName)
+                ]);
             });
 
             $article->tags()->sync($tags->pluck('id'));
         }
 
-        return redirect()->back();
+        return back()->with('success', 'Article updated successfully');
     }
 
     public function destroy(Article $article)
