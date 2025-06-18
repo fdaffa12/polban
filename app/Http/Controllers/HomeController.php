@@ -252,4 +252,51 @@ class HomeController extends Controller
             ]
         ]);
     }
+
+    public function department()
+    {
+        $departments = Department::with(['members' => function($query) {
+            $query->orderBy('position');
+        }])->get()->map(function ($department) {
+            return [
+                'id' => $department->id,
+                'dept_name' => $department->dept_name,
+                'image' => $department->image ? "/storage/{$department->image}" : null,
+                // Perbaiki mapping untuk board_members
+                'board_members' => $department->members
+                    ->where('job_type', 'board_of_dept')
+                    ->values()
+                    ->map(fn($member) => $this->mapMember($member))
+                    ->toArray(), // Tambahkan toArray()
+                // Perbaiki mapping untuk section_heads  
+                'section_heads' => $department->members
+                    ->where('job_type', 'section_head_dept')
+                    ->values()
+                    ->map(fn($member) => $this->mapMember($member))
+                    ->toArray(), // Tambahkan toArray()
+                // Perbaiki mapping untuk staff_members
+                'staff_members' => $department->members
+                    ->where('job_type', 'staff')
+                    ->values()
+                    ->map(fn($member) => $this->mapMember($member))
+                    ->toArray() // Tambahkan toArray()
+            ];
+        });
+
+        return Inertia::render('Department', [
+            'departments' => $departments
+        ]);
+    }
+
+    private function mapMember($member)
+    {
+        return [
+            'id' => $member->id,
+            'name' => $member->name,
+            'image' => $member->image ? "/storage/{$member->image}" : null,
+            'job_type' => $member->job_type,
+            'job_titles' => $member->job_titles,
+            'position' => $member->position
+        ];
+    }
 }

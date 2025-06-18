@@ -127,5 +127,6 @@ Route::middleware('auth')->group(function () {
 // New about route
 Route::get('/about', [HomeController::class, 'about'])->name('about');
 Route::get('/ruang-optima', [HomeController::class, 'lenteraRestorasi'])->name('ruang-optima');
+Route::get('/department', [HomeController::class, 'department'])->name('department');
 
 require __DIR__ . '/auth.php';
