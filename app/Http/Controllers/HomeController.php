@@ -299,4 +299,144 @@ class HomeController extends Controller
             'position' => $member->position
         ];
     }
+
+    public function news()
+    {
+        $categories = Category::withCount(['articles' => function($query) {
+            $query->where('status', 'publish');
+        }])->get();
+
+        $articles = Article::with(['category', 'user'])
+            ->where('status', 'publish')
+            ->latest()
+            ->paginate(12);
+
+        $mappedArticles = $articles->getCollection()->map(function ($article) {
+            return [
+                'id' => $article->id,
+                'title' => $article->title,
+                'content' => Str::limit(strip_tags($article->content), 200),
+                'featured_image' => $article->featured_image ? "/storage/{$article->featured_image}" : null,
+                'created_at' => $article->created_at->format('d M Y'),
+                'author' => $article->user->name,
+                'category' => [
+                    'id' => $article->category->id,
+                    'name' => $article->category->name
+                ]
+            ];
+        });
+
+        return Inertia::render('News', [
+            'categories' => $categories->map(function($category) {
+                return [
+                    'id' => $category->id,
+                    'name' => $category->name,
+                    'articles_count' => $category->articles_count
+                ];
+            }),
+            'articles' => $mappedArticles,
+            'pagination' => [
+                'current_page' => $articles->currentPage(),
+                'last_page' => $articles->lastPage(),
+                'per_page' => $articles->perPage(),
+                'total' => $articles->total(),
+                'has_more_pages' => $articles->hasMorePages()
+            ]
+        ]);
+    }
+
+    public function newsByCategory($categoryId)
+    {
+        $categories = Category::withCount(['articles' => function($query) {
+            $query->where('status', 'publish');
+        }])->get();
+
+        $articles = Article::with(['category', 'user'])
+            ->where('status', 'publish')
+            ->where('category_id', $categoryId)
+            ->latest()
+            ->paginate(12);
+
+        $mappedArticles = $articles->getCollection()->map(function ($article) {
+            return [
+                'id' => $article->id,
+                'title' => $article->title,
+                'content' => Str::limit(strip_tags($article->content), 200),
+                'featured_image' => $article->featured_image ? "/storage/{$article->featured_image}" : null,
+                'created_at' => $article->created_at->format('d M Y'),
+                'author' => $article->user->name,
+                'category' => [
+                    'id' => $article->category->id,
+                    'name' => $article->category->name
+                ]
+            ];
+        });
+
+        return Inertia::render('News', [
+            'categories' => $categories->map(function($category) {
+                return [
+                    'id' => $category->id,
+                    'name' => $category->name,
+                    'articles_count' => $category->articles_count
+                ];
+            }),
+            'articles' => $mappedArticles,
+            'activeCategory' => $categoryId,
+            'pagination' => [
+                'current_page' => $articles->currentPage(),
+                'last_page' => $articles->lastPage(),
+                'per_page' => $articles->perPage(),
+                'total' => $articles->total(),
+                'has_more_pages' => $articles->hasMorePages()
+            ]
+        ]);
+    }
+
+    public function articleDetail($id)
+    {
+        $article = Article::with(['category', 'user', 'tags'])
+            ->where('status', 'publish')
+            ->findOrFail($id);
+
+        // Get related articles from same category
+        $relatedArticles = Article::with(['category', 'user'])
+            ->where('status', 'publish')
+            ->where('category_id', $article->category_id)
+            ->where('id', '!=', $article->id)
+            ->latest()
+            ->take(4)
+            ->get()
+            ->map(function ($relatedArticle) {
+                return [
+                    'id' => $relatedArticle->id,
+                    'title' => $relatedArticle->title,
+                    'content' => Str::limit(strip_tags($relatedArticle->content), 150),
+                    'featured_image' => $relatedArticle->featured_image ? "/storage/{$relatedArticle->featured_image}" : null,
+                    'created_at' => $relatedArticle->created_at->format('d M Y'),
+                    'author' => $relatedArticle->user->name,
+                ];
+            });
+
+        return Inertia::render('ArticleDetail', [
+            'article' => [
+                'id' => $article->id,
+                'title' => $article->title,
+                'content' => $article->content,
+                'featured_image' => $article->featured_image ? "/storage/{$article->featured_image}" : null,
+                'created_at' => $article->created_at->format('d M Y'),
+                'author' => $article->user->name,
+                'category' => [
+                    'id' => $article->category->id,
+                    'name' => $article->category->name
+                ],
+                'tags' => $article->tags->map(function($tag) {
+                    return [
+                        'id' => $tag->id,
+                        'name' => $tag->name
+                    ];
+                })
+            ],
+            'relatedArticles' => $relatedArticles
+        ]);
+    }
 }

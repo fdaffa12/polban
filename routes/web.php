@@ -130,3 +130,8 @@ Route::get('/ruang-optima', [HomeController::class, 'lenteraRestorasi'])->name('
 Route::get('/department', [HomeController::class, 'department'])->name('department');
 
 require __DIR__ . '/auth.php';
+
+// Tambahkan routes ini
+Route::get('/news', [HomeController::class, 'news'])->name('news');
+Route::get('/news/category/{categoryId}', [HomeController::class, 'newsByCategory'])->name('news.category');
+Route::get('/article/{id}', [HomeController::class, 'articleDetail'])->name('article.detail');
