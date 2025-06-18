@@ -389,6 +389,7 @@ class HomeController extends Controller
             }),
             'articles' => $mappedArticles,
             'activeCategory' => $categoryId,
+            'popularPosts' => $this->getPopularPosts(), // Add this line
             'pagination' => [
                 'current_page' => $articles->currentPage(),
                 'last_page' => $articles->lastPage(),
@@ -473,11 +474,11 @@ class HomeController extends Controller
                     'content' => Str::limit(strip_tags($article->content), 150),
                     'featured_image' => $article->featured_image ? "/storage/{$article->featured_image}" : null,
                     'created_at' => $article->created_at->format('d M Y'),
+                    'viewed' => $article->viewed,
                     'category' => [
                         'id' => $article->category->id,
                         'name' => $article->category->name
-                    ],
-                    'viewed' => $article->viewed
+                    ]
                 ];
             });
     }
