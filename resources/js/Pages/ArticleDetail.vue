@@ -21,7 +21,9 @@ const popularPosts = computed(() => props.popularPosts);
         <!-- Article Header -->
         <section
             class="relative py-12 overflow-hidden"
-            :style="{ backgroundColor: 'white' }"
+            :style="{
+                background: `linear-gradient(to bottom, white, white 30%, var(--color-background))`,
+            }"
         >
             <div class="container-custom">
                 <nav
@@ -313,5 +315,10 @@ const popularPosts = computed(() => props.popularPosts);
         font-size: 2.25rem;
         line-height: 2.5rem;
     }
+}
+
+/* Add this new style */
+section {
+    min-height: 100vh; /* This ensures the gradient covers the full height */
 }
 </style>
