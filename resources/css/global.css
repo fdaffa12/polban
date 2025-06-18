@@ -5,10 +5,10 @@
 @tailwind utilities;
 
 :root {
-    --color-primary-dark: #23415A;
-    --color-primary: #4B7B74;
-    --color-secondary: #76BDB8;
-    --color-background: #F2EBD7;
+    --color-primary-dark: #23415a;
+    --color-primary: #4b7b74;
+    --color-secondary: #76bdb8;
+    --color-background: #f2ebd7;
     --text-color: #1f2937;
     --light-text: #6b7280;
 }
@@ -105,15 +105,27 @@ body {
 
 .about-image-glow {
     @apply absolute -inset-4 rounded-xl opacity-20 blur-lg;
-    background: linear-gradient(to right, var(--color-primary), var(--color-secondary));
+    background: linear-gradient(
+        to right,
+        var(--color-primary),
+        var(--color-secondary)
+    );
 }
 
 .about-button {
     @apply inline-flex items-center px-6 py-3 text-white rounded-full 
            transition-all duration-300 transform hover:scale-105 shadow-lg;
-    background: linear-gradient(to right, var(--color-primary-dark), var(--color-primary));
+    background: linear-gradient(
+        to right,
+        var(--color-primary-dark),
+        var(--color-primary)
+    );
     &:hover {
-        background: linear-gradient(to right, var(--color-primary), var(--color-secondary));
+        background: linear-gradient(
+            to right,
+            var(--color-primary),
+            var(--color-secondary)
+        );
     }
 }
 
@@ -133,7 +145,7 @@ body {
 .about-section-title {
     @apply relative inline-block text-3xl md:text-4xl font-bold text-[var(--text-color)] mb-8;
     &::after {
-        content: '';
+        content: "";
         @apply absolute -bottom-3 left-0 w-24 h-1 bg-[var(--color-primary)] rounded-full;
     }
 }
@@ -141,14 +153,14 @@ body {
 .history-timeline {
     @apply relative pl-8 border-l-2;
     border-color: var(--color-primary);
-    
+
     &::before {
-        content: '';
+        content: "";
         @apply absolute -left-2 top-0 w-4 h-4 rounded-full bg-[var(--color-primary)];
     }
-    
+
     &::after {
-        content: '';
+        content: "";
         @apply absolute -left-2 bottom-0 w-4 h-4 rounded-full bg-[var(--color-primary)];
     }
 }
@@ -166,8 +178,39 @@ body {
 
 /* Custom container sizes */
 .container-custom {
-    @apply container mx-auto px-4 sm:px-6 lg:px-8;
-    max-width: 1440px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    max-width: 1280px; /* atau 1440px sesuai kebutuhan */
+}
+
+@media (min-width: 640px) {
+    .container-custom {
+        padding-left: 2rem;
+        padding-right: 2rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .container-custom {
+        padding-left: 3rem;
+        padding-right: 3rem;
+    }
+}
+
+/* Grid layout utilities */
+.grid-cols-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+
+@media (min-width: 1024px) {
+    .grid-cols-layout {
+        grid-template-columns: 8fr 4fr;
+    }
 }
 
 /* Grid Pattern */
@@ -223,7 +266,12 @@ body {
 /* Prose Customization for About Page */
 .prose {
     @apply max-w-none;
-    h1, h2, h3, h4, h5, h6 {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
         @apply text-[var(--text-color)] font-bold;
     }
     p {
@@ -241,18 +289,18 @@ body {
 /* Gallery Effects */
 .gallery-image {
     @apply relative overflow-hidden rounded-xl shadow-lg;
-    
+
     &::after {
-        content: '';
+        content: "";
         @apply absolute inset-0 bg-gradient-to-t from-black/60 to-transparent 
                opacity-0 transition-opacity duration-300;
     }
-    
+
     &:hover {
         &::after {
             @apply opacity-100;
         }
-        
+
         img {
             @apply scale-110;
         }
@@ -267,14 +315,14 @@ body {
 .history-timeline {
     @apply relative pl-8 border-l-2;
     border-color: var(--color-primary);
-    
+
     &::before {
-        content: '';
+        content: "";
         @apply absolute -left-2 top-0 w-4 h-4 rounded-full bg-[var(--color-primary)];
     }
-    
+
     &::after {
-        content: '';
+        content: "";
         @apply absolute -left-2 bottom-0 w-4 h-4 rounded-full bg-[var(--color-primary)];
     }
 }
@@ -282,7 +330,7 @@ body {
 /* Section Transitions */
 .section-fade-up {
     @apply opacity-0 translate-y-8 transition-all duration-700;
-    
+
     &.visible {
         @apply opacity-100 translate-y-0;
     }

@@ -1,169 +1,282 @@
 <template>
     <GuestLayout title="Portal Berita">
-        <!-- Hero Section -->
-        <section class="relative py-20 overflow-hidden" :style="{ backgroundColor: 'white' }">
-            <div class="container-custom relative z-10">
-                <div class="text-center max-w-4xl mx-auto">
-                    <h1 class="heading-responsive font-bold mb-6" :style="{ color: 'var(--text-color)' }">
-                        Portal Berita
-                    </h1>
-                    <p class="text-responsive mb-8" :style="{ color: 'var(--light-text)' }">
-                        Dapatkan informasi terkini seputar kegiatan dan perkembangan organisasi
-                    </p>
-                </div>
-            </div>
-        </section>
-
-        <!-- News Section -->
+        <!-- Main Container -->
         <section
-            class="py-24 relative overflow-hidden"
-            :style="{
-                background: `linear-gradient(to bottom, white 0%, var(--color-background) 100%)`
-            }"
+            class="relative py-12 overflow-hidden"
+            :style="{ backgroundColor: 'white' }"
         >
-            <div class="container-custom relative z-10">
-                <!-- Category Navigation -->
-                <div class="mb-12">
-                    <div class="flex flex-wrap gap-3 justify-center max-w-4xl mx-auto">
-                        <button
-                            @click="filterByCategory(null)"
-                            class="group relative px-8 py-4 rounded-2xl transition-all duration-300 text-sm md:text-base font-semibold overflow-hidden"
-                            :style="
-                                !activeCategory
-                                    ? {
-                                          backgroundColor: 'var(--color-primary)',
-                                          color: 'white',
-                                      }
-                                    : {
-                                          backgroundColor: 'white',
-                                          color: 'var(--color-primary)',
-                                          border: '1px solid var(--color-secondary)',
-                                      }
-                            "
-                        >
-                            <span class="relative z-10">Semua Berita</span>
-                            <div
-                                v-if="activeCategory"
-                                class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                                :style="{
-                                    backgroundColor: 'var(--color-secondary)',
-                                    opacity: '0.1',
-                                }"
-                            ></div>
-                        </button>
-                        <button
-                            v-for="category in categories"
-                            :key="category.id"
-                            @click="filterByCategory(category.id)"
-                            class="group relative px-8 py-4 rounded-2xl transition-all duration-300 text-sm md:text-base font-semibold overflow-hidden"
-                            :style="
-                                activeCategory === category.id
-                                    ? {
-                                          backgroundColor: 'var(--color-primary)',
-                                          color: 'white',
-                                      }
-                                    : {
-                                          backgroundColor: 'white',
-                                          color: 'var(--color-primary)',
-                                          border: '1px solid var(--color-secondary)',
-                                      }
-                            "
-                        >
-                            <span class="relative z-10">
-                                {{ category.name }} ({{ category.articles_count }})
-                            </span>
-                            <div
-                                v-if="activeCategory !== category.id"
-                                class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                                :style="{
-                                    backgroundColor: 'var(--color-secondary)',
-                                    opacity: '0.1',
-                                }"
-                            ></div>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Articles Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mb-12">
-                    <article
-                        v-for="article in articles"
-                        :key="article.id"
-                        class="group bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer"
-                        @click="goToArticle(article.id)"
-                    >
-                        <div class="relative overflow-hidden">
-                            <img
-                                v-if="article.featured_image"
-                                :src="article.featured_image"
-                                :alt="article.title"
-                                class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                            />
-                            <div
-                                v-else
-                                class="w-full h-48 flex items-center justify-center"
-                                :style="{ backgroundColor: 'var(--color-background)' }"
-                            >
-                                <span :style="{ color: 'var(--light-text)' }">No Image</span>
-                            </div>
-                            <div
-                                class="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-medium text-white"
-                                :style="{ backgroundColor: 'var(--color-primary)' }"
-                            >
-                                {{ article.category.name }}
-                            </div>
-                        </div>
-                        <div class="p-6">
-                            <h3
-                                class="text-lg font-bold mb-3 line-clamp-2 group-hover:text-[var(--color-primary)] transition-colors duration-300"
+            <div class="container-custom">
+                <div class="grid-cols-layout">
+                    <!-- Left Column (Main Content) -->
+                    <div>
+                        <!-- Title and Description -->
+                        <div class="mb-8">
+                            <h1
+                                class="text-3xl lg:text-4xl xl:text-5xl font-bold mb-4"
                                 :style="{ color: 'var(--text-color)' }"
                             >
-                                {{ article.title }}
-                            </h3>
+                                Portal Berita
+                            </h1>
                             <p
-                                class="text-sm mb-4 line-clamp-3"
+                                class="text-base lg:text-lg mb-6"
                                 :style="{ color: 'var(--light-text)' }"
                             >
-                                {{ article.content }}
+                                Dapatkan informasi terkini seputar kegiatan dan
+                                perkembangan organisasi
                             </p>
-                            <div class="flex items-center justify-between text-xs" :style="{ color: 'var(--light-text)' }">
-                                <span>{{ article.author }}</span>
-                                <span>{{ article.created_at }}</span>
+                        </div>
+
+                        <!-- Category Navigation -->
+                        <div class="mb-8">
+                            <div class="flex flex-wrap gap-2 lg:gap-3">
+                                <button
+                                    @click="filterByCategory(null)"
+                                    class="group relative px-4 lg:px-6 py-2 lg:py-3 rounded-xl transition-all duration-300 text-xs lg:text-sm font-semibold overflow-hidden"
+                                    :style="
+                                        !activeCategory
+                                            ? {
+                                                  backgroundColor:
+                                                      'var(--color-primary)',
+                                                  color: 'white',
+                                              }
+                                            : {
+                                                  backgroundColor: 'white',
+                                                  color: 'var(--color-primary)',
+                                                  border: '1px solid var(--color-secondary)',
+                                              }
+                                    "
+                                >
+                                    <span class="relative z-10"
+                                        >Semua Berita</span
+                                    >
+                                    <div
+                                        v-if="activeCategory"
+                                        class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                                        :style="{
+                                            backgroundColor:
+                                                'var(--color-secondary)',
+                                            opacity: '0.1',
+                                        }"
+                                    ></div>
+                                </button>
+                                <button
+                                    v-for="category in categories"
+                                    :key="category.id"
+                                    @click="filterByCategory(category.id)"
+                                    class="group relative px-4 lg:px-6 py-2 lg:py-3 rounded-xl transition-all duration-300 text-xs lg:text-sm font-semibold overflow-hidden"
+                                    :style="
+                                        activeCategory === category.id
+                                            ? {
+                                                  backgroundColor:
+                                                      'var(--color-primary)',
+                                                  color: 'white',
+                                              }
+                                            : {
+                                                  backgroundColor: 'white',
+                                                  color: 'var(--color-primary)',
+                                                  border: '1px solid var(--color-secondary)',
+                                              }
+                                    "
+                                >
+                                    <span class="relative z-10">
+                                        {{ category.name }} ({{
+                                            category.articles_count
+                                        }})
+                                    </span>
+                                    <div
+                                        v-if="activeCategory !== category.id"
+                                        class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                                        :style="{
+                                            backgroundColor:
+                                                'var(--color-secondary)',
+                                            opacity: '0.1',
+                                        }"
+                                    ></div>
+                                </button>
                             </div>
                         </div>
-                    </article>
-                </div>
 
-                <!-- Pagination -->
-                <div v-if="pagination.last_page > 1" class="flex justify-center">
-                    <div class="flex items-center space-x-2">
-                        <button
-                            v-if="pagination.current_page > 1"
-                            @click="changePage(pagination.current_page - 1)"
-                            class="px-4 py-2 rounded-lg transition-colors duration-300"
-                            :style="{
-                                backgroundColor: 'white',
-                                color: 'var(--color-primary)',
-                                border: '1px solid var(--color-secondary)',
-                            }"
+                        <!-- Articles List -->
+                        <div class="space-y-4 lg:space-y-6 mb-8">
+                            <article
+                                v-for="article in displayedArticles"
+                                :key="article.id"
+                                class="group bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer"
+                                @click="goToArticle(article.id)"
+                            >
+                                <div class="flex flex-col md:flex-row">
+                                    <!-- Article Image -->
+                                    <div
+                                        class="md:w-1/3 relative overflow-hidden"
+                                    >
+                                        <img
+                                            v-if="article.featured_image"
+                                            :src="article.featured_image"
+                                            :alt="article.title"
+                                            class="w-full h-48 md:h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                        />
+                                        <div
+                                            v-else
+                                            class="w-full h-48 md:h-full flex items-center justify-center"
+                                            :style="{
+                                                backgroundColor:
+                                                    'var(--color-background)',
+                                            }"
+                                        >
+                                            <span
+                                                :style="{
+                                                    color: 'var(--light-text)',
+                                                }"
+                                                >No Image</span
+                                            >
+                                        </div>
+                                        <div
+                                            class="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-medium text-white"
+                                            :style="{
+                                                backgroundColor:
+                                                    'var(--color-primary)',
+                                            }"
+                                        >
+                                            {{ article.category.name }}
+                                        </div>
+                                    </div>
+
+                                    <!-- Article Content -->
+                                    <div
+                                        class="md:w-2/3 p-4 lg:p-6 flex flex-col justify-between"
+                                    >
+                                        <div>
+                                            <h3
+                                                class="text-lg lg:text-xl font-bold mb-2 lg:mb-3 line-clamp-2 group-hover:text-[var(--color-primary)] transition-colors duration-300"
+                                                :style="{
+                                                    color: 'var(--text-color)',
+                                                }"
+                                            >
+                                                {{ article.title }}
+                                            </h3>
+                                            <p
+                                                class="text-sm mb-3 lg:mb-4 line-clamp-3"
+                                                :style="{
+                                                    color: 'var(--light-text)',
+                                                }"
+                                            >
+                                                {{ article.content }}
+                                            </p>
+                                        </div>
+                                        <div
+                                            class="flex items-center justify-between text-xs lg:text-sm"
+                                            :style="{
+                                                color: 'var(--light-text)',
+                                            }"
+                                        >
+                                            <span>{{ article.author }}</span>
+                                            <span>{{
+                                                article.created_at
+                                            }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </article>
+                        </div>
+
+                        <!-- Load More Button -->
+                        <div v-if="canLoadMore" class="text-center">
+                            <button
+                                @click="loadMore"
+                                :disabled="loading"
+                                class="px-6 lg:px-8 py-2 lg:py-3 rounded-xl font-semibold transition-all duration-300 disabled:opacity-50 text-sm lg:text-base"
+                                :style="{
+                                    backgroundColor: 'var(--color-primary)',
+                                    color: 'white',
+                                }"
+                            >
+                                {{ loading ? "Loading..." : "Load More" }}
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Right Column (Sidebar) -->
+                    <div>
+                        <div
+                            class="bg-white rounded-2xl shadow-lg p-4 lg:p-6 lg:sticky lg:top-8"
                         >
-                            Previous
-                        </button>
-                        <span class="px-4 py-2" :style="{ color: 'var(--text-color)' }">
-                            {{ pagination.current_page }} / {{ pagination.last_page }}
-                        </span>
-                        <button
-                            v-if="pagination.has_more_pages"
-                            @click="changePage(pagination.current_page + 1)"
-                            class="px-4 py-2 rounded-lg transition-colors duration-300"
-                            :style="{
-                                backgroundColor: 'white',
-                                color: 'var(--color-primary)',
-                                border: '1px solid var(--color-secondary)',
-                            }"
-                        >
-                            Next
-                        </button>
+                            <h2
+                                class="text-xl lg:text-2xl font-bold mb-4 lg:mb-6"
+                                :style="{ color: 'var(--text-color)' }"
+                            >
+                                Popular Post
+                            </h2>
+                            <div class="space-y-3 lg:space-y-4">
+                                <article
+                                    v-for="latestArticle in latestNews"
+                                    :key="latestArticle.id"
+                                    class="group cursor-pointer border-b border-gray-100 pb-3 lg:pb-4 last:border-b-0 last:pb-0"
+                                    @click="goToArticle(latestArticle.id)"
+                                >
+                                    <div class="flex gap-3 lg:gap-4">
+                                        <div
+                                            class="w-16 h-16 lg:w-20 lg:h-20 flex-shrink-0 rounded-lg overflow-hidden"
+                                        >
+                                            <img
+                                                v-if="
+                                                    latestArticle.featured_image
+                                                "
+                                                :src="
+                                                    latestArticle.featured_image
+                                                "
+                                                :alt="latestArticle.title"
+                                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                            />
+                                            <div
+                                                v-else
+                                                class="w-full h-full flex items-center justify-center"
+                                                :style="{
+                                                    backgroundColor:
+                                                        'var(--color-background)',
+                                                }"
+                                            >
+                                                <span
+                                                    class="text-xs"
+                                                    :style="{
+                                                        color: 'var(--light-text)',
+                                                    }"
+                                                    >No Image</span
+                                                >
+                                            </div>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <div
+                                                class="inline-block px-2 py-1 rounded text-xs font-medium text-white mb-1 lg:mb-2"
+                                                :style="{
+                                                    backgroundColor:
+                                                        'var(--color-primary)',
+                                                }"
+                                            >
+                                                {{
+                                                    latestArticle.category.name
+                                                }}
+                                            </div>
+                                            <h3
+                                                class="font-semibold text-xs lg:text-sm line-clamp-2 group-hover:text-[var(--color-primary)] transition-colors duration-300 mb-1 lg:mb-2"
+                                                :style="{
+                                                    color: 'var(--text-color)',
+                                                }"
+                                            >
+                                                {{ latestArticle.title }}
+                                            </h3>
+                                            <p
+                                                class="text-xs"
+                                                :style="{
+                                                    color: 'var(--light-text)',
+                                                }"
+                                            >
+                                                {{ latestArticle.created_at }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </article>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -172,38 +285,61 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { router } from '@inertiajs/vue3'
-import GuestLayout from '@/Layouts/GuestLayout.vue'
+import { ref, computed, onMounted } from "vue";
+import { router } from "@inertiajs/vue3";
+import GuestLayout from "@/Layouts/GuestLayout.vue";
 
 const props = defineProps({
     categories: Array,
     articles: Array,
     activeCategory: Number,
-    pagination: Object
-})
+    pagination: Object,
+});
 
-const activeCategory = ref(props.activeCategory || null)
+const activeCategory = ref(props.activeCategory || null);
+const displayedCount = ref(5);
+const loading = ref(false);
 
+// Computed properties
+const displayedArticles = computed(() => {
+    return props.articles.slice(0, displayedCount.value);
+});
+
+const canLoadMore = computed(() => {
+    return displayedCount.value < props.articles.length;
+});
+
+const latestNews = computed(() => {
+    return props.articles.slice(0, 6);
+});
+
+// Methods
 const filterByCategory = (categoryId) => {
-    activeCategory.value = categoryId
+    activeCategory.value = categoryId;
+    displayedCount.value = 5; // Reset to initial count
     if (categoryId) {
-        router.get(`/news/category/${categoryId}`)
+        router.get(`/news/category/${categoryId}`);
     } else {
-        router.get('/news')
+        router.get("/news");
     }
-}
+};
 
 const goToArticle = (articleId) => {
-    router.get(`/article/${articleId}`)
-}
+    router.get(`/article/${articleId}`);
+};
 
-const changePage = (page) => {
-    const url = activeCategory.value 
-        ? `/news/category/${activeCategory.value}?page=${page}`
-        : `/news?page=${page}`
-    router.get(url)
-}
+const loadMore = () => {
+    loading.value = true;
+    setTimeout(() => {
+        displayedCount.value += 5;
+        loading.value = false;
+    }, 500); // Simulate loading delay
+};
+
+// Reset displayed count when articles change
+onMounted(() => {
+    displayedCount.value = 5;
+});
 </script>
 
 <style scoped>
@@ -219,5 +355,24 @@ const changePage = (page) => {
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
+}
+
+.container-custom {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+@media (min-width: 640px) {
+    .container-custom {
+        padding: 0 2rem;
+    }
+}
+
+/* Memastikan grid 2 kolom di desktop */
+@media (min-width: 1024px) {
+    .container-custom {
+        padding: 0 3rem;
+    }
 }
 </style>
