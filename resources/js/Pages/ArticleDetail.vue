@@ -1,5 +1,5 @@
 <template>
-    <GuestLayout title="Detail Artikel">
+    <GuestLayout :title="article.title">
         <!-- Article Header -->
         <section
             class="relative py-20 overflow-hidden"
