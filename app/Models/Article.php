@@ -15,7 +15,8 @@ class Article extends Model
         'user_id',
         'featured_image',
         'status',
-        'viewed'
+        'viewed',
+        'slug'  // Add this
     ];
 
     protected $attributes = [

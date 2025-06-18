@@ -144,25 +144,26 @@ class HomeController extends Controller
         $newsCategory = Category::where('name', 'News')->first();
 
         // Ambil artikel dengan kategori News
-        $newsArticles = [];
-        if ($newsCategory) {
-            $newsArticles = Article::with(['category', 'user'])
-                ->where('category_id', $newsCategory->id)
-                ->where('status', 'publish')
-                ->latest()
-                ->take(5)
-                ->get()
-                ->map(function ($article) {
-                    return [
-                        'id' => $article->id,
-                        'title' => $article->title,
-                        'content' => Str::limit(strip_tags($article->content), 150),
-                        'featured_image' => $article->featured_image ? "/storage/{$article->featured_image}" : null,
-                        'created_at' => $article->created_at->format('d M Y'),
-                        'author' => $article->user->name,
-                    ];
-                });
-        }
+        $newsArticles = Article::with(['category', 'user'])
+            ->where('status', 'publish')
+            ->latest()
+            ->take(5)
+            ->get()
+            ->map(function ($article) {
+                return [
+                    'id' => $article->id,
+                    'title' => $article->title,
+                    'slug' => $article->slug, // Add this
+                    'content' => Str::limit(strip_tags($article->content), 200),
+                    'featured_image' => $article->featured_image ? "/storage/{$article->featured_image}" : null,
+                    'created_at' => $article->created_at->format('d M Y'),
+                    'author' => $article->user->name,
+                    'category' => [
+                        'id' => $article->category->id,
+                        'name' => $article->category->name
+                    ]
+                ];
+            });
 
         // Fetch departments
         $departments = Department::all()->map(function ($department) {
@@ -319,6 +320,7 @@ class HomeController extends Controller
             return [
                 'id' => $article->id,
                 'title' => $article->title,
+                'slug' => $article->slug, // Add this
                 'content' => Str::limit(strip_tags($article->content), 200),
                 'featured_image' => $article->featured_image ? "/storage/{$article->featured_image}" : null,
                 'created_at' => $article->created_at->format('d M Y'),
@@ -400,15 +402,16 @@ class HomeController extends Controller
         ]);
     }
 
-    public function articleDetail($id)
+    public function articleDetail($slug)
     {
         $article = Article::with(['category', 'user', 'tags'])
             ->where('status', 'publish')
-            ->findOrFail($id);
+            ->where('slug', $slug)
+            ->firstOrFail();
 
         // Update view counter
         DB::table('articles')
-            ->where('id', $id)
+            ->where('slug', $slug)
             ->increment('viewed', 1, [
                 'updated_at' => now()
             ]);
@@ -428,6 +431,7 @@ class HomeController extends Controller
                 return [
                     'id' => $relatedArticle->id,
                     'title' => $relatedArticle->title,
+                    'slug' => $relatedArticle->slug, // Add this
                     'content' => Str::limit(strip_tags($relatedArticle->content), 150),
                     'featured_image' => $relatedArticle->featured_image ? "/storage/{$relatedArticle->featured_image}" : null,
                     'created_at' => $relatedArticle->created_at->format('d M Y'),
@@ -439,6 +443,7 @@ class HomeController extends Controller
             'article' => [
                 'id' => $article->id,
                 'title' => $article->title,
+                'slug' => $article->slug, // Add this
                 'content' => $article->content,
                 'featured_image' => $article->featured_image ? "/storage/{$article->featured_image}" : null,
                 'created_at' => $article->created_at->format('d M Y'),
@@ -471,6 +476,7 @@ class HomeController extends Controller
                 return [
                     'id' => $article->id,
                     'title' => $article->title,
+                    'slug' => $article->slug, // Add this
                     'content' => Str::limit(strip_tags($article->content), 150),
                     'featured_image' => $article->featured_image ? "/storage/{$article->featured_image}" : null,
                     'created_at' => $article->created_at->format('d M Y'),

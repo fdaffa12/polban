@@ -102,7 +102,7 @@
                                 v-for="article in displayedArticles"
                                 :key="article.id"
                                 class="group bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer"
-                                @click="goToArticle(article.id)"
+                                @click="goToArticle(article.slug)"
                             >
                                 <div class="flex flex-col md:flex-row">
                                     <!-- Article Image -->
@@ -211,7 +211,7 @@
                                     v-for="post in popularPosts"
                                     :key="post.id"
                                     class="group cursor-pointer border-b border-gray-100 pb-3 lg:pb-4 last:border-b-0 last:pb-0"
-                                    @click="goToArticle(post.id)"
+                                    @click="goToArticle(post.slug)"
                                 >
                                     <div class="flex gap-3 lg:gap-4">
                                         <div
@@ -325,8 +325,8 @@ const filterByCategory = (categoryId) => {
     }
 };
 
-const goToArticle = (articleId) => {
-    router.get(`/article/${articleId}`);
+const goToArticle = (slug) => {
+    router.get(`/article/${slug}`);
 };
 
 const loadMore = () => {

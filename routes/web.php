@@ -134,4 +134,9 @@ require __DIR__ . '/auth.php';
 // Tambahkan routes ini
 Route::get('/news', [HomeController::class, 'news'])->name('news');
 Route::get('/news/category/{categoryId}', [HomeController::class, 'newsByCategory'])->name('news.category');
-Route::get('/article/{id}', [HomeController::class, 'articleDetail'])->name('article.detail');
+Route::get('/article/{slug}', [HomeController::class, 'articleDetail'])->name('article.detail');
+
+// Add route binding at the top of the file after Route declarations
+Route::bind('article', function ($value) {
+    return \App\Models\Article::where('slug', $value)->firstOrFail();
+});

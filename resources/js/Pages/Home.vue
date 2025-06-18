@@ -667,7 +667,7 @@ const props = defineProps({
                             </div>
 
                             <Link
-                                href="/articles"
+                                href="/news"
                                 class="relative z-10 inline-flex items-center justify-center px-6 py-3 rounded-xl bg-white text-[var(--color-primary)] hover:bg-[var(--color-background)] transition-colors duration-300 font-semibold group-hover:shadow-lg"
                             >
                                 <span>Lihat Semua Artikel</span>
@@ -759,7 +759,7 @@ const props = defineProps({
                                                         class="flex items-center gap-4 pt-2"
                                                     >
                                                         <Link
-                                                            :href="`/articles/${article.id}`"
+                                                            :href="`/article/${article.slug}`"
                                                             class="inline-flex items-center px-6 py-2 rounded-lg bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] text-white transition-all duration-300"
                                                         >
                                                             Baca Selengkapnya
