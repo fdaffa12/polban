@@ -443,12 +443,12 @@ class HomeController extends Controller
             'article' => [
                 'id' => $article->id,
                 'title' => $article->title,
-                'slug' => $article->slug, // Add this
+                'slug' => $article->slug,
                 'content' => $article->content,
                 'featured_image' => $article->featured_image ? "/storage/{$article->featured_image}" : null,
                 'created_at' => $article->created_at->format('d M Y'),
                 'author' => $article->user->name,
-                'viewed' => $viewCount, // Add view count to response
+                'viewed' => $viewCount,
                 'category' => [
                     'id' => $article->category->id,
                     'name' => $article->category->name
@@ -460,6 +460,7 @@ class HomeController extends Controller
                     ];
                 })
             ],
+            'popularPosts' => $this->getPopularPosts(), // Pindahkan ke sini
             'relatedArticles' => $relatedArticles
         ]);
     }

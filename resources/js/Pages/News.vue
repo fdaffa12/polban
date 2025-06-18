@@ -1,3 +1,60 @@
+<script setup>
+import { ref, computed, onMounted } from "vue";
+import { router } from "@inertiajs/vue3";
+import GuestLayout from "@/Layouts/GuestLayout.vue";
+
+const props = defineProps({
+    categories: Array,
+    articles: Array,
+    activeCategory: Number,
+    pagination: Object,
+    popularPosts: Array, // Add this line
+});
+
+const activeCategory = ref(props.activeCategory || null);
+const displayedCount = ref(5);
+const loading = ref(false);
+
+// Computed properties
+const displayedArticles = computed(() => {
+    return props.articles.slice(0, displayedCount.value);
+});
+
+const canLoadMore = computed(() => {
+    return displayedCount.value < props.articles.length;
+});
+
+const popularPosts = computed(() => props.popularPosts);
+
+// Methods
+const filterByCategory = (categoryId) => {
+    activeCategory.value = categoryId;
+    displayedCount.value = 5; // Reset to initial count
+    if (categoryId) {
+        router.get(`/news/category/${categoryId}`);
+    } else {
+        router.get("/news");
+    }
+};
+
+const goToArticle = (slug) => {
+    router.get(`/article/${slug}`);
+};
+
+const loadMore = () => {
+    loading.value = true;
+    setTimeout(() => {
+        displayedCount.value += 5;
+        loading.value = false;
+    }, 500); // Simulate loading delay
+};
+
+// Reset displayed count when articles change
+onMounted(() => {
+    displayedCount.value = 5;
+});
+</script>
+
 <template>
     <GuestLayout title="Portal Berita">
         <!-- Main Container -->
@@ -285,63 +342,6 @@
         </section>
     </GuestLayout>
 </template>
-
-<script setup>
-import { ref, computed, onMounted } from "vue";
-import { router } from "@inertiajs/vue3";
-import GuestLayout from "@/Layouts/GuestLayout.vue";
-
-const props = defineProps({
-    categories: Array,
-    articles: Array,
-    activeCategory: Number,
-    pagination: Object,
-    popularPosts: Array, // Add this line
-});
-
-const activeCategory = ref(props.activeCategory || null);
-const displayedCount = ref(5);
-const loading = ref(false);
-
-// Computed properties
-const displayedArticles = computed(() => {
-    return props.articles.slice(0, displayedCount.value);
-});
-
-const canLoadMore = computed(() => {
-    return displayedCount.value < props.articles.length;
-});
-
-const popularPosts = computed(() => props.popularPosts);
-
-// Methods
-const filterByCategory = (categoryId) => {
-    activeCategory.value = categoryId;
-    displayedCount.value = 5; // Reset to initial count
-    if (categoryId) {
-        router.get(`/news/category/${categoryId}`);
-    } else {
-        router.get("/news");
-    }
-};
-
-const goToArticle = (slug) => {
-    router.get(`/article/${slug}`);
-};
-
-const loadMore = () => {
-    loading.value = true;
-    setTimeout(() => {
-        displayedCount.value += 5;
-        loading.value = false;
-    }, 500); // Simulate loading delay
-};
-
-// Reset displayed count when articles change
-onMounted(() => {
-    displayedCount.value = 5;
-});
-</script>
 
 <style scoped>
 .line-clamp-2 {
