@@ -204,27 +204,23 @@
                                 class="text-xl lg:text-2xl font-bold mb-4 lg:mb-6"
                                 :style="{ color: 'var(--text-color)' }"
                             >
-                                Popular Post
+                                Popular Posts
                             </h2>
                             <div class="space-y-3 lg:space-y-4">
                                 <article
-                                    v-for="latestArticle in latestNews"
-                                    :key="latestArticle.id"
+                                    v-for="post in popularPosts"
+                                    :key="post.id"
                                     class="group cursor-pointer border-b border-gray-100 pb-3 lg:pb-4 last:border-b-0 last:pb-0"
-                                    @click="goToArticle(latestArticle.id)"
+                                    @click="goToArticle(post.id)"
                                 >
                                     <div class="flex gap-3 lg:gap-4">
                                         <div
                                             class="w-16 h-16 lg:w-20 lg:h-20 flex-shrink-0 rounded-lg overflow-hidden"
                                         >
                                             <img
-                                                v-if="
-                                                    latestArticle.featured_image
-                                                "
-                                                :src="
-                                                    latestArticle.featured_image
-                                                "
-                                                :alt="latestArticle.title"
+                                                v-if="post.featured_image"
+                                                :src="post.featured_image"
+                                                :alt="post.title"
                                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                                             />
                                             <div
@@ -252,9 +248,7 @@
                                                         'var(--color-primary)',
                                                 }"
                                             >
-                                                {{
-                                                    latestArticle.category.name
-                                                }}
+                                                {{ post.category.name }}
                                             </div>
                                             <h3
                                                 class="font-semibold text-xs lg:text-sm line-clamp-2 group-hover:text-[var(--color-primary)] transition-colors duration-300 mb-1 lg:mb-2"
@@ -262,16 +256,24 @@
                                                     color: 'var(--text-color)',
                                                 }"
                                             >
-                                                {{ latestArticle.title }}
+                                                {{ post.title }}
                                             </h3>
-                                            <p
-                                                class="text-xs"
+                                            <div
+                                                class="flex justify-between items-center text-xs"
                                                 :style="{
                                                     color: 'var(--light-text)',
                                                 }"
                                             >
-                                                {{ latestArticle.created_at }}
-                                            </p>
+                                                <span>{{
+                                                    post.created_at
+                                                }}</span>
+                                                <span
+                                                    >{{
+                                                        post.viewed ?? 0
+                                                    }}
+                                                    views</span
+                                                >
+                                            </div>
                                         </div>
                                     </div>
                                 </article>
@@ -294,6 +296,7 @@ const props = defineProps({
     articles: Array,
     activeCategory: Number,
     pagination: Object,
+    popularPosts: Array, // Add this line
 });
 
 const activeCategory = ref(props.activeCategory || null);
@@ -309,9 +312,7 @@ const canLoadMore = computed(() => {
     return displayedCount.value < props.articles.length;
 });
 
-const latestNews = computed(() => {
-    return props.articles.slice(0, 6);
-});
+const popularPosts = computed(() => props.popularPosts);
 
 // Methods
 const filterByCategory = (categoryId) => {

@@ -55,7 +55,7 @@ class HomeController extends Controller
             $eventDates = $upcomingEvent->dates->sortBy('event_date');
             $firstDate = $eventDates->first();
             $lastDate = $eventDates->last();
-            
+
             $featuredEvent = [
                 'id' => $upcomingEvent->id,
                 'event_name' => $upcomingEvent->event_name,
@@ -114,7 +114,7 @@ class HomeController extends Controller
             $eventDates = $event->dates->sortBy('event_date');
             $firstDate = $eventDates->first();
             $lastDate = $eventDates->last();
-            
+
             // Determine status based on event dates
             $status = 'upcoming';
             if ($firstDate->event_date <= $today->toDateString() && $lastDate->event_date >= $today->toDateString()) {
@@ -142,7 +142,7 @@ class HomeController extends Controller
 
         // Ambil kategori News
         $newsCategory = Category::where('name', 'News')->first();
-        
+
         // Ambil artikel dengan kategori News
         $newsArticles = [];
         if ($newsCategory) {
@@ -197,8 +197,8 @@ class HomeController extends Controller
                 'title' => $aboutUs->au_title ?? 'KABINET RUANG OPTIMA',
                 'au_desc' => $aboutUs->au_desc,
                 'image' => $aboutUs->au_image ? asset('storage/' . $aboutUs->au_image) : null,
-                'au_multiple_image' => $aboutUs->au_multiple_image 
-                    ? array_map(function($image) {
+                'au_multiple_image' => $aboutUs->au_multiple_image
+                    ? array_map(function ($image) {
                         return asset('storage/' . $image);
                     }, $aboutUs->au_multiple_image)
                     : [],
@@ -220,33 +220,33 @@ class HomeController extends Controller
             'content' => [
                 'title' => 'KABINET LENTERA RESTORASI',
                 'description' => $content ? nl2br($content->description) : '',
-                'visions' => $visions->map(function($vision) {
+                'visions' => $visions->map(function ($vision) {
                     return [
                         'id' => $vision->id,
                         'content' => nl2br($vision->vision)
                     ];
                 }),
-                'missions' => $missions->map(function($mission, $index) {
+                'missions' => $missions->map(function ($mission, $index) {
                     return [
                         'id' => $mission->id,
                         'content' => nl2br($mission->mission)
                     ];
                 }),
-                'coreValues' => $coreValues->map(function($value) {
+                'coreValues' => $coreValues->map(function ($value) {
                     return [
                         'id' => $value->id,
                         'title' => $value->title,
                         'description' => nl2br($value->description)
                     ];
                 }),
-                'images' => $images->map(function($image) {
+                'images' => $images->map(function ($image) {
                     return [
                         'id' => $image->id,
                         'title' => $image->title,
                         'image' => $image->image ? asset('storage/' . $image->image) : null
                     ];
                 }),
-                'au_multiple_image' => collect($images)->pluck('image')->map(function($image) {
+                'au_multiple_image' => collect($images)->pluck('image')->map(function ($image) {
                     return asset('storage/' . $image);
                 })->toArray()
             ]
@@ -255,9 +255,11 @@ class HomeController extends Controller
 
     public function department()
     {
-        $departments = Department::with(['members' => function($query) {
-            $query->orderBy('position');
-        }])->get()->map(function ($department) {
+        $departments = Department::with([
+            'members' => function ($query) {
+                $query->orderBy('position');
+            }
+        ])->get()->map(function ($department) {
             return [
                 'id' => $department->id,
                 'dept_name' => $department->dept_name,
@@ -302,9 +304,11 @@ class HomeController extends Controller
 
     public function news()
     {
-        $categories = Category::withCount(['articles' => function($query) {
-            $query->where('status', 'publish');
-        }])->get();
+        $categories = Category::withCount([
+            'articles' => function ($query) {
+                $query->where('status', 'publish');
+            }
+        ])->get();
 
         $articles = Article::with(['category', 'user'])
             ->where('status', 'publish')
@@ -327,7 +331,7 @@ class HomeController extends Controller
         });
 
         return Inertia::render('News', [
-            'categories' => $categories->map(function($category) {
+            'categories' => $categories->map(function ($category) {
                 return [
                     'id' => $category->id,
                     'name' => $category->name,
@@ -335,6 +339,7 @@ class HomeController extends Controller
                 ];
             }),
             'articles' => $mappedArticles,
+            'popularPosts' => $this->getPopularPosts(), // Add this line
             'pagination' => [
                 'current_page' => $articles->currentPage(),
                 'last_page' => $articles->lastPage(),
@@ -347,9 +352,11 @@ class HomeController extends Controller
 
     public function newsByCategory($categoryId)
     {
-        $categories = Category::withCount(['articles' => function($query) {
-            $query->where('status', 'publish');
-        }])->get();
+        $categories = Category::withCount([
+            'articles' => function ($query) {
+                $query->where('status', 'publish');
+            }
+        ])->get();
 
         $articles = Article::with(['category', 'user'])
             ->where('status', 'publish')
@@ -373,7 +380,7 @@ class HomeController extends Controller
         });
 
         return Inertia::render('News', [
-            'categories' => $categories->map(function($category) {
+            'categories' => $categories->map(function ($category) {
                 return [
                     'id' => $category->id,
                     'name' => $category->name,
@@ -397,6 +404,16 @@ class HomeController extends Controller
         $article = Article::with(['category', 'user', 'tags'])
             ->where('status', 'publish')
             ->findOrFail($id);
+
+        // Update view counter
+        DB::table('articles')
+            ->where('id', $id)
+            ->increment('viewed', 1, [
+                'updated_at' => now()
+            ]);
+
+        // Get updated view count
+        $viewCount = $article->fresh()->viewed;
 
         // Get related articles from same category
         $relatedArticles = Article::with(['category', 'user'])
@@ -425,11 +442,12 @@ class HomeController extends Controller
                 'featured_image' => $article->featured_image ? "/storage/{$article->featured_image}" : null,
                 'created_at' => $article->created_at->format('d M Y'),
                 'author' => $article->user->name,
+                'viewed' => $viewCount, // Add view count to response
                 'category' => [
                     'id' => $article->category->id,
                     'name' => $article->category->name
                 ],
-                'tags' => $article->tags->map(function($tag) {
+                'tags' => $article->tags->map(function ($tag) {
                     return [
                         'id' => $tag->id,
                         'name' => $tag->name
@@ -438,5 +456,29 @@ class HomeController extends Controller
             ],
             'relatedArticles' => $relatedArticles
         ]);
+    }
+
+    // Add new method for popular posts
+    private function getPopularPosts()
+    {
+        return Article::with(['category', 'user'])
+            ->where('status', 'publish')
+            ->orderBy('viewed', 'desc')
+            ->take(5)
+            ->get()
+            ->map(function ($article) {
+                return [
+                    'id' => $article->id,
+                    'title' => $article->title,
+                    'content' => Str::limit(strip_tags($article->content), 150),
+                    'featured_image' => $article->featured_image ? "/storage/{$article->featured_image}" : null,
+                    'created_at' => $article->created_at->format('d M Y'),
+                    'category' => [
+                        'id' => $article->category->id,
+                        'name' => $article->category->name
+                    ],
+                    'viewed' => $article->viewed
+                ];
+            });
     }
 }

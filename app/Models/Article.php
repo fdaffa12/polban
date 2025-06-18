@@ -8,7 +8,19 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Article extends Model
 {
-    protected $fillable = ['title', 'content', 'category_id', 'user_id', 'featured_image', 'status'];
+    protected $fillable = [
+        'title',
+        'content',
+        'category_id',
+        'user_id',
+        'featured_image',
+        'status',
+        'viewed'
+    ];
+
+    protected $attributes = [
+        'viewed' => 0 // Set default value
+    ];
 
     public function category(): BelongsTo
     {
