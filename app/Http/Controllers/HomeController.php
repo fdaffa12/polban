@@ -776,7 +776,7 @@ class HomeController extends Controller
                 'dates' => $event->dates->map(function ($date) {
                     return [
                         'event_date' => $date->event_date,
-                        'event_time' => $date->event_time
+                        'event_time' => $date->event_time ? Carbon::parse($date->event_time)->format('H:i:s') : null
                     ];
                 }),
                 'department' => [
