@@ -489,4 +489,240 @@ class HomeController extends Controller
                 ];
             });
     }
+
+    public function events()
+    {
+        $departments = Department::withCount([
+            'events' => function ($query) {
+                $query->where('status', '!=', 'closed');
+            }
+        ])->get();
+
+        $events = Event::with(['department', 'dates'])
+            ->where('status', '!=', 'closed')
+            ->latest()
+            ->paginate(12);
+
+        $mappedEvents = $events->getCollection()->map(function ($event) {
+            $today = now();
+            $eventDates = $event->dates->sortBy('event_date');
+            $firstDate = $eventDates->first();
+            $lastDate = $eventDates->last();
+
+            // Determine status based on event dates
+            $status = 'upcoming';
+            if ($firstDate && $firstDate->event_date <= $today->toDateString() && $lastDate && $lastDate->event_date >= $today->toDateString()) {
+                $status = 'ongoing';
+            } elseif ($lastDate && $lastDate->event_date < $today->toDateString()) {
+                $status = 'past';
+            }
+
+            return [
+                'id' => $event->id,
+                'event_name' => $event->event_name,
+                'event_detail' => Str::limit(strip_tags($event->event_detail), 200),
+                'fee_type' => $event->fee_type,
+                'fee_amount' => $event->fee_amount,
+                'event_flyer' => $event->event_flyer ? "/storage/{$event->event_flyer}" : null,
+                'start_date' => $firstDate ? $firstDate->event_date : null,
+                'end_date' => $lastDate && $lastDate->event_date != $firstDate->event_date ? $lastDate->event_date : null,
+                'status' => $status,
+                'department' => [
+                    'id' => $event->department->id,
+                    'name' => $event->department->dept_name
+                ]
+            ];
+        });
+
+        return Inertia::render('Events', [
+            'departments' => $departments->map(function ($department) {
+                return [
+                    'id' => $department->id,
+                    'name' => $department->dept_name,
+                    'events_count' => $department->events_count
+                ];
+            }),
+            'events' => $mappedEvents,
+            'popularEvents' => $this->getPopularEvents(),
+            'pagination' => [
+                'current_page' => $events->currentPage(),
+                'last_page' => $events->lastPage(),
+                'per_page' => $events->perPage(),
+                'total' => $events->total(),
+                'has_more_pages' => $events->hasMorePages()
+            ]
+        ]);
+    }
+
+    public function eventsByDepartment($departmentId)
+    {
+        $departments = Department::withCount([
+            'events' => function ($query) {
+                $query->where('status', '!=', 'closed');
+            }
+        ])->get();
+
+        $events = Event::with(['department', 'dates'])
+            ->where('status', '!=', 'closed')
+            ->where('department_id', $departmentId)
+            ->latest()
+            ->paginate(12);
+
+        $mappedEvents = $events->getCollection()->map(function ($event) {
+            $today = now();
+            $eventDates = $event->dates->sortBy('event_date');
+            $firstDate = $eventDates->first();
+            $lastDate = $eventDates->last();
+
+            $status = 'upcoming';
+            if ($firstDate && $firstDate->event_date <= $today->toDateString() && $lastDate && $lastDate->event_date >= $today->toDateString()) {
+                $status = 'ongoing';
+            } elseif ($lastDate && $lastDate->event_date < $today->toDateString()) {
+                $status = 'past';
+            }
+
+            return [
+                'id' => $event->id,
+                'event_name' => $event->event_name,
+                'event_detail' => Str::limit(strip_tags($event->event_detail), 200),
+                'fee_type' => $event->fee_type,
+                'fee_amount' => $event->fee_amount,
+                'event_flyer' => $event->event_flyer ? "/storage/{$event->event_flyer}" : null,
+                'start_date' => $firstDate ? $firstDate->event_date : null,
+                'end_date' => $lastDate && $lastDate->event_date != $firstDate->event_date ? $lastDate->event_date : null,
+                'status' => $status,
+                'department' => [
+                    'id' => $event->department->id,
+                    'name' => $event->department->dept_name
+                ]
+            ];
+        });
+
+        return Inertia::render('Events', [
+            'departments' => $departments->map(function ($department) {
+                return [
+                    'id' => $department->id,
+                    'name' => $department->dept_name,
+                    'events_count' => $department->events_count
+                ];
+            }),
+            'events' => $mappedEvents,
+            'activeDepartment' => $departmentId,
+            'popularEvents' => $this->getPopularEvents(),
+            'pagination' => [
+                'current_page' => $events->currentPage(),
+                'last_page' => $events->lastPage(),
+                'per_page' => $events->perPage(),
+                'total' => $events->total(),
+                'has_more_pages' => $events->hasMorePages()
+            ]
+        ]);
+    }
+
+    public function eventDetail($id)
+    {
+        $event = Event::with(['department', 'dates'])
+            ->where('id', $id)
+            ->firstOrFail();
+
+        $eventDates = $event->dates->sortBy('event_date');
+        $firstDate = $eventDates->first();
+        $lastDate = $eventDates->last();
+        $today = now();
+
+        $status = 'upcoming';
+        if ($firstDate && $firstDate->event_date <= $today->toDateString() && $lastDate && $lastDate->event_date >= $today->toDateString()) {
+            $status = 'ongoing';
+        } elseif ($lastDate && $lastDate->event_date < $today->toDateString()) {
+            $status = 'past';
+        }
+
+        // Get related events from same department
+        $relatedEvents = Event::with(['department', 'dates'])
+            ->where('department_id', $event->department_id)
+            ->where('id', '!=', $event->id)
+            ->where('status', '!=', 'closed')
+            ->latest()
+            ->take(4)
+            ->get()
+            ->map(function ($relatedEvent) {
+                $eventDates = $relatedEvent->dates->sortBy('event_date');
+                $firstDate = $eventDates->first();
+                $lastDate = $eventDates->last();
+
+                return [
+                    'id' => $relatedEvent->id,
+                    'event_name' => $relatedEvent->event_name,
+                    'event_detail' => Str::limit(strip_tags($relatedEvent->event_detail), 150),
+                    'event_flyer' => $relatedEvent->event_flyer ? "/storage/{$relatedEvent->event_flyer}" : null,
+                    'start_date' => $firstDate ? $firstDate->event_date : null,
+                    'end_date' => $lastDate && $lastDate->event_date != $firstDate->event_date ? $lastDate->event_date : null,
+                    'fee_type' => $relatedEvent->fee_type,
+                    'department' => [
+                        'id' => $relatedEvent->department->id,
+                        'name' => $relatedEvent->department->dept_name
+                    ]
+                ];
+            });
+
+        return Inertia::render('EventDetail', [
+            'event' => [
+                'id' => $event->id,
+                'event_name' => $event->event_name,
+                'event_detail' => $event->event_detail,
+                'fee_type' => $event->fee_type,
+                'fee_amount' => $event->fee_amount,
+                'event_flyer' => $event->event_flyer ? "/storage/{$event->event_flyer}" : null,
+                'event_gallery' => $event->event_gallery ? array_map(function($image) {
+                    return "/storage/{$image}";
+                }, $event->event_gallery) : [],
+                'event_doc' => $event->event_doc ? "/storage/{$event->event_doc}" : null,
+                'start_date' => $firstDate ? $firstDate->event_date : null,
+                'end_date' => $lastDate && $lastDate->event_date != $firstDate->event_date ? $lastDate->event_date : null,
+                'status' => $status,
+                'dates' => $event->dates->map(function($date) {
+                    return [
+                        'event_date' => $date->event_date,
+                        'event_time' => $date->event_time
+                    ];
+                }),
+                'department' => [
+                    'id' => $event->department->id,
+                    'name' => $event->department->dept_name
+                ]
+            ],
+            'popularEvents' => $this->getPopularEvents(),
+            'relatedEvents' => $relatedEvents
+        ]);
+    }
+
+    // Add new method for popular events
+    private function getPopularEvents()
+    {
+        return Event::with(['department', 'dates'])
+            ->where('status', '!=', 'closed')
+            ->latest()
+            ->take(7)
+            ->get()
+            ->map(function ($event) {
+                $eventDates = $event->dates->sortBy('event_date');
+                $firstDate = $eventDates->first();
+                $lastDate = $eventDates->last();
+
+                return [
+                    'id' => $event->id,
+                    'event_name' => $event->event_name,
+                    'event_detail' => Str::limit(strip_tags($event->event_detail), 150),
+                    'event_flyer' => $event->event_flyer ? "/storage/{$event->event_flyer}" : null,
+                    'start_date' => $firstDate ? $firstDate->event_date : null,
+                    'end_date' => $lastDate && $lastDate->event_date != $firstDate->event_date ? $lastDate->event_date : null,
+                    'fee_type' => $event->fee_type,
+                    'department' => [
+                        'id' => $event->department->id,
+                        'name' => $event->department->dept_name
+                    ]
+                ];
+            });
+    }
 }
+// ... existing code ...

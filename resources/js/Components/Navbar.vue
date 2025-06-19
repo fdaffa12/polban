@@ -23,7 +23,7 @@ const mobileMenuItems = [
         text: "Activities",
         dropdown: true,
         items: [
-            { text: "Events", href: "/events" },
+            { text: "Events", href: "/our-event" },
             { text: "Calendar Event", href: "/calendar" },
         ],
     },
@@ -228,11 +228,11 @@ const isActivitiesActive = computed(() => {
                         >
                             <div class="py-1">
                                 <Link
-                                    href="/events"
+                                    href="/our-event"
                                     class="block px-4 py-2 text-sm text-[var(--text-color)] hover:bg-[var(--color-background)] hover:text-[var,--color-primary)]"
                                     :class="{
                                         'text-[var(--color-primary)] bg-[var(--color-background)]':
-                                            isActiveRoute('/events'),
+                                            isActiveRoute('/our-event'),
                                     }"
                                 >
                                     Events

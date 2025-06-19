@@ -136,6 +136,10 @@ Route::get('/news', [HomeController::class, 'news'])->name('news');
 Route::get('/news/category/{categoryId}', [HomeController::class, 'newsByCategory'])->name('news.category');
 Route::get('/article/{slug}', [HomeController::class, 'articleDetail'])->name('article.detail');
 
+// Tambahkan route event publik
+Route::get('/our-event', [HomeController::class, 'events'])->name('public.events');
+Route::get('/event/{slug}', [HomeController::class, 'eventDetail'])->name('public.event.detail');
+
 // Update route binding at the top
 Route::bind('article', function ($value) {
     return \App\Models\Article::where('id', $value)->firstOrFail();
