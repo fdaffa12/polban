@@ -461,13 +461,14 @@ nav {
 
 .nav-button-secondary {
     @apply px-4 py-2 rounded-lg transition-all duration-200 transform hover:scale-105;
-    color: var(--color-secondary);
-    border: 1px solid var(--color-secondary);
+    background-color: var(--color-background);
+    color: var(--color-primary-dark);
+    border: 2px solid var(--color-background);
 }
 
 .nav-button-secondary:hover {
-    background-color: var(--color-secondary);
-    color: var(--color-primary-dark);
+    background-color: transparent;
+    color: var(--color-background);
     @apply shadow-md;
 }
 
@@ -523,14 +524,14 @@ nav {
 
 .mobile-button {
     @apply block w-full text-center px-4 py-3 rounded-lg transition-colors duration-200;
-    background-color: transparent;
-    color: var(--color-background);
-    border: 1px solid var(--color-secondary);
+    background-color: var(--color-background);
+    color: var(--color-primary-dark);
+    border: 2px solid var(--color-background);
 }
 
 .mobile-button:hover {
-    background-color: var(--color-secondary);
-    color: var(--color-primary-dark);
+    background-color: transparent;
+    color: var(--color-background);
 }
 
 @keyframes mobileMenuFadeIn {
