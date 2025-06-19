@@ -62,7 +62,7 @@ const formatDate = (dateString) => {
 const getStatusColor = (status) => {
     switch (status) {
         case "ongoing":
-            return "var(--color-success)";
+            return "var(--color-primary)";
         case "upcoming":
             return "var(--color-primary)";
         case "past":

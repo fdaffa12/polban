@@ -15,6 +15,7 @@ use App\Models\LenteraRestorasiMission;
 use App\Models\LenteraRestorasiCoreValue;
 use App\Models\LenteraRestorasiImage;
 use App\Models\LenteraRestorasiContent;
+use Carbon\Carbon;
 
 class HomeController extends Controller
 {
@@ -110,29 +111,60 @@ class HomeController extends Controller
         // Gabungkan dan map events
         $events = $activeAndUpcomingEvents->concat($pastEvents);
 
-        $mappedEvents = $events->map(function ($event) use ($today) {
+        // Hapus getCollection() karena $events sudah merupakan Collection
+        $mappedEvents = $events->map(function ($event) {
+            $today = now();
             $eventDates = $event->dates->sortBy('event_date');
             $firstDate = $eventDates->first();
             $lastDate = $eventDates->last();
 
-            // Determine status based on event dates
-            $status = 'upcoming';
-            if ($firstDate->event_date <= $today->toDateString() && $lastDate->event_date >= $today->toDateString()) {
-                $status = 'ongoing';
-            } elseif ($lastDate->event_date < $today->toDateString()) {
-                $status = 'past';
+            // Default status adalah past
+            $status = 'past';
+
+            if ($firstDate && $lastDate) {
+                \Log::info('Event: ' . $event->event_name);
+                \Log::info('Today: ' . $today->toDateString());
+
+                // Jika tanggal hari ini sama dengan salah satu tanggal event
+                foreach ($eventDates as $date) {
+                    // Ubah format tanggal event menjadi Y-m-d saja
+                    $eventDate = Carbon::parse($date->event_date)->toDateString();
+                    \Log::info('Checking date: ' . $eventDate);
+                    \Log::info('Compare with today: ' . ($eventDate === $today->toDateString() ? 'true' : 'false'));
+
+                    if ($eventDate === $today->toDateString()) {
+                        $status = 'ongoing';
+                        \Log::info('Status set to ongoing');
+                        break;
+                    }
+                }
+
+                // Jika bukan ongoing, cek apakah upcoming
+                if ($status !== 'ongoing') {
+                    $firstEventDate = Carbon::parse($firstDate->event_date)->toDateString();
+                    \Log::info('First date: ' . $firstEventDate);
+                    \Log::info('Compare with today: ' . ($firstEventDate > $today->toDateString() ? 'true' : 'false'));
+
+                    if ($firstEventDate > $today->toDateString()) {
+                        $status = 'upcoming';
+                        \Log::info('Status set to upcoming');
+                    }
+                }
+
+                \Log::info('Final status: ' . $status);
+                \Log::info('------------------------');
             }
 
             return [
                 'id' => $event->id,
                 'event_name' => $event->event_name,
-                'event_detail' => Str::limit(strip_tags($event->event_detail), 150),
+                'event_detail' => Str::limit(strip_tags($event->event_detail), 200),
                 'fee_type' => $event->fee_type,
+                'fee_amount' => $event->fee_amount,
                 'event_flyer' => $event->event_flyer ? "/storage/{$event->event_flyer}" : null,
-                'dates' => $event->dates,
-                'status' => $status,
                 'start_date' => $firstDate ? $firstDate->event_date : null,
                 'end_date' => $lastDate && $lastDate->event_date != $firstDate->event_date ? $lastDate->event_date : null,
+                'status' => $status,
                 'department' => [
                     'id' => $event->department->id,
                     'name' => $event->department->dept_name
@@ -504,12 +536,27 @@ class HomeController extends Controller
             $firstDate = $eventDates->first();
             $lastDate = $eventDates->last();
 
-            // Determine status based on event dates
-            $status = 'upcoming';
-            if ($firstDate && $firstDate->event_date <= $today->toDateString() && $lastDate && $lastDate->event_date >= $today->toDateString()) {
-                $status = 'ongoing';
-            } elseif ($lastDate && $lastDate->event_date < $today->toDateString()) {
-                $status = 'past';
+            // Default status adalah past
+            $status = 'past';
+
+            if ($firstDate && $lastDate) {
+                // Jika tanggal hari ini sama dengan salah satu tanggal event
+                foreach ($eventDates as $date) {
+                    // Ubah format tanggal event menjadi Y-m-d saja
+                    $eventDate = Carbon::parse($date->event_date)->toDateString();
+                    if ($eventDate === $today->toDateString()) {
+                        $status = 'ongoing';
+                        break;
+                    }
+                }
+
+                // Jika bukan ongoing, cek apakah upcoming
+                if ($status !== 'ongoing') {
+                    $firstEventDate = Carbon::parse($firstDate->event_date)->toDateString();
+                    if ($firstEventDate > $today->toDateString()) {
+                        $status = 'upcoming';
+                    }
+                }
             }
 
             return [
@@ -564,11 +611,27 @@ class HomeController extends Controller
             $firstDate = $eventDates->first();
             $lastDate = $eventDates->last();
 
-            $status = 'upcoming';
-            if ($firstDate && $firstDate->event_date <= $today->toDateString() && $lastDate && $lastDate->event_date >= $today->toDateString()) {
-                $status = 'ongoing';
-            } elseif ($lastDate && $lastDate->event_date < $today->toDateString()) {
-                $status = 'past';
+            // Default status adalah past
+            $status = 'past';
+
+            if ($firstDate && $lastDate) {
+                // Jika tanggal hari ini sama dengan salah satu tanggal event
+                foreach ($eventDates as $date) {
+                    // Ubah format tanggal event menjadi Y-m-d saja
+                    $eventDate = Carbon::parse($date->event_date)->toDateString();
+                    if ($eventDate === $today->toDateString()) {
+                        $status = 'ongoing';
+                        break;
+                    }
+                }
+
+                // Jika bukan ongoing, cek apakah upcoming
+                if ($status !== 'ongoing') {
+                    $firstEventDate = Carbon::parse($firstDate->event_date)->toDateString();
+                    if ($firstEventDate > $today->toDateString()) {
+                        $status = 'upcoming';
+                    }
+                }
             }
 
             return [
@@ -619,16 +682,65 @@ class HomeController extends Controller
         $firstDate = $eventDates->first();
         $lastDate = $eventDates->last();
 
+        // Default status adalah past
+        $status = 'past';
+
+        if ($firstDate && $lastDate) {
+            $today = now();
+
+            // Jika tanggal hari ini sama dengan salah satu tanggal event
+            foreach ($eventDates as $date) {
+                // Ubah format tanggal event menjadi Y-m-d saja
+                $eventDate = Carbon::parse($date->event_date)->toDateString();
+                if ($eventDate === $today->toDateString()) {
+                    $status = 'ongoing';
+                    break;
+                }
+            }
+
+            // Jika bukan ongoing, cek apakah upcoming
+            if ($status !== 'ongoing') {
+                $firstEventDate = Carbon::parse($firstDate->event_date)->toDateString();
+                if ($firstEventDate > $today->toDateString()) {
+                    $status = 'upcoming';
+                }
+            }
+        }
+
         // Get related events from same department tanpa validasi status
         $relatedEvents = Event::with(['department', 'dates'])
             ->where('department_id', $event->department_id)
-            ->where('id', '!=', $event->id)  // Hanya filter event yang sedang dilihat
+            ->where('id', '!=', $event->id)
             ->latest()
-            ->get()  // Hapus take(4) agar semua event tampil
+            ->get()
             ->map(function ($relatedEvent) {
+                $today = now();
                 $eventDates = $relatedEvent->dates->sortBy('event_date');
                 $firstDate = $eventDates->first();
                 $lastDate = $eventDates->last();
+
+                // Default status adalah past
+                $status = 'past';
+
+                if ($firstDate && $lastDate) {
+                    // Jika tanggal hari ini sama dengan salah satu tanggal event
+                    foreach ($eventDates as $date) {
+                        // Ubah format tanggal event menjadi Y-m-d saja
+                        $eventDate = Carbon::parse($date->event_date)->toDateString();
+                        if ($eventDate === $today->toDateString()) {
+                            $status = 'ongoing';
+                            break;
+                        }
+                    }
+
+                    // Jika bukan ongoing, cek apakah upcoming
+                    if ($status !== 'ongoing') {
+                        $firstEventDate = Carbon::parse($firstDate->event_date)->toDateString();
+                        if ($firstEventDate > $today->toDateString()) {
+                            $status = 'upcoming';
+                        }
+                    }
+                }
 
                 return [
                     'id' => $relatedEvent->id,
@@ -638,6 +750,7 @@ class HomeController extends Controller
                     'start_date' => $firstDate ? $firstDate->event_date : null,
                     'end_date' => $lastDate && $lastDate->event_date != $firstDate->event_date ? $lastDate->event_date : null,
                     'fee_type' => $relatedEvent->fee_type,
+                    'status' => $status,
                     'department' => [
                         'id' => $relatedEvent->department->id,
                         'name' => $relatedEvent->department->dept_name
@@ -659,6 +772,7 @@ class HomeController extends Controller
                 'event_doc' => $event->event_doc ? "/storage/{$event->event_doc}" : null,
                 'start_date' => $firstDate ? $firstDate->event_date : null,
                 'end_date' => $lastDate && $lastDate->event_date != $firstDate->event_date ? $lastDate->event_date : null,
+                'status' => $status,
                 'dates' => $event->dates->map(function ($date) {
                     return [
                         'event_date' => $date->event_date,
@@ -670,7 +784,7 @@ class HomeController extends Controller
                     'name' => $event->department->dept_name
                 ]
             ],
-            'popularEvents' => $relatedEvents, // Gunakan relatedEvents untuk popularEvents
+            'popularEvents' => $relatedEvents,
             'relatedEvents' => $relatedEvents
         ]);
     }
@@ -703,4 +817,3 @@ class HomeController extends Controller
             });
     }
 }
-// ... existing code ...
