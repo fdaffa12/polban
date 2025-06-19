@@ -141,6 +141,9 @@ Route::get('/our-event', [HomeController::class, 'events'])->name('public.events
 Route::get('/our-event/department/{departmentId}', [HomeController::class, 'eventsByDepartment'])->name('public.events.by.department');
 Route::get('/event/{slug}', [HomeController::class, 'eventDetail'])->name('public.event.detail');
 
+// Tambahkan route untuk calendar view
+Route::get('/event-calendar', [HomeController::class, 'eventCalendar'])->name('public.event.calendar');
+
 // Update route binding at the top
 Route::bind('article', function ($value) {
     return \App\Models\Article::where('id', $value)->firstOrFail();

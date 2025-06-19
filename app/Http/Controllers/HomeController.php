@@ -816,4 +816,64 @@ class HomeController extends Controller
                 ];
             });
     }
+
+    public function eventCalendar()
+    {
+        $events = Event::with(['department', 'dates'])
+            ->latest()
+            ->get()
+            ->map(function ($event) {
+                $today = now();
+                $eventDates = $event->dates->sortBy('event_date');
+                $firstDate = $eventDates->first();
+                $lastDate = $eventDates->last();
+
+                // Default status adalah past
+                $status = 'past';
+
+                if ($firstDate && $lastDate) {
+                    // Jika tanggal hari ini sama dengan salah satu tanggal event
+                    foreach ($eventDates as $date) {
+                        // Ubah format tanggal event menjadi Y-m-d saja
+                        $eventDate = Carbon::parse($date->event_date)->toDateString();
+                        if ($eventDate === $today->toDateString()) {
+                            $status = 'ongoing';
+                            break;
+                        }
+                    }
+
+                    // Jika bukan ongoing, cek apakah upcoming
+                    if ($status !== 'ongoing') {
+                        $firstEventDate = Carbon::parse($firstDate->event_date)->toDateString();
+                        if ($firstEventDate > $today->toDateString()) {
+                            $status = 'upcoming';
+                        }
+                    }
+                }
+
+                return [
+                    'id' => $event->id,
+                    'event_name' => $event->event_name,
+                    'event_detail' => Str::limit(strip_tags($event->event_detail), 200),
+                    'fee_type' => $event->fee_type,
+                    'fee_amount' => $event->fee_amount,
+                    'event_flyer' => $event->event_flyer ? "/storage/{$event->event_flyer}" : null,
+                    'dates' => $event->dates->map(function ($date) {
+                        return [
+                            'event_date' => $date->event_date,
+                            'event_time' => $date->event_time
+                        ];
+                    }),
+                    'status' => $status,
+                    'department' => [
+                        'id' => $event->department->id,
+                        'name' => $event->department->dept_name
+                    ]
+                ];
+            });
+
+        return Inertia::render('EventCalendar', [
+            'events' => $events
+        ]);
+    }
 }

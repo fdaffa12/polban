@@ -24,7 +24,7 @@ const mobileMenuItems = [
         dropdown: true,
         items: [
             { text: "Events", href: "/our-event" },
-            { text: "Calendar Event", href: "/calendar" },
+            { text: "Calendar Event", href: "/event-calendar" },
         ],
     },
 ];
@@ -223,11 +223,11 @@ const auth = computed(() => usePage().props.auth);
                                     Events
                                 </Link>
                                 <Link
-                                    href="/calendar"
+                                    href="/event-calendar"
                                     class="dropdown-item"
                                     :class="{
                                         'dropdown-item-active':
-                                            isActiveRoute('/calendar'),
+                                            isActiveRoute('/event-calendar'),
                                     }"
                                 >
                                     Calendar Event
