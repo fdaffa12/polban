@@ -2,12 +2,20 @@
 import { ref, computed, onMounted } from "vue";
 import { router } from "@inertiajs/vue3";
 import GuestLayout from "@/Layouts/GuestLayout.vue";
+import { Carousel, Slide, Navigation } from "vue3-carousel";
+import "vue3-carousel/dist/carousel.css";
 
 const props = defineProps({
     event: Object,
     relatedEvents: Array,
     popularEvents: Array,
 });
+
+const activeGalleryImage = ref(0);
+
+const setActiveGalleryImage = (index) => {
+    activeGalleryImage.value = index;
+};
 
 const goToEvent = (eventId) => {
     router.get(`/event/${eventId}`);
@@ -83,9 +91,7 @@ const getStatusText = (status) => {
                         >Events</a
                     >
                     <span>/</span>
-                    <span :style="{ color: 'var(--color-primary)' }">{{
-                        event.department.name
-                    }}</span>
+                    <span :style="{ color: 'var(--color-primary)' }">{{ event.department.name }}</span>
                 </nav>
 
                 <!-- Two Column Layout -->
@@ -197,60 +203,56 @@ const getStatusText = (status) => {
                                 Detail Event
                             </h2>
 
-                            <!-- Event Dates and Times -->
+                            <!-- Event Dates and Times - Updated Design -->
                             <div
                                 v-if="event.dates && event.dates.length > 0"
                                 class="mb-6"
                             >
                                 <h3
-                                    class="text-lg font-semibold mb-3"
+                                    class="text-lg font-semibold mb-4"
                                     :style="{ color: 'var(--text-color)' }"
                                 >
                                     Jadwal Event
                                 </h3>
-                                <div class="space-y-2">
+                                <div class="grid gap-3">
                                     <div
                                         v-for="(date, index) in event.dates"
                                         :key="index"
-                                        class="flex items-center gap-3 p-3 rounded-lg"
-                                        :style="{
-                                            backgroundColor:
-                                                'var(--color-background)',
-                                        }"
+                                        class="flex items-center justify-between p-4 border border-gray-200 rounded-xl hover:border-[var(--color-primary)] transition-colors duration-300"
                                     >
-                                        <svg
-                                            class="w-5 h-5"
-                                            :style="{
-                                                color: 'var(--color-primary)',
-                                            }"
-                                            fill="currentColor"
-                                            viewBox="0 0 20 20"
-                                        >
-                                            <path
-                                                fill-rule="evenodd"
-                                                d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
-                                                clip-rule="evenodd"
-                                            />
-                                        </svg>
-                                        <span
-                                            :style="{
-                                                color: 'var(--text-color)',
-                                            }"
-                                        >
-                                            {{ formatDate(date.event_date) }}
-                                            <span
-                                                v-if="date.event_time"
-                                                class="ml-2"
-                                                :style="{
-                                                    color: 'var(--light-text)',
-                                                }"
-                                            >
-                                                -
-                                                {{
-                                                    formatTime(date.event_time)
-                                                }}
-                                            </span>
-                                        </span>
+                                        <div class="flex items-center gap-4">
+                                            <div class="flex-shrink-0">
+                                                <div class="w-12 h-12 rounded-full flex items-center justify-center" :style="{ backgroundColor: 'var(--color-primary)' }">
+                                                    <svg
+                                                        class="w-6 h-6 text-white"
+                                                        fill="currentColor"
+                                                        viewBox="0 0 20 20"
+                                                    >
+                                                        <path
+                                                            fill-rule="evenodd"
+                                                            d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                                                            clip-rule="evenodd"
+                                                        />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div class="font-semibold text-lg" :style="{ color: 'var(--text-color)' }">
+                                                    {{ formatDate(date.event_date) }}
+                                                </div>
+                                                <div class="text-sm" :style="{ color: 'var(--light-text)' }">
+                                                    Hari {{ index + 1 }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div v-if="date.event_time" class="text-right">
+                                            <div class="font-semibold text-lg" :style="{ color: 'var(--color-primary)' }">
+                                                {{ formatTime(date.event_time) }}
+                                            </div>
+                                            <div class="text-sm" :style="{ color: 'var(--light-text)' }">
+                                                WIB
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -272,58 +274,122 @@ const getStatusText = (status) => {
                             class="mb-8"
                         >
                             <h2
-                                class="text-xl font-bold mb-4"
+                                class="text-xl font-bold mb-6"
                                 :style="{ color: 'var(--text-color)' }"
                             >
                                 Galeri Event
                             </h2>
-                            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                                <div
-                                    v-for="(
-                                        image, index
-                                    ) in event.event_gallery"
-                                    :key="index"
-                                    class="aspect-square rounded-lg overflow-hidden"
+                            <div class="bg-white rounded-2xl shadow-lg p-4">
+                                <Carousel
+                                    :items-to-show="3"
+                                    :wrap-around="true"
+                                    :transition="500"
+                                    :snap-align="'center'"
+                                    :modelValue="activeGalleryImage"
+                                    @update:modelValue="setActiveGalleryImage"
+                                    :breakpoints="{
+                                        320: {
+                                            itemsToShow: 1,
+                                            snapAlign: 'center',
+                                        },
+                                        640: {
+                                            itemsToShow: 2,
+                                            snapAlign: 'center',
+                                        },
+                                        768: {
+                                            itemsToShow: 2,
+                                            snapAlign: 'center',
+                                        },
+                                        1024: {
+                                            itemsToShow: 3,
+                                            snapAlign: 'center',
+                                        },
+                                    }"
+                                    class="gallery-carousel"
                                 >
-                                    <img
-                                        :src="image"
-                                        :alt="`Gallery ${index + 1}`"
-                                        class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                                    />
-                                </div>
+                                    <Slide
+                                        v-for="(image, index) in event.event_gallery"
+                                        :key="index"
+                                        class="px-2"
+                                    >
+                                        <div
+                                            class="relative h-48 rounded-xl overflow-hidden group cursor-pointer"
+                                            @click="openImagePreview(index)"
+                                        >
+                                            <img
+                                                :src="image"
+                                                :alt="`Gallery ${index + 1}`"
+                                                class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                            />
+                                            <div
+                                                class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center"
+                                            >
+                                                <div class="bg-white/20 backdrop-blur-sm rounded-full p-3">
+                                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path>
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </Slide>
+
+                                    <template #addons>
+                                        <Navigation />
+                                    </template>
+                                </Carousel>
                             </div>
                         </div>
 
-                        <!-- Download Document -->
-                        <div v-if="event.event_doc" class="mb-8">
-                            <div class="bg-white rounded-2xl shadow-lg p-6">
-                                <h2
-                                    class="text-xl font-bold mb-4"
-                                    :style="{ color: 'var(--text-color)' }"
+                        <!-- Image Preview Modal -->
+                        <div
+                            v-if="showImagePreview"
+                            class="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
+                            @click="closeImagePreview"
+                        >
+                            <div class="relative max-w-4xl max-h-full">
+                                <!-- Close Button -->
+                                <button
+                                    @click="closeImagePreview"
+                                    class="absolute top-4 right-4 z-10 bg-white/20 backdrop-blur-sm rounded-full p-2 text-white hover:bg-white/30 transition-all duration-300"
                                 >
-                                    Dokumen Event
-                                </h2>
-                                <a
-                                    :href="event.event_doc"
-                                    target="_blank"
-                                    class="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 text-white"
-                                    :style="{
-                                        backgroundColor: 'var(--color-primary)',
-                                    }"
-                                >
-                                    <svg
-                                        class="w-5 h-5"
-                                        fill="currentColor"
-                                        viewBox="0 0 20 20"
-                                    >
-                                        <path
-                                            fill-rule="evenodd"
-                                            d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
-                                            clip-rule="evenodd"
-                                        />
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                                     </svg>
-                                    Download Dokumen
-                                </a>
+                                </button>
+
+                                <!-- Navigation Buttons -->
+                                <button
+                                    v-if="event.event_gallery.length > 1"
+                                    @click.stop="prevPreviewImage"
+                                    class="absolute left-4 top-1/2 transform -translate-y-1/2 z-10 bg-white/20 backdrop-blur-sm rounded-full p-3 text-white hover:bg-white/30 transition-all duration-300"
+                                >
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                                    </svg>
+                                </button>
+
+                                <button
+                                    v-if="event.event_gallery.length > 1"
+                                    @click.stop="nextPreviewImage"
+                                    class="absolute right-4 top-1/2 transform -translate-y-1/2 z-10 bg-white/20 backdrop-blur-sm rounded-full p-3 text-white hover:bg-white/30 transition-all duration-300"
+                                >
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                    </svg>
+                                </button>
+
+                                <!-- Image -->
+                                <img
+                                    :src="event.event_gallery[previewImageIndex]"
+                                    :alt="`Gallery ${previewImageIndex + 1}`"
+                                    class="max-w-full max-h-full object-contain rounded-lg"
+                                    @click.stop
+                                />
+
+                                <!-- Image Counter -->
+                                <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 text-white text-sm">
+                                    {{ previewImageIndex + 1 }} / {{ event.event_gallery.length }}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -388,9 +454,7 @@ const getStatusText = (status) => {
                                                     color: 'var(--light-text)',
                                                 }"
                                             >
-                                                <span>{{
-                                                    formatDate(event.start_date)
-                                                }}</span>
+                                                <span>{{ formatDate(event.start_date) }}</span>
                                                 <span>{{
                                                     event.fee_type === "free"
                                                         ? "Gratis"
@@ -403,6 +467,87 @@ const getStatusText = (status) => {
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Related Events Section -->
+        <section
+            v-if="relatedEvents && relatedEvents.length > 0"
+            class="py-16"
+            :style="{ backgroundColor: 'var(--color-background)' }"
+        >
+            <div class="container-custom">
+                <h2
+                    class="text-2xl md:text-3xl font-bold text-center mb-12"
+                    :style="{ color: 'var(--text-color)' }"
+                >
+                    Event Terkait
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <article
+                        v-for="relatedEvent in relatedEvents"
+                        :key="relatedEvent.id"
+                        class="bg-white rounded-2xl shadow-lg overflow-hidden group cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-xl"
+                        @click="goToEvent(relatedEvent.id)"
+                    >
+                        <div class="aspect-video overflow-hidden">
+                            <img
+                                v-if="relatedEvent.event_flyer"
+                                :src="relatedEvent.event_flyer"
+                                :alt="relatedEvent.event_name"
+                                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                            />
+                            <div
+                                v-else
+                                class="w-full h-full flex items-center justify-center"
+                                :style="{
+                                    backgroundColor: 'var(--color-background)',
+                                }"
+                            >
+                                <span
+                                    class="text-sm"
+                                    :style="{ color: 'var(--light-text)' }"
+                                    >No Image</span
+                                >
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div
+                                class="inline-block px-3 py-1 rounded-full text-xs font-medium text-white mb-3"
+                                :style="{
+                                    backgroundColor: getStatusColor(
+                                        relatedEvent.status
+                                    ),
+                                }"
+                            >
+                                {{ getStatusText(relatedEvent.status) }}
+                            </div>
+                            <h3
+                                class="font-bold text-lg mb-2 line-clamp-2 group-hover:text-[var(--color-primary)] transition-colors duration-300"
+                                :style="{ color: 'var(--text-color)' }"
+                            >
+                                {{ relatedEvent.event_name }}
+                            </h3>
+                            <p
+                                class="text-sm mb-4 line-clamp-3"
+                                :style="{ color: 'var(--light-text)' }"
+                            >
+                                {{ relatedEvent.event_detail }}
+                            </p>
+                            <div
+                                class="flex justify-between items-center text-sm"
+                                :style="{ color: 'var(--light-text)' }"
+                            >
+                                <span>{{ formatDate(relatedEvent.start_date) }}</span>
+                                <span>{{
+                                    relatedEvent.fee_type === "free"
+                                        ? "Gratis"
+                                        : "Berbayar"
+                                }}</span>
+                            </div>
+                        </div>
+                    </article>
                 </div>
             </div>
         </section>
@@ -515,5 +660,48 @@ const getStatusText = (status) => {
 
 section {
     min-height: 100vh;
+}
+
+/* Gallery Carousel Styles */
+.gallery-carousel :deep(.carousel__slide) {
+    padding: 0;
+}
+
+.gallery-carousel :deep(.carousel__viewport) {
+    perspective: 2000px;
+}
+
+.gallery-carousel :deep(.carousel__track) {
+    transform-style: preserve-3d;
+}
+
+.gallery-carousel :deep(.carousel__slide--sliding) {
+    transition: 0.5s;
+}
+
+.gallery-carousel :deep(.carousel__slide) {
+    opacity: 0.9;
+    transform: rotateY(-20deg) scale(0.9);
+}
+
+.gallery-carousel :deep(.carousel__slide--active) {
+    opacity: 1;
+    transform: rotateY(0) scale(1);
+}
+
+.gallery-carousel :deep(.carousel__slide--prev) {
+    opacity: 1;
+    transform: rotateY(10deg) scale(0.95);
+}
+
+.gallery-carousel :deep(.carousel__slide--next) {
+    opacity: 1;
+    transform: rotateY(-10deg) scale(0.95);
+}
+
+.gallery-carousel :deep(.carousel__prev),
+.gallery-carousel :deep(.carousel__next) {
+    box-sizing: content-box;
+    border: 5px solid white;
 }
 </style>
