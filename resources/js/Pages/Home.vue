@@ -492,7 +492,7 @@ const props = defineProps({
 
                             <!-- Update Button -->
                             <Link
-                                href="/events"
+                                href="/our-event"
                                 class="inline-flex items-center justify-center w-full px-6 py-3 text-[var(--color-primary)] bg-white rounded-xl hover:bg-[var(--color-background)] transition-all duration-300 transform hover:scale-105 shadow-lg"
                             >
                                 Lihat Semua Event
