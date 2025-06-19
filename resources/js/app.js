@@ -2,7 +2,7 @@ import "../css/app.css";
 import "./bootstrap";
 import Toast from "vue-toastification";
 import "vue-toastification/dist/index.css";
-import '../css/global.css';
+import "../css/global.css";
 
 import { createInertiaApp } from "@inertiajs/vue3";
 import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
@@ -39,6 +39,7 @@ createInertiaApp({
             .mount(el);
     },
     progress: {
-        color: "#4B5563",
+        color: "#f2ebd7",
+        showSpinner: true,
     },
 });
