@@ -2,8 +2,6 @@
 import { ref, computed, onMounted } from "vue";
 import { router } from "@inertiajs/vue3";
 import GuestLayout from "@/Layouts/GuestLayout.vue";
-import { Carousel, Slide, Navigation } from "vue3-carousel";
-import "vue3-carousel/dist/carousel.css";
 
 const props = defineProps({
     event: Object,
@@ -63,6 +61,38 @@ const getStatusText = (status) => {
             return "Akan Datang";
     }
 };
+
+// Tambahkan state untuk preview gambar
+const showImagePreview = ref(false);
+const previewImageIndex = ref(0);
+
+// Fungsi untuk membuka preview gambar
+const openImagePreview = (index) => {
+    previewImageIndex.value = index;
+    showImagePreview.value = true;
+};
+
+// Fungsi untuk menutup preview gambar
+const closeImagePreview = () => {
+    showImagePreview.value = false;
+};
+
+// Fungsi untuk navigasi gambar preview
+const prevPreviewImage = () => {
+    if (previewImageIndex.value > 0) {
+        previewImageIndex.value--;
+    } else {
+        previewImageIndex.value = props.event.event_gallery.length - 1;
+    }
+};
+
+const nextPreviewImage = () => {
+    if (previewImageIndex.value < props.event.event_gallery.length - 1) {
+        previewImageIndex.value++;
+    } else {
+        previewImageIndex.value = 0;
+    }
+};
 </script>
 
 <template>
@@ -91,7 +121,9 @@ const getStatusText = (status) => {
                         >Events</a
                     >
                     <span>/</span>
-                    <span :style="{ color: 'var(--color-primary)' }">{{ event.department.name }}</span>
+                    <span :style="{ color: 'var(--color-primary)' }">{{
+                        event.department.name
+                    }}</span>
                 </nav>
 
                 <!-- Two Column Layout -->
@@ -222,7 +254,13 @@ const getStatusText = (status) => {
                                     >
                                         <div class="flex items-center gap-4">
                                             <div class="flex-shrink-0">
-                                                <div class="w-12 h-12 rounded-full flex items-center justify-center" :style="{ backgroundColor: 'var(--color-primary)' }">
+                                                <div
+                                                    class="w-12 h-12 rounded-full flex items-center justify-center"
+                                                    :style="{
+                                                        backgroundColor:
+                                                            'var(--color-primary)',
+                                                    }"
+                                                >
                                                     <svg
                                                         class="w-6 h-6 text-white"
                                                         fill="currentColor"
@@ -237,19 +275,48 @@ const getStatusText = (status) => {
                                                 </div>
                                             </div>
                                             <div>
-                                                <div class="font-semibold text-lg" :style="{ color: 'var(--text-color)' }">
-                                                    {{ formatDate(date.event_date) }}
+                                                <div
+                                                    class="font-semibold text-lg"
+                                                    :style="{
+                                                        color: 'var(--text-color)',
+                                                    }"
+                                                >
+                                                    {{
+                                                        formatDate(
+                                                            date.event_date
+                                                        )
+                                                    }}
                                                 </div>
-                                                <div class="text-sm" :style="{ color: 'var(--light-text)' }">
+                                                <div
+                                                    class="text-sm"
+                                                    :style="{
+                                                        color: 'var(--light-text)',
+                                                    }"
+                                                >
                                                     Hari {{ index + 1 }}
                                                 </div>
                                             </div>
                                         </div>
-                                        <div v-if="date.event_time" class="text-right">
-                                            <div class="font-semibold text-lg" :style="{ color: 'var(--color-primary)' }">
-                                                {{ formatTime(date.event_time) }}
+                                        <div
+                                            v-if="date.event_time"
+                                            class="text-right"
+                                        >
+                                            <div
+                                                class="font-semibold text-lg"
+                                                :style="{
+                                                    color: 'var(--color-primary)',
+                                                }"
+                                            >
+                                                {{
+                                                    formatTime(date.event_time)
+                                                }}
                                             </div>
-                                            <div class="text-sm" :style="{ color: 'var(--light-text)' }">
+                                            <div
+                                                class="text-sm"
+                                                :style="{
+                                                    color: 'var(--light-text)',
+                                                }"
+                                            >
                                                 WIB
                                             </div>
                                         </div>
@@ -274,69 +341,51 @@ const getStatusText = (status) => {
                             class="mb-8"
                         >
                             <h2
-                                class="text-xl font-bold mb-6"
+                                class="text-xl font-bold mb-4"
                                 :style="{ color: 'var(--text-color)' }"
                             >
                                 Galeri Event
                             </h2>
                             <div class="bg-white rounded-2xl shadow-lg p-4">
-                                <Carousel
-                                    :items-to-show="3"
-                                    :wrap-around="true"
-                                    :transition="500"
-                                    :snap-align="'center'"
-                                    :modelValue="activeGalleryImage"
-                                    @update:modelValue="setActiveGalleryImage"
-                                    :breakpoints="{
-                                        320: {
-                                            itemsToShow: 1,
-                                            snapAlign: 'center',
-                                        },
-                                        640: {
-                                            itemsToShow: 2,
-                                            snapAlign: 'center',
-                                        },
-                                        768: {
-                                            itemsToShow: 2,
-                                            snapAlign: 'center',
-                                        },
-                                        1024: {
-                                            itemsToShow: 3,
-                                            snapAlign: 'center',
-                                        },
-                                    }"
-                                    class="gallery-carousel"
+                                <div
+                                    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"
                                 >
-                                    <Slide
-                                        v-for="(image, index) in event.event_gallery"
+                                    <div
+                                        v-for="(
+                                            image, index
+                                        ) in event.event_gallery"
                                         :key="index"
-                                        class="px-2"
+                                        class="relative h-48 rounded-xl overflow-hidden group cursor-pointer"
+                                        @click="openImagePreview(index)"
                                     >
+                                        <img
+                                            :src="image"
+                                            :alt="`Gallery ${index + 1}`"
+                                            class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                        />
                                         <div
-                                            class="relative h-48 rounded-xl overflow-hidden group cursor-pointer"
-                                            @click="openImagePreview(index)"
+                                            class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center"
                                         >
-                                            <img
-                                                :src="image"
-                                                :alt="`Gallery ${index + 1}`"
-                                                class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                                            />
                                             <div
-                                                class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center"
+                                                class="bg-white/20 backdrop-blur-sm rounded-full p-3"
                                             >
-                                                <div class="bg-white/20 backdrop-blur-sm rounded-full p-3">
-                                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path>
-                                                    </svg>
-                                                </div>
+                                                <svg
+                                                    class="w-6 h-6 text-white"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    viewBox="0 0 24 24"
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"
+                                                    ></path>
+                                                </svg>
                                             </div>
                                         </div>
-                                    </Slide>
-
-                                    <template #addons>
-                                        <Navigation />
-                                    </template>
-                                </Carousel>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -352,8 +401,18 @@ const getStatusText = (status) => {
                                     @click="closeImagePreview"
                                     class="absolute top-4 right-4 z-10 bg-white/20 backdrop-blur-sm rounded-full p-2 text-white hover:bg-white/30 transition-all duration-300"
                                 >
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                    <svg
+                                        class="w-6 h-6"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M6 18L18 6M6 6l12 12"
+                                        ></path>
                                     </svg>
                                 </button>
 
@@ -363,8 +422,18 @@ const getStatusText = (status) => {
                                     @click.stop="prevPreviewImage"
                                     class="absolute left-4 top-1/2 transform -translate-y-1/2 z-10 bg-white/20 backdrop-blur-sm rounded-full p-3 text-white hover:bg-white/30 transition-all duration-300"
                                 >
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                                    <svg
+                                        class="w-6 h-6"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M15 19l-7-7 7-7"
+                                        ></path>
                                     </svg>
                                 </button>
 
@@ -373,22 +442,37 @@ const getStatusText = (status) => {
                                     @click.stop="nextPreviewImage"
                                     class="absolute right-4 top-1/2 transform -translate-y-1/2 z-10 bg-white/20 backdrop-blur-sm rounded-full p-3 text-white hover:bg-white/30 transition-all duration-300"
                                 >
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                    <svg
+                                        class="w-6 h-6"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M9 5l7 7-7 7"
+                                        ></path>
                                     </svg>
                                 </button>
 
                                 <!-- Image -->
                                 <img
-                                    :src="event.event_gallery[previewImageIndex]"
+                                    :src="
+                                        event.event_gallery[previewImageIndex]
+                                    "
                                     :alt="`Gallery ${previewImageIndex + 1}`"
                                     class="max-w-full max-h-full object-contain rounded-lg"
                                     @click.stop
                                 />
 
                                 <!-- Image Counter -->
-                                <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 text-white text-sm">
-                                    {{ previewImageIndex + 1 }} / {{ event.event_gallery.length }}
+                                <div
+                                    class="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 text-white text-sm"
+                                >
+                                    {{ previewImageIndex + 1 }} /
+                                    {{ event.event_gallery.length }}
                                 </div>
                             </div>
                         </div>
@@ -454,7 +538,9 @@ const getStatusText = (status) => {
                                                     color: 'var(--light-text)',
                                                 }"
                                             >
-                                                <span>{{ formatDate(event.start_date) }}</span>
+                                                <span>{{
+                                                    formatDate(event.start_date)
+                                                }}</span>
                                                 <span>{{
                                                     event.fee_type === "free"
                                                         ? "Gratis"
@@ -484,7 +570,9 @@ const getStatusText = (status) => {
                 >
                     Event Terkait
                 </h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div
+                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+                >
                     <article
                         v-for="relatedEvent in relatedEvents"
                         :key="relatedEvent.id"
@@ -539,7 +627,9 @@ const getStatusText = (status) => {
                                 class="flex justify-between items-center text-sm"
                                 :style="{ color: 'var(--light-text)' }"
                             >
-                                <span>{{ formatDate(relatedEvent.start_date) }}</span>
+                                <span>{{
+                                    formatDate(relatedEvent.start_date)
+                                }}</span>
                                 <span>{{
                                     relatedEvent.fee_type === "free"
                                         ? "Gratis"
@@ -659,49 +749,33 @@ const getStatusText = (status) => {
 }
 
 section {
-    min-height: 100vh;
+    min-height: auto;
+    padding-top: 2rem;
+    padding-bottom: 4rem;
 }
 
 /* Gallery Carousel Styles */
-.gallery-carousel :deep(.carousel__slide) {
-    padding: 0;
-}
-
-.gallery-carousel :deep(.carousel__viewport) {
-    perspective: 2000px;
-}
-
-.gallery-carousel :deep(.carousel__track) {
-    transform-style: preserve-3d;
-}
-
-.gallery-carousel :deep(.carousel__slide--sliding) {
-    transition: 0.5s;
-}
-
-.gallery-carousel :deep(.carousel__slide) {
-    opacity: 0.9;
-    transform: rotateY(-20deg) scale(0.9);
-}
-
-.gallery-carousel :deep(.carousel__slide--active) {
-    opacity: 1;
-    transform: rotateY(0) scale(1);
-}
-
-.gallery-carousel :deep(.carousel__slide--prev) {
-    opacity: 1;
-    transform: rotateY(10deg) scale(0.95);
-}
-
-.gallery-carousel :deep(.carousel__slide--next) {
-    opacity: 1;
-    transform: rotateY(-10deg) scale(0.95);
-}
-
+.gallery-carousel :deep(.carousel__slide),
+.gallery-carousel :deep(.carousel__viewport),
+.gallery-carousel :deep(.carousel__track),
+.gallery-carousel :deep(.carousel__slide--sliding),
+.gallery-carousel :deep(.carousel__slide),
+.gallery-carousel :deep(.carousel__slide--active),
+.gallery-carousel :deep(.carousel__slide--prev),
+.gallery-carousel :deep(.carousel__slide--next),
 .gallery-carousel :deep(.carousel__prev),
 .gallery-carousel :deep(.carousel__next) {
-    box-sizing: content-box;
-    border: 5px solid white;
+    /* Hapus semua style ini */
+}
+
+/* Tambahkan style baru untuk spacing yang lebih rapat */
+section {
+    min-height: auto; /* Ubah dari 100vh */
+}
+
+/* Tambahkan margin yang lebih kecil untuk section event terkait */
+section.py-16 {
+    padding-top: 2rem; /* Kurangi padding atas */
+    padding-bottom: 4rem;
 }
 </style>
