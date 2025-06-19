@@ -31,9 +31,9 @@ const filterByDepartment = (departmentId) => {
     activeDepartment.value = departmentId;
     displayedCount.value = 5; // Reset to initial count
     if (departmentId) {
-        router.get(`/events/department/${departmentId}`);
+        router.get(`/our-event/department/${departmentId}`);
     } else {
-        router.get("/events");
+        router.get("/our-event");
     }
 };
 

@@ -138,6 +138,7 @@ Route::get('/article/{slug}', [HomeController::class, 'articleDetail'])->name('a
 
 // Tambahkan route event publik
 Route::get('/our-event', [HomeController::class, 'events'])->name('public.events');
+Route::get('/our-event/department/{departmentId}', [HomeController::class, 'eventsByDepartment'])->name('public.events.by.department');
 Route::get('/event/{slug}', [HomeController::class, 'eventDetail'])->name('public.event.detail');
 
 // Update route binding at the top
