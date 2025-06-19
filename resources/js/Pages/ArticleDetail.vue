@@ -20,7 +20,7 @@ const popularPosts = computed(() => props.popularPosts);
     <GuestLayout :title="article.title">
         <!-- Article Header -->
         <section
-            class="relative py-12 overflow-hidden"
+            class="relative py-12"
             :style="{
                 background: `linear-gradient(to bottom, white, white 30%, var(--color-background))`,
             }"

@@ -58,10 +58,7 @@ onMounted(() => {
 <template>
     <GuestLayout title="Portal Berita">
         <!-- Main Container -->
-        <section
-            class="relative py-12 overflow-hidden"
-            :style="{ backgroundColor: 'white' }"
-        >
+        <section class="relative py-12" :style="{ backgroundColor: 'white' }">
             <div class="container-custom">
                 <div class="grid-cols-layout">
                     <!-- Left Column (Main Content) -->

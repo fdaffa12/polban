@@ -471,7 +471,7 @@ class HomeController extends Controller
         return Article::with(['category', 'user'])
             ->where('status', 'publish')
             ->orderBy('viewed', 'desc')
-            ->take(5)
+            ->take(7)
             ->get()
             ->map(function ($article) {
                 return [
