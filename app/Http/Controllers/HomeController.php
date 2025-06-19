@@ -492,14 +492,9 @@ class HomeController extends Controller
 
     public function events()
     {
-        $departments = Department::withCount([
-            'events' => function ($query) {
-                $query->where('status', '!=', 'closed');
-            }
-        ])->get();
+        $departments = Department::withCount(['events'])->get();
 
         $events = Event::with(['department', 'dates'])
-            ->where('status', '!=', 'closed')
             ->latest()
             ->paginate(12);
 
@@ -556,14 +551,9 @@ class HomeController extends Controller
 
     public function eventsByDepartment($departmentId)
     {
-        $departments = Department::withCount([
-            'events' => function ($query) {
-                $query->where('status', '!=', 'closed');
-            }
-        ])->get();
+        $departments = Department::withCount(['events'])->get();
 
         $events = Event::with(['department', 'dates'])
-            ->where('status', '!=', 'closed')
             ->where('department_id', $departmentId)
             ->latest()
             ->paginate(12);
@@ -628,23 +618,13 @@ class HomeController extends Controller
         $eventDates = $event->dates->sortBy('event_date');
         $firstDate = $eventDates->first();
         $lastDate = $eventDates->last();
-        $today = now();
 
-        $status = 'upcoming';
-        if ($firstDate && $firstDate->event_date <= $today->toDateString() && $lastDate && $lastDate->event_date >= $today->toDateString()) {
-            $status = 'ongoing';
-        } elseif ($lastDate && $lastDate->event_date < $today->toDateString()) {
-            $status = 'past';
-        }
-
-        // Get related events from same department
+        // Get related events from same department tanpa validasi status
         $relatedEvents = Event::with(['department', 'dates'])
             ->where('department_id', $event->department_id)
-            ->where('id', '!=', $event->id)
-            ->where('status', '!=', 'closed')
+            ->where('id', '!=', $event->id)  // Hanya filter event yang sedang dilihat
             ->latest()
-            ->take(4)
-            ->get()
+            ->get()  // Hapus take(4) agar semua event tampil
             ->map(function ($relatedEvent) {
                 $eventDates = $relatedEvent->dates->sortBy('event_date');
                 $firstDate = $eventDates->first();
@@ -673,14 +653,13 @@ class HomeController extends Controller
                 'fee_type' => $event->fee_type,
                 'fee_amount' => $event->fee_amount,
                 'event_flyer' => $event->event_flyer ? "/storage/{$event->event_flyer}" : null,
-                'event_gallery' => $event->event_gallery ? array_map(function($image) {
+                'event_gallery' => $event->event_gallery ? array_map(function ($image) {
                     return "/storage/{$image}";
                 }, $event->event_gallery) : [],
                 'event_doc' => $event->event_doc ? "/storage/{$event->event_doc}" : null,
                 'start_date' => $firstDate ? $firstDate->event_date : null,
                 'end_date' => $lastDate && $lastDate->event_date != $firstDate->event_date ? $lastDate->event_date : null,
-                'status' => $status,
-                'dates' => $event->dates->map(function($date) {
+                'dates' => $event->dates->map(function ($date) {
                     return [
                         'event_date' => $date->event_date,
                         'event_time' => $date->event_time
@@ -691,7 +670,7 @@ class HomeController extends Controller
                     'name' => $event->department->dept_name
                 ]
             ],
-            'popularEvents' => $this->getPopularEvents(),
+            'popularEvents' => $relatedEvents, // Gunakan relatedEvents untuk popularEvents
             'relatedEvents' => $relatedEvents
         ]);
     }
@@ -700,7 +679,6 @@ class HomeController extends Controller
     private function getPopularEvents()
     {
         return Event::with(['department', 'dates'])
-            ->where('status', '!=', 'closed')
             ->latest()
             ->take(7)
             ->get()

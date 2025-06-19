@@ -19,7 +19,13 @@ const goToEvent = (eventId) => {
     router.get(`/event/${eventId}`);
 };
 
-const popularEvents = computed(() => props.popularEvents);
+const popularEvents = computed(() => {
+    if (!props.relatedEvents) return [];
+    // Filter event dengan departemen yang sama dan bukan event yang sedang ditampilkan
+    return props.relatedEvents
+        .filter((e) => e.id !== props.event.id) // Exclude current event
+        .slice(0, 5); // Ambil maksimal 5 event
+});
 
 const formatDate = (dateString) => {
     if (!dateString) return "";
@@ -487,23 +493,26 @@ const nextPreviewImage = () => {
                                 class="text-xl lg:text-2xl font-bold mb-4 lg:mb-6"
                                 :style="{ color: 'var(--text-color)' }"
                             >
-                                Popular Events
+                                Event {{ event.department.name }} Lainnya
                             </h2>
-                            <div class="space-y-3 lg:space-y-4">
+                            <div
+                                v-if="popularEvents.length > 0"
+                                class="space-y-3 lg:space-y-4"
+                            >
                                 <article
-                                    v-for="event in popularEvents"
-                                    :key="event.id"
+                                    v-for="relatedEvent in popularEvents"
+                                    :key="relatedEvent.id"
                                     class="group cursor-pointer border-b border-gray-100 pb-3 lg:pb-4 last:border-b-0 last:pb-0"
-                                    @click="goToEvent(event.id)"
+                                    @click="goToEvent(relatedEvent.id)"
                                 >
                                     <div class="flex gap-3 lg:gap-4">
                                         <div
                                             class="w-16 h-16 lg:w-20 lg:h-20 flex-shrink-0 rounded-lg overflow-hidden"
                                         >
                                             <img
-                                                v-if="event.event_flyer"
-                                                :src="event.event_flyer"
-                                                :alt="event.event_name"
+                                                v-if="relatedEvent.event_flyer"
+                                                :src="relatedEvent.event_flyer"
+                                                :alt="relatedEvent.event_name"
                                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                                             />
                                             <div
@@ -530,7 +539,7 @@ const nextPreviewImage = () => {
                                                     color: 'var(--text-color)',
                                                 }"
                                             >
-                                                {{ event.event_name }}
+                                                {{ relatedEvent.event_name }}
                                             </h3>
                                             <div
                                                 class="flex justify-between items-center text-xs"
@@ -539,10 +548,13 @@ const nextPreviewImage = () => {
                                                 }"
                                             >
                                                 <span>{{
-                                                    formatDate(event.start_date)
+                                                    formatDate(
+                                                        relatedEvent.start_date
+                                                    )
                                                 }}</span>
                                                 <span>{{
-                                                    event.fee_type === "free"
+                                                    relatedEvent.fee_type ===
+                                                    "free"
                                                         ? "Gratis"
                                                         : "Berbayar"
                                                 }}</span>
@@ -551,93 +563,15 @@ const nextPreviewImage = () => {
                                     </div>
                                 </article>
                             </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Related Events Section -->
-        <section
-            v-if="relatedEvents && relatedEvents.length > 0"
-            class="py-16"
-            :style="{ backgroundColor: 'var(--color-background)' }"
-        >
-            <div class="container-custom">
-                <h2
-                    class="text-2xl md:text-3xl font-bold text-center mb-12"
-                    :style="{ color: 'var(--text-color)' }"
-                >
-                    Event Terkait
-                </h2>
-                <div
-                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-                >
-                    <article
-                        v-for="relatedEvent in relatedEvents"
-                        :key="relatedEvent.id"
-                        class="bg-white rounded-2xl shadow-lg overflow-hidden group cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-xl"
-                        @click="goToEvent(relatedEvent.id)"
-                    >
-                        <div class="aspect-video overflow-hidden">
-                            <img
-                                v-if="relatedEvent.event_flyer"
-                                :src="relatedEvent.event_flyer"
-                                :alt="relatedEvent.event_name"
-                                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                            />
                             <div
                                 v-else
-                                class="w-full h-full flex items-center justify-center"
-                                :style="{
-                                    backgroundColor: 'var(--color-background)',
-                                }"
-                            >
-                                <span
-                                    class="text-sm"
-                                    :style="{ color: 'var(--light-text)' }"
-                                    >No Image</span
-                                >
-                            </div>
-                        </div>
-                        <div class="p-6">
-                            <div
-                                class="inline-block px-3 py-1 rounded-full text-xs font-medium text-white mb-3"
-                                :style="{
-                                    backgroundColor: getStatusColor(
-                                        relatedEvent.status
-                                    ),
-                                }"
-                            >
-                                {{ getStatusText(relatedEvent.status) }}
-                            </div>
-                            <h3
-                                class="font-bold text-lg mb-2 line-clamp-2 group-hover:text-[var(--color-primary)] transition-colors duration-300"
-                                :style="{ color: 'var(--text-color)' }"
-                            >
-                                {{ relatedEvent.event_name }}
-                            </h3>
-                            <p
-                                class="text-sm mb-4 line-clamp-3"
+                                class="text-center py-4"
                                 :style="{ color: 'var(--light-text)' }"
                             >
-                                {{ relatedEvent.event_detail }}
-                            </p>
-                            <div
-                                class="flex justify-between items-center text-sm"
-                                :style="{ color: 'var(--light-text)' }"
-                            >
-                                <span>{{
-                                    formatDate(relatedEvent.start_date)
-                                }}</span>
-                                <span>{{
-                                    relatedEvent.fee_type === "free"
-                                        ? "Gratis"
-                                        : "Berbayar"
-                                }}</span>
+                                Tidak ada event lain dari departemen ini
                             </div>
                         </div>
-                    </article>
+                    </div>
                 </div>
             </div>
         </section>
