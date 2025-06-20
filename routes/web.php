@@ -15,6 +15,7 @@ use App\Http\Controllers\ProposalController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\ProposalSpjController;
+use App\Http\Controllers\SettingController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -122,6 +123,9 @@ Route::middleware('auth')->group(function () {
 
     Route::put('/proposals/spj/{spj}/approve', [ProposalSpjController::class, 'approve'])->name('proposals.spj.approve');
     Route::put('/proposals/spj/{spj}/revise', [ProposalSpjController::class, 'revise'])->name('proposals.spj.revise');
+
+    Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
+    Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
 });
 
 // New about route

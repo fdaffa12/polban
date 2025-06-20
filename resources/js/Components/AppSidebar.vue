@@ -85,6 +85,11 @@ const items: MenuItem[] = [
         url: route("users.index"),
         icon: Users,
     },
+    {
+        title: "Settings",
+        url: route("settings.index"),
+        icon: Settings,
+    },
 ];
 
 const page = usePage();
