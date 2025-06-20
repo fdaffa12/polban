@@ -16,9 +16,21 @@ use App\Models\LenteraRestorasiCoreValue;
 use App\Models\LenteraRestorasiImage;
 use App\Models\LenteraRestorasiContent;
 use Carbon\Carbon;
+use App\Models\Setting;
 
 class HomeController extends Controller
 {
+    public function __construct()
+    {
+        // Share settings data to all views
+        $settings = Setting::first();
+        if ($settings) {
+            $aboutUs = AboutUs::first();
+            $settings->about_us_excerpt = $aboutUs ? Str::limit(strip_tags($aboutUs->au_desc), 500) : '';
+            Inertia::share('settings', $settings);
+        }
+    }
+
     public function index()
     {
         $aboutUs = AboutUs::first();
