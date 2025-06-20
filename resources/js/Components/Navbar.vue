@@ -6,6 +6,10 @@ const isOpen = ref(false);
 const aboutDropdownOpen = ref(false);
 const activitiesDropdownOpen = ref(false);
 
+// Tambahkan settings dari usePage
+const page = usePage();
+const settings = computed(() => page.props.settings);
+
 // Update mobile menu items structure
 const mobileMenuItems = [
     { text: "Home", href: "/" },
@@ -57,7 +61,6 @@ const closeAllDropdowns = () => {
 };
 
 // Add current route checking
-const page = usePage();
 const currentRoute = computed(() => page.url);
 
 // Update the active route checking functions
@@ -95,9 +98,10 @@ const auth = computed(() => usePage().props.auth);
                 <div class="flex items-center">
                     <Link href="/" class="flex-shrink-0 flex items-center">
                         <img
+                            v-if="settings?.logo"
                             class="h-12 w-auto"
-                            src="/path-to-your-logo.png"
-                            alt="Logo"
+                            :src="`/storage/${settings.logo}`"
+                            :alt="settings?.nama || 'Logo'"
                         />
                     </Link>
                 </div>
