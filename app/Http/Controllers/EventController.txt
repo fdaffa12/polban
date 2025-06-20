@@ -1,0 +1,253 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Event;
+use App\Models\EventDate;
+use App\Models\Department;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Illuminate\Support\Facades\File;
+
+class EventController extends Controller
+{
+    public function index()
+    {
+        return Inertia::render('Events/Index', [
+            'events' => Event::with(['department', 'dates'])->latest()->get(),
+            'departments' => Department::all()
+        ]);
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'department_id' => 'required|exists:departments,id',
+            'event_name' => 'required|string|max:255',
+            'event_detail' => 'required|string',
+            'fee_type' => 'required|in:free,paid',
+            'fee_amount' => 'required_if:fee_type,paid|nullable|numeric|min:0',
+            'event_flyer' => 'required|image|max:2048',
+            'event_gallery.*' => 'nullable|image|max:2048',
+            'event_doc' => 'nullable|mimes:pdf,doc,docx|max:10240',
+            'status' => 'required|in:coming_soon,running,closed',
+            'dates' => 'required|array|min:1',
+            'dates.*.event_date' => 'required|date',
+            'dates.*.event_time' => 'required'
+        ]);
+
+        try {
+            // Handle event flyer
+            $flyer = $request->file('event_flyer');
+            $flyerName = time() . '_flyer.' . $flyer->getClientOriginalExtension();
+            $flyerPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/events/flyers';
+            if (!File::exists($flyerPath)) {
+                File::makeDirectory($flyerPath, 0777, true);
+            }
+            $flyer->move($flyerPath, $flyerName);
+            $flyerRelativePath = 'events/flyers/' . $flyerName;
+
+            // Handle gallery images
+            $galleryPaths = [];
+            if ($request->hasFile('event_gallery')) {
+                $galleryPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/events/gallery';
+                if (!File::exists($galleryPath)) {
+                    File::makeDirectory($galleryPath, 0777, true);
+                }
+
+                foreach ($request->file('event_gallery') as $image) {
+                    $imageName = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+                    $image->move($galleryPath, $imageName);
+                    $galleryPaths[] = 'events/gallery/' . $imageName;
+                }
+            }
+
+            // Handle event document
+            $docRelativePath = null;
+            if ($request->hasFile('event_doc')) {
+                $doc = $request->file('event_doc');
+                $docName = time() . '_doc.' . $doc->getClientOriginalExtension();
+                $docPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/events/docs';
+                if (!File::exists($docPath)) {
+                    File::makeDirectory($docPath, 0777, true);
+                }
+                $doc->move($docPath, $docName);
+                $docRelativePath = 'events/docs/' . $docName;
+            }
+
+            $event = Event::create([
+                'department_id' => $request->department_id,
+                'event_name' => $request->event_name,
+                'event_detail' => $request->event_detail,
+                'fee_type' => $request->fee_type,
+                'fee_amount' => $request->fee_amount,
+                'event_flyer' => $flyerRelativePath,
+                'event_gallery' => $galleryPaths,
+                'event_doc' => $docRelativePath,
+                'status' => $request->status,
+            ]);
+
+            foreach ($request->dates as $date) {
+                $event->dates()->create([
+                    'event_date' => $date['event_date'],
+                    'event_time' => $date['event_time'],
+                ]);
+            }
+
+            return redirect()->back()->with('success', 'Event created successfully');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to create event: ' . $e->getMessage());
+        }
+    }
+
+    public function update(Request $request, Event $event)
+    {
+        $request->validate([
+            'department_id' => 'required|exists:departments,id',
+            'event_name' => 'required|string|max:255',
+            'event_detail' => 'required|string',
+            'fee_type' => 'required|in:free,paid',
+            'fee_amount' => 'required_if:fee_type,paid|nullable|numeric|min:0',
+            'event_flyer' => 'nullable|image|max:2048',
+            'event_gallery.*' => 'nullable|image|max:2048',
+            'event_doc' => 'nullable|mimes:pdf,doc,docx|max:10240',
+            'status' => 'required|in:coming_soon,running,closed',
+            'dates' => 'required|array|min:1',
+            'dates.*.event_date' => 'required|date',
+            'dates.*.event_time' => 'required'
+        ]);
+
+        try {
+            // Handle event flyer
+            if ($request->hasFile('event_flyer')) {
+                if ($event->event_flyer) {
+                    $oldFlyerPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/' . $event->event_flyer;
+                    if (File::exists($oldFlyerPath)) {
+                        File::delete($oldFlyerPath);
+                    }
+                }
+
+                $flyer = $request->file('event_flyer');
+                $flyerName = time() . '_flyer.' . $flyer->getClientOriginalExtension();
+                $flyerPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/events/flyers';
+                if (!File::exists($flyerPath)) {
+                    File::makeDirectory($flyerPath, 0777, true);
+                }
+                $flyer->move($flyerPath, $flyerName);
+                $event->event_flyer = 'events/flyers/' . $flyerName;
+            }
+
+            // Handle gallery images
+            if ($request->hasFile('event_gallery')) {
+                // Delete old gallery images
+                if ($event->event_gallery) {
+                    foreach ($event->event_gallery as $oldImage) {
+                        $oldImagePath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/' . $oldImage;
+                        if (File::exists($oldImagePath)) {
+                            File::delete($oldImagePath);
+                        }
+                    }
+                }
+
+                $galleryPaths = [];
+                $galleryPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/events/gallery';
+                if (!File::exists($galleryPath)) {
+                    File::makeDirectory($galleryPath, 0777, true);
+                }
+
+                foreach ($request->file('event_gallery') as $image) {
+                    $imageName = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+                    $image->move($galleryPath, $imageName);
+                    $galleryPaths[] = 'events/gallery/' . $imageName;
+                }
+                $event->event_gallery = $galleryPaths;
+            }
+
+            // Handle event document
+            if ($request->hasFile('event_doc')) {
+                if ($event->event_doc) {
+                    $oldDocPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/' . $event->event_doc;
+                    if (File::exists($oldDocPath)) {
+                        File::delete($oldDocPath);
+                    }
+                }
+
+                $doc = $request->file('event_doc');
+                $docName = time() . '_doc.' . $doc->getClientOriginalExtension();
+                $docPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/events/docs';
+                if (!File::exists($docPath)) {
+                    File::makeDirectory($docPath, 0777, true);
+                }
+                $doc->move($docPath, $docName);
+                $event->event_doc = 'events/docs/' . $docName;
+            }
+
+            $event->update([
+                'department_id' => $request->department_id,
+                'event_name' => $request->event_name,
+                'event_detail' => $request->event_detail,
+                'fee_type' => $request->fee_type,
+                'fee_amount' => $request->fee_amount,
+                'status' => $request->status,
+            ]);
+
+            // Update dates
+            $event->dates()->delete();
+            foreach ($request->dates as $date) {
+                $event->dates()->create([
+                    'event_date' => $date['event_date'],
+                    'event_time' => $date['event_time'],
+                ]);
+            }
+
+            return redirect()->back()->with('success', 'Event updated successfully');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to update event: ' . $e->getMessage());
+        }
+    }
+
+    public function destroy(Event $event)
+    {
+        try {
+            // Delete event flyer
+            if ($event->event_flyer) {
+                $flyerPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/' . $event->event_flyer;
+                if (File::exists($flyerPath)) {
+                    File::delete($flyerPath);
+                }
+            }
+
+            // Delete gallery images
+            if ($event->event_gallery) {
+                foreach ($event->event_gallery as $image) {
+                    $imagePath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/' . $image;
+                    if (File::exists($imagePath)) {
+                        File::delete($imagePath);
+                    }
+                }
+            }
+
+            // Delete event document
+            if ($event->event_doc) {
+                $docPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/' . $event->event_doc;
+                if (File::exists($docPath)) {
+                    File::delete($docPath);
+                }
+            }
+
+            $event->dates()->delete();
+            $event->delete();
+
+            return redirect()->back()->with('success', 'Event deleted successfully');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to delete event: ' . $e->getMessage());
+        }
+    }
+
+    public function show(Event $event)
+    {
+        return Inertia::render('Events/Show', [
+            'event' => $event->load(['department', 'dates']),
+        ]);
+    }
+}

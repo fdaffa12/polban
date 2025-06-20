@@ -13,7 +13,19 @@
 
     <!-- Scripts -->
     @routes
-    @vite(['resources/js/app.js', "resources/js/Pages/{$page['component']}.vue"])
+    @if (app()->environment('production'))
+        @php
+            $manifest = json_decode(file_get_contents(public_path('build/manifest.json')), true);
+        @endphp
+        <script type="module" src="{{ asset('build/' . $manifest['resources/js/app.js']['file']) }}"></script>
+        @if (isset($manifest['resources/js/app.js']['css']))
+            @foreach ($manifest['resources/js/app.js']['css'] as $css)
+                <link rel="stylesheet" href="{{ asset('build/' . $css) }}">
+            @endforeach
+        @endif
+    @else
+        @vite(['resources/js/app.js'])
+    @endif
     @inertiaHead
 </head>
 

@@ -1,0 +1,123 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\AboutUs;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Illuminate\Support\Facades\File;
+
+class AboutUsController extends Controller
+{
+    public function index()
+    {
+        $aboutUs = AboutUs::first() ?? new AboutUs();
+        return Inertia::render('AboutUs/Index', [
+            'aboutUs' => $aboutUs
+        ]);
+    }
+
+    public function update(Request $request)
+    {
+        $request->validate([
+            'au_title' => 'required|string|max:255',
+            'au_desc' => 'required|string',
+            'au_image' => 'nullable|image|max:2048',
+            'au_multiple_image.*' => 'nullable|image|max:2048',
+            'au_values' => 'nullable',
+            'history' => 'nullable',
+        ]);
+
+        $aboutUs = AboutUs::first() ?? new AboutUs();
+        $data = $request->except(['au_image', 'au_multiple_image']);
+
+        // Handle main image
+        if ($request->hasFile('au_image')) {
+            // Hapus file lama jika ada
+            if ($aboutUs->au_image) {
+                $oldPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/' . $aboutUs->au_image;
+                if (File::exists($oldPath)) {
+                    File::delete($oldPath);
+                }
+            }
+
+            $image = $request->file('au_image');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+
+            // Path FISIK untuk server
+            $uploadPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/about-us';
+
+            // Buat folder jika belum ada
+            if (!File::exists($uploadPath)) {
+                File::makeDirectory($uploadPath, 0777, true);
+            }
+
+            // Simpan file
+            $image->move($uploadPath, $imageName);
+
+            // Path RELATIF untuk database
+            $data['au_image'] = 'about-us/' . $imageName;
+        }
+
+        // Handle multiple images
+        if ($request->hasFile('au_multiple_image')) {
+            $multipleImages = [];
+            foreach ($request->file('au_multiple_image') as $image) {
+                $imageName = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+
+                // Path FISIK untuk server
+                $uploadPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/about-us/gallery';
+
+                // Buat folder jika belum ada
+                if (!File::exists($uploadPath)) {
+                    File::makeDirectory($uploadPath, 0777, true);
+                }
+
+                // Simpan file
+                $image->move($uploadPath, $imageName);
+
+                // Path RELATIF untuk database
+                $multipleImages[] = 'about-us/gallery/' . $imageName;
+            }
+            $data['au_multiple_image'] = $multipleImages;
+        }
+
+        $aboutUs->fill($data);
+        $aboutUs->save();
+
+        return redirect()->back()->with('success', 'About Us updated successfully.');
+    }
+
+    public function removeImage(Request $request)
+    {
+        $request->validate([
+            'index' => 'required|integer'
+        ]);
+
+        $aboutUs = AboutUs::first();
+        if (!$aboutUs) {
+            return response()->json(['message' => 'About Us not found'], 404);
+        }
+
+        $images = $aboutUs->au_multiple_image ?? [];
+        if (!isset($images[$request->index])) {
+            return response()->json(['message' => 'Image not found'], 404);
+        }
+
+        // Hapus file dari storage
+        $imagePath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/' . $images[$request->index];
+        if (File::exists($imagePath)) {
+            File::delete($imagePath);
+        }
+
+        // Hapus dari array dan reindex
+        array_splice($images, $request->index, 1);
+        $aboutUs->au_multiple_image = array_values($images);
+        $aboutUs->save();
+
+        return redirect()->back()->with([
+            'success' => true,
+            'images' => $aboutUs->au_multiple_image
+        ]);
+    }
+}

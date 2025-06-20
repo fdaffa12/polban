@@ -1,0 +1,237 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Department;
+use App\Models\Member;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
+
+class DepartmentController extends Controller
+{
+    public function index()
+    {
+        return Inertia::render('Departments/Index', [
+            'departments' => Department::with('members')->latest()->get(),
+        ]);
+    }
+
+    public function storeDepartment(Request $request)
+    {
+        $request->validate([
+            'dept_name' => 'required|string|max:255',
+            'image' => 'required|image|max:10248',
+        ]);
+
+        try {
+            $image = $request->file('image');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+
+            // Path FISIK untuk server
+            $uploadPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/departments';
+
+            // Buat folder jika belum ada
+            if (!File::exists($uploadPath)) {
+                File::makeDirectory($uploadPath, 0777, true);
+            }
+
+            // Simpan file
+            $image->move($uploadPath, $imageName);
+
+            // Path RELATIF untuk database
+            $path = 'departments/' . $imageName;
+
+            Department::create([
+                'dept_name' => $request->dept_name,
+                'image' => $path,
+            ]);
+
+            return redirect()->back()->with('success', 'Department added successfully');
+        } catch (\Exception $e) {
+            Log::error('Department creation error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to add department');
+        }
+    }
+
+    public function updateDepartment(Request $request, Department $department)
+    {
+        $request->validate([
+            'dept_name' => 'required|string|max:255',
+            'image' => 'nullable|image|max:10248',
+        ]);
+
+        try {
+            if ($request->hasFile('image')) {
+                // Hapus file lama jika ada
+                if ($department->image) {
+                    $oldPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/' . $department->image;
+                    if (File::exists($oldPath)) {
+                        File::delete($oldPath);
+                    }
+                }
+
+                $image = $request->file('image');
+                $imageName = time() . '.' . $image->getClientOriginalExtension();
+
+                // Path FISIK untuk server
+                $uploadPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/departments';
+
+                // Buat folder jika belum ada
+                if (!File::exists($uploadPath)) {
+                    File::makeDirectory($uploadPath, 0777, true);
+                }
+
+                // Simpan file
+                $image->move($uploadPath, $imageName);
+
+                // Path RELATIF untuk database
+                $department->image = 'departments/' . $imageName;
+            }
+
+            $department->dept_name = $request->dept_name;
+            $department->save();
+
+            return redirect()->back()->with('success', 'Department updated successfully');
+        } catch (\Exception $e) {
+            Log::error('Department update error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to update department');
+        }
+    }
+
+    public function destroyDepartment(Department $department)
+    {
+        try {
+            if ($department->image) {
+                $imagePath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/' . $department->image;
+                if (File::exists($imagePath)) {
+                    File::delete($imagePath);
+                }
+            }
+            $department->delete();
+
+            return redirect()->back()->with('success', 'Department deleted successfully');
+        } catch (\Exception $e) {
+            Log::error('Department deletion error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to delete department');
+        }
+    }
+
+    public function storeMember(Request $request)
+    {
+        try {
+            $request->validate([
+                'department_id' => 'required|exists:departments,id',
+                'name' => 'required|string|max:255',
+                'image' => 'required|image|max:10248',
+                'job_type' => 'required|in:board_of_dept,section_head_dept,staff',
+                'job_titles' => 'required|string|max:255',
+                'position' => 'nullable|string|max:255',
+            ]);
+
+            $image = $request->file('image');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+
+            // Path FISIK untuk server
+            $uploadPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/members';
+
+            // Buat folder jika belum ada
+            if (!File::exists($uploadPath)) {
+                File::makeDirectory($uploadPath, 0777, true);
+            }
+
+            // Simpan file
+            $image->move($uploadPath, $imageName);
+
+            // Path RELATIF untuk database
+            $path = 'members/' . $imageName;
+
+            Member::create([
+                'department_id' => $request->department_id,
+                'name' => $request->name,
+                'image' => $path,
+                'job_type' => $request->job_type,
+                'job_titles' => $request->job_titles,
+                'position' => $request->position,
+            ]);
+
+            return redirect()->back()->with('success', 'Member added successfully');
+        } catch (\Exception $e) {
+            Log::error('Member creation error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to add member: ' . $e->getMessage());
+        }
+    }
+
+    public function updateMember(Request $request, Member $member)
+    {
+        $request->validate([
+            'department_id' => 'required|exists:departments,id',
+            'name' => 'required|string|max:255',
+            'image' => 'nullable|image|max:10248',
+            'job_type' => 'required|in:board_of_dept,section_head_dept,staff',
+            'job_titles' => 'required|string|max:255',
+            'position' => 'nullable|string|max:255',
+        ]);
+
+        try {
+            if ($request->hasFile('image')) {
+                // Hapus file lama jika ada
+                if ($member->image) {
+                    $oldPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/' . $member->image;
+                    if (File::exists($oldPath)) {
+                        File::delete($oldPath);
+                    }
+                }
+
+                $image = $request->file('image');
+                $imageName = time() . '.' . $image->getClientOriginalExtension();
+
+                // Path FISIK untuk server
+                $uploadPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/members';
+
+                // Buat folder jika belum ada
+                if (!File::exists($uploadPath)) {
+                    File::makeDirectory($uploadPath, 0777, true);
+                }
+
+                // Simpan file
+                $image->move($uploadPath, $imageName);
+
+                // Path RELATIF untuk database
+                $member->image = 'members/' . $imageName;
+            }
+
+            $member->update([
+                'department_id' => $request->department_id,
+                'name' => $request->name,
+                'job_type' => $request->job_type,
+                'job_titles' => $request->job_titles,
+                'position' => $request->position,
+            ]);
+
+            return redirect()->back()->with('success', 'Member updated successfully');
+        } catch (\Exception $e) {
+            Log::error('Member update error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to update member');
+        }
+    }
+
+    public function destroyMember(Member $member)
+    {
+        try {
+            if ($member->image) {
+                $imagePath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/' . $member->image;
+                if (File::exists($imagePath)) {
+                    File::delete($imagePath);
+                }
+            }
+
+            $member->delete();
+            return redirect()->back()->with('success', 'Member deleted successfully');
+        } catch (\Exception $e) {
+            Log::error('Member deletion error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to delete member');
+        }
+    }
+}
