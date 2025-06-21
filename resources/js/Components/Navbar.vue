@@ -17,7 +17,7 @@ const mobileMenuItems = [
         text: "About",
         dropdown: true,
         items: [
-            { text: "Lentera Restorasi", href: "/ruang-optima" },
+            { text: "Ruang Optima", href: "/ruang-optima" },
             { text: "About Us", href: "/about" },
         ],
     },
@@ -151,7 +151,7 @@ const auth = computed(() => usePage().props.auth);
                                             isActiveRoute('/ruang-optima'),
                                     }"
                                 >
-                                    Lentera Restorasi
+                                    Ruang Optima
                                 </Link>
                                 <Link
                                     href="/about"

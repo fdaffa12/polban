@@ -19,8 +19,8 @@ const setActiveImage = (index) => {
 </script>
 
 <template>
-    <GuestLayout title="Lentera Restorasi">
-        <Head title="Lentera Restorasi" />
+    <GuestLayout title="Ruang Optima">
+        <Head title="Ruang Optima" />
 
         <!-- Hero Section -->
         <section class="py-12 bg-white">
@@ -32,7 +32,7 @@ const setActiveImage = (index) => {
                             <h1
                                 class="text-4xl md:text-5xl font-bold text-[var(--text-color)] leading-tight"
                             >
-                                Lentera Restorasi
+                                Ruang Optima
                                 <span
                                     class="block text-xl md:text-2xl font-light text-[var(--light-text)] mt-2"
                                 >

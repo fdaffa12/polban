@@ -4,7 +4,6 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
     <title inertia>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Fonts -->
@@ -13,18 +12,17 @@
 
     <!-- Scripts -->
     @routes
-    @if (app()->environment('production'))
-        @php
-            $manifest = json_decode(file_get_contents(public_path('build/manifest.json')), true);
-        @endphp
+    @php
+        $manifestPath = public_path('build/manifest.json');
+        $manifest = file_exists($manifestPath) ? json_decode(file_get_contents($manifestPath), true) : null;
+    @endphp
+
+    @if ($manifest)
+        <!-- Load built files -->
         <script type="module" src="{{ asset('build/' . $manifest['resources/js/app.js']['file']) }}"></script>
-        @if (isset($manifest['resources/js/app.js']['css']))
-            @foreach ($manifest['resources/js/app.js']['css'] as $css)
-                <link rel="stylesheet" href="{{ asset('build/' . $css) }}">
-            @endforeach
-        @endif
-    @else
-        @vite(['resources/js/app.js'])
+        @foreach ($manifest['resources/js/app.js']['css'] as $css)
+            <link rel="stylesheet" href="{{ asset('build/' . $css) }}">
+        @endforeach
     @endif
     @inertiaHead
 </head>
