@@ -326,7 +326,7 @@ const props = defineProps({
                                                         class="flex items-center gap-4 pt-2"
                                                     >
                                                         <Link
-                                                            :href="`/events/${event.id}`"
+                                                            :href="`/event/${event.id}`"
                                                             class="inline-flex items-center px-6 py-2 rounded-lg bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] text-white transition-all duration-300"
                                                         >
                                                             Selengkapnya
