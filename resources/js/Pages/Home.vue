@@ -12,6 +12,10 @@ const props = defineProps({
         type: Object,
         required: true,
     },
+    himpunan: {
+        type: Object,
+        default: null,
+    },
     events: {
         type: Array,
         default: () => [],
@@ -69,7 +73,7 @@ const props = defineProps({
             </div>
         </div>
 
-        <!-- About Us Section -->
+        <!-- About Us Section (now Himpunan Section) -->
         <section class="py-20 bg-white relative overflow-hidden">
             <!-- Decorative Elements -->
             <div class="absolute inset-0 pointer-events-none">
@@ -94,10 +98,10 @@ const props = defineProps({
                         <div class="about-image-glow"></div>
                         <div class="relative h-[400px]">
                             <img
-                                v-if="aboutUs.image"
-                                :src="aboutUs.image"
-                                :alt="aboutUs.title"
-                                class="w-full h-full object-cover rounded-xl shadow-lg transform transition-transform duration-500 hover:scale-105"
+                                v-if="himpunan?.logo"
+                                :src="himpunan.logo"
+                                :alt="himpunan.name"
+                                class="w-full h-full object-contain rounded-xl shadow-lg transform transition-transform duration-500 hover:scale-105"
                             />
                             <div
                                 v-else
@@ -119,15 +123,18 @@ const props = defineProps({
                             <h2
                                 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6"
                             >
-                                {{ aboutUs.title }}
+                                {{ himpunan?.name || "HMJTK Polban" }}
                             </h2>
                             <div
                                 class="prose prose-lg text-gray-600 max-w-none"
-                                v-html="aboutUs.description"
+                                v-html="
+                                    himpunan?.description ||
+                                    'Belum ada deskripsi'
+                                "
                             ></div>
                         </div>
 
-                        <Link href="/about" class="about-button">
+                        <Link href="/ruang-optima" class="about-button">
                             Baca Selengkapnya
                             <svg
                                 class="w-5 h-5 ml-2"

@@ -35,6 +35,7 @@ class HomeController extends Controller
     public function index()
     {
         $aboutUs = AboutUs::first();
+        $himpunan = Himpunan::first();
         $today = now();
 
         // Coba ambil event yang akan datang (upcoming)
@@ -227,6 +228,11 @@ class HomeController extends Controller
                 'description' => $aboutUs->au_desc ? strip_tags($aboutUs->au_desc) : '',
                 'image' => $aboutUs->au_image ? "/storage/{$aboutUs->au_image}" : null,
             ],
+            'himpunan' => $himpunan ? [
+                'name' => $himpunan->name,
+                'description' => strip_tags($himpunan->description),
+                'logo' => $himpunan->logo ? "/storage/{$himpunan->logo}" : null,
+            ] : null,
             'featuredEvent' => $featuredEvent,
             'events' => $mappedEvents,
             'newsArticles' => $newsArticles,
