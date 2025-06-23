@@ -22,7 +22,7 @@ const mobileMenuItems = [
             { text: "History", href: "/about" },
         ],
     },
-    { text: "Department", href: "/department" },
+    { text: "Our Team", href: "/department" },
     { text: "News", href: "/news" },
     {
         text: "Activities",
@@ -81,7 +81,13 @@ const isAboutActive = computed(() => {
 });
 
 const isActivitiesActive = computed(() => {
-    return isActiveParentRoute(["/events", "/calendar"]);
+    // Tambahkan path untuk event
+    return isActiveParentRoute([
+        "/events",
+        "/event-calendar",
+        "/our-event",
+        "/event",
+    ]);
 });
 
 // Tambahkan computed property untuk auth
@@ -175,7 +181,7 @@ const auth = computed(() => usePage().props.auth);
                             'nav-link-active': isActiveRoute('/department'),
                         }"
                     >
-                        Department
+                        Our Team
                     </Link>
 
                     <Link

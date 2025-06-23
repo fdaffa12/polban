@@ -119,7 +119,8 @@ onMounted(() => {
                                     @click="filterByCategory(category.id)"
                                     class="group relative px-4 lg:px-6 py-2 lg:py-3 rounded-xl transition-all duration-300 text-xs lg:text-sm font-semibold overflow-hidden"
                                     :style="
-                                        activeCategory === category.id
+                                        Number(activeCategory) ===
+                                        Number(category.id)
                                             ? {
                                                   backgroundColor:
                                                       'var(--color-primary)',
@@ -138,7 +139,10 @@ onMounted(() => {
                                         }})
                                     </span>
                                     <div
-                                        v-if="activeCategory !== category.id"
+                                        v-if="
+                                            Number(activeCategory) !==
+                                            Number(category.id)
+                                        "
                                         class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                                         :style="{
                                             backgroundColor:
