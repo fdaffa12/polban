@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <title inertia>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Fonts -->
@@ -12,18 +13,7 @@
 
     <!-- Scripts -->
     @routes
-    @php
-        $manifestPath = public_path('build/manifest.json');
-        $manifest = file_exists($manifestPath) ? json_decode(file_get_contents($manifestPath), true) : null;
-    @endphp
-
-    @if ($manifest)
-        <!-- Load built files -->
-        <script type="module" src="{{ asset('build/' . $manifest['resources/js/app.js']['file']) }}"></script>
-        @foreach ($manifest['resources/js/app.js']['css'] as $css)
-            <link rel="stylesheet" href="{{ asset('build/' . $css) }}">
-        @endforeach
-    @endif
+    @vite(['resources/js/app.js', "resources/js/Pages/{$page['component']}.vue"])
     @inertiaHead
 </head>
 

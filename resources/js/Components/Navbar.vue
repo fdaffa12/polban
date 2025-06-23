@@ -9,6 +9,7 @@ const activitiesDropdownOpen = ref(false);
 // Tambahkan settings dari usePage
 const page = usePage();
 const settings = computed(() => page.props.settings);
+const navTitle = computed(() => page.props.navTitle);
 
 // Update mobile menu items structure
 const mobileMenuItems = [
@@ -17,7 +18,7 @@ const mobileMenuItems = [
         text: "About",
         dropdown: true,
         items: [
-            { text: "Ruang Optima", href: "/ruang-optima" },
+            { text: navTitle, href: "/ruang-optima" },
             { text: "About Us", href: "/about" },
         ],
     },
@@ -151,7 +152,7 @@ const auth = computed(() => usePage().props.auth);
                                             isActiveRoute('/ruang-optima'),
                                     }"
                                 >
-                                    Ruang Optima
+                                    {{ navTitle }}
                                 </Link>
                                 <Link
                                     href="/about"

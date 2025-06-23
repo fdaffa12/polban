@@ -85,31 +85,6 @@ const props = defineProps({
             </div>
 
             <div class="container-custom relative z-10">
-                <!-- Section Header -->
-                <div class="text-center mb-16 relative">
-                    <h2
-                        class="text-[var(--color-primary)] font-semibold text-lg mb-4"
-                    >
-                        Tentang Kami
-                    </h2>
-                    <div class="relative inline-block">
-                        <h3
-                            class="text-4xl md:text-5xl font-bold text-[var(--text-color)] mb-6"
-                        >
-                            HMJTK'25
-                        </h3>
-                        <!-- Decorative Lines -->
-                        <div class="about-title-line-left"></div>
-                        <div class="about-title-line-right"></div>
-                    </div>
-                    <p
-                        class="text-[var(--light-text)] text-lg max-w-2xl mx-auto"
-                    >
-                        Himpunan Mahasiswa Jurusan Teknik Kimia Politeknik
-                        Bandung
-                    </p>
-                </div>
-
                 <div
                     class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
                 >

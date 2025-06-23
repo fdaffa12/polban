@@ -44,6 +44,7 @@ class HandleInertiaRequests extends Middleware
         if ($settings) {
             $aboutUs = AboutUs::first();
             $settings->about_us_excerpt = $aboutUs ? Str::limit(strip_tags($aboutUs->au_desc), 500) : '';
+            $navTitle = $aboutUs ? $aboutUs->au_title : '';
         }
 
         return array_merge(parent::share($request), [
@@ -51,6 +52,7 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
             ],
             'settings' => $settings,
+            'navTitle' => $navTitle,
             'flash' => [
                 'message' => fn() => $request->session()->get('message')
             ],

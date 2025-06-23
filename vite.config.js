@@ -22,9 +22,9 @@ export default defineConfig({
             "@": "/resources/js",
         },
     },
-    server: {
-        cors: {
-            origin: "https://hmjtk.iftekno.com",
-        },
-    },
+    // server: {
+    //     cors: {
+    //         origin: "https://hmjtk.iftekno.com",
+    //     },
+    // },
 });
