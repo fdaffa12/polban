@@ -90,17 +90,17 @@ const auth = computed(() => usePage().props.auth);
 
 <template>
     <nav class="sticky top-0 z-50">
-        <!-- Gradient Background -->
+        <!-- Gradient Background - hapus opacity, tambah shadow bawah -->
         <div class="nav-gradient absolute inset-0"></div>
 
         <div class="relative max-w-7xl mx-auto px-4">
-            <div class="flex justify-between h-20">
-                <!-- Logo Section -->
+            <div class="flex justify-between h-16">
+                <!-- Logo Section - sesuaikan ukuran logo -->
                 <div class="flex items-center">
                     <Link href="/" class="flex-shrink-0 flex items-center">
                         <img
                             v-if="settings?.logo"
-                            class="h-12 w-auto"
+                            class="h-10"
                             :src="`/storage/${settings.logo}`"
                             :alt="settings?.nama || 'Logo'"
                         />
@@ -299,7 +299,7 @@ const auth = computed(() => usePage().props.auth);
             </div>
         </div>
 
-        <!-- Mobile Menu -->
+        <!-- Mobile Menu - sesuaikan posisi dan tambah shadow -->
         <div v-show="isOpen" class="mobile-menu">
             <div class="px-4 py-2 space-y-2">
                 <!-- Iterate through mobile menu items -->
@@ -412,6 +412,9 @@ const auth = computed(() => usePage().props.auth);
         var(--color-primary-dark) 0%,
         var(--color-primary) 100%
     );
+    /* Tingkatkan shadow 3 level lebih tebal */
+    box-shadow: 0 6px 12px -1px rgba(0, 0, 0, 0.5),
+        0 4px 8px -2px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
 }
 
 /* Hapus backdrop-blur dan opacity yang mengurangi ketajaman navbar */
@@ -420,7 +423,7 @@ nav {
 }
 
 .nav-link {
-    @apply px-3 py-2 rounded-md text-sm font-medium transition-all duration-200;
+    @apply px-3 py-2 rounded-md text-sm font-normal transition-all duration-200;
     color: var(--color-background);
 }
 
@@ -429,7 +432,7 @@ nav {
 }
 
 .nav-link-active {
-    @apply font-semibold border-b-2;
+    @apply font-medium border-b-2;
     color: var(--color-secondary);
     border-color: var(--color-secondary);
 }
@@ -440,7 +443,7 @@ nav {
 }
 
 .dropdown-item {
-    @apply block px-4 py-2 text-sm transition-colors duration-200;
+    @apply block px-4 py-2 text-sm font-normal transition-colors duration-200;
     color: var(--color-background);
 }
 
@@ -487,16 +490,19 @@ nav {
 }
 
 .mobile-menu {
-    @apply md:hidden fixed top-20 left-0 right-0;
+    @apply md:hidden fixed top-16 left-0 right-0;
     background-color: var(--color-primary-dark);
     border-top: 1px solid var(--color-secondary);
     animation: mobileMenuFadeIn 0.3s ease-out;
-    max-height: calc(100vh - 5rem);
+    max-height: calc(100vh - 4rem);
     overflow-y: auto;
+    /* Sesuaikan shadow mobile menu juga */
+    box-shadow: 0 6px 12px -1px rgba(0, 0, 0, 0.5),
+        0 4px 8px -2px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
 }
 
 .mobile-menu-item {
-    @apply block w-full px-4 py-3 rounded-lg text-base font-medium transition-colors duration-200;
+    @apply block w-full px-4 py-2 rounded-lg text-base font-normal transition-colors duration-200;
     color: var(--color-background);
     display: flex;
     align-items: center;
@@ -518,7 +524,7 @@ nav {
 }
 
 .mobile-submenu-item {
-    @apply block w-full px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200;
+    @apply block w-full px-4 py-2 rounded-lg text-sm font-normal transition-colors duration-200;
     color: var(--color-background);
 }
 
@@ -528,7 +534,7 @@ nav {
 }
 
 .mobile-button {
-    @apply block w-full text-center px-4 py-3 rounded-lg transition-colors duration-200;
+    @apply block w-full text-center px-4 py-2 rounded-lg transition-colors duration-200;
     background-color: var(--color-background);
     color: var(--color-primary-dark);
     border: 2px solid var(--color-background);
