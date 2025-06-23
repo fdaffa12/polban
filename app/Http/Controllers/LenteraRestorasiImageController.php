@@ -6,6 +6,7 @@ use App\Models\LenteraRestorasiImage;
 use App\Models\LenteraRestorasiVision;
 use App\Models\LenteraRestorasiMission;
 use App\Models\LenteraRestorasiCoreValue;
+use App\Models\Himpunan;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
@@ -20,6 +21,7 @@ class LenteraRestorasiImageController extends Controller
             'visions' => LenteraRestorasiVision::latest()->get(),
             'missions' => LenteraRestorasiMission::latest()->get(),
             'coreValues' => LenteraRestorasiCoreValue::latest()->get(),
+            'himpunan' => Himpunan::first()
         ]);
     }
 
@@ -191,6 +193,40 @@ class LenteraRestorasiImageController extends Controller
             return redirect()->back()->with('success', 'Core Value deleted successfully');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Failed to delete core value');
+        }
+    }
+
+    public function updateHimpunan(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'logo' => 'nullable|image|max:2048'
+        ]);
+
+        try {
+            $himpunan = Himpunan::first();
+            if (!$himpunan) {
+                $himpunan = new Himpunan();
+            }
+
+            if ($request->hasFile('logo')) {
+                // Delete old logo if exists
+                if ($himpunan->logo && Storage::disk('public')->exists($himpunan->logo)) {
+                    Storage::disk('public')->delete($himpunan->logo);
+                }
+                $path = $request->file('logo')->store('himpunan', 'public');
+                $himpunan->logo = $path;
+            }
+
+            $himpunan->name = $request->name;
+            $himpunan->description = $request->description;
+            $himpunan->save();
+
+            return redirect()->back()->with('success', 'Himpunan updated successfully');
+        } catch (\Exception $e) {
+            Log::error('Himpunan update error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to update himpunan');
         }
     }
 }

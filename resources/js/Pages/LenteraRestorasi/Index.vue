@@ -19,6 +19,7 @@ const props = defineProps({
     visions: Array,
     missions: Array,
     coreValues: Array,
+    himpunan: Object,
 });
 
 const toast = useToast();
@@ -354,12 +355,80 @@ const submit = () => {
         });
     }
 };
+
+// Tambahkan state dan method untuk himpunan
+const showHimpunanModal = ref(false);
+const himpunanForm = useForm({
+    name: props.himpunan?.name || "",
+    description: props.himpunan?.description || "",
+    logo: null,
+});
+
+const openHimpunanModal = () => {
+    himpunanForm.name = props.himpunan?.name || "";
+    himpunanForm.description = props.himpunan?.description || "";
+    himpunanForm.logo = null;
+    showHimpunanModal.value = true;
+};
+
+const closeHimpunanModal = () => {
+    showHimpunanModal.value = false;
+    himpunanForm.reset();
+};
+
+const submitHimpunan = () => {
+    himpunanForm.post(route("lentera-restorasi.himpunan.update"), {
+        preserveScroll: true,
+        onSuccess: () => {
+            closeHimpunanModal();
+            toast.success("Himpunan updated successfully");
+        },
+        onError: () => toast.error("Failed to update himpunan"),
+    });
+};
 </script>
 
 <template>
     <AuthenticatedLayout title="Lentera Restorasi">
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+                <!-- Himpunan Section -->
+                <div
+                    class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6"
+                >
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-semibold">
+                            Himpunan Management
+                        </h2>
+                        <PrimaryButton @click="openHimpunanModal()">
+                            {{ himpunan ? "Edit Himpunan" : "Add Himpunan" }}
+                        </PrimaryButton>
+                    </div>
+
+                    <div v-if="himpunan" class="border rounded-lg p-4">
+                        <div class="flex items-start gap-4">
+                            <img
+                                v-if="himpunan.logo"
+                                :src="`/storage/${himpunan.logo}`"
+                                :alt="himpunan.name"
+                                class="w-32 h-32 object-cover rounded-lg"
+                            />
+                            <div>
+                                <h3 class="text-lg font-medium">
+                                    {{ himpunan.name }}
+                                </h3>
+                                <div
+                                    class="mt-2"
+                                    v-html="himpunan.description"
+                                ></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-else class="text-center text-gray-500">
+                        Belum ada data himpunan
+                    </div>
+                </div>
+
                 <!-- Vision Section -->
                 <div
                     class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6"
@@ -736,6 +805,86 @@ const submit = () => {
                                         {{
                                             editingCoreValue ? "Update" : "Save"
                                         }}
+                                    </PrimaryButton>
+                                </div>
+                            </form>
+                        </div>
+                    </Modal>
+
+                    <!-- Himpunan Modal -->
+                    <Modal
+                        :show="showHimpunanModal"
+                        @close="closeHimpunanModal"
+                    >
+                        <div class="p-6">
+                            <h2 class="text-lg font-medium">
+                                {{
+                                    himpunan ? "Edit Himpunan" : "Add Himpunan"
+                                }}
+                            </h2>
+                            <form @submit.prevent="submitHimpunan" class="mt-6">
+                                <div>
+                                    <InputLabel for="name" value="Name" />
+                                    <TextInput
+                                        id="name"
+                                        v-model="himpunanForm.name"
+                                        type="text"
+                                        class="mt-1 block w-full"
+                                        required
+                                    />
+                                    <InputError
+                                        :message="himpunanForm.errors.name"
+                                        class="mt-2"
+                                    />
+                                </div>
+
+                                <div class="mt-6">
+                                    <InputLabel
+                                        for="description"
+                                        value="Description"
+                                    />
+                                    <QuillEditor
+                                        id="description"
+                                        v-model:content="
+                                            himpunanForm.description
+                                        "
+                                        :options="editorOptions"
+                                        contentType="html"
+                                        theme="snow"
+                                        class="mt-1"
+                                        style="min-height: 200px"
+                                    />
+                                    <InputError
+                                        :message="
+                                            himpunanForm.errors.description
+                                        "
+                                        class="mt-2"
+                                    />
+                                </div>
+
+                                <div class="mt-6">
+                                    <InputLabel for="logo" value="Logo" />
+                                    <input
+                                        type="file"
+                                        id="logo"
+                                        @input="
+                                            himpunanForm.logo =
+                                                $event.target.files[0]
+                                        "
+                                        accept="image/*"
+                                        class="mt-1 block w-full"
+                                    />
+                                    <InputError
+                                        :message="himpunanForm.errors.logo"
+                                        class="mt-2"
+                                    />
+                                </div>
+
+                                <div class="mt-6 flex justify-end gap-4">
+                                    <PrimaryButton
+                                        :disabled="himpunanForm.processing"
+                                    >
+                                        {{ himpunan ? "Update" : "Save" }}
                                     </PrimaryButton>
                                 </div>
                             </form>

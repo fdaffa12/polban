@@ -10,6 +10,7 @@ const props = defineProps({
         type: Object,
         required: true,
     },
+    himpunan: Object,
 });
 
 const activeImage = ref(0);
@@ -32,11 +33,11 @@ const setActiveImage = (index) => {
                             <h1
                                 class="text-4xl md:text-5xl font-bold text-[var(--text-color)] leading-tight"
                             >
-                                Ruang Optima
+                                {{ himpunan?.name || "HMJTK Polban" }}
                                 <span
                                     class="block text-xl md:text-2xl font-light text-[var(--light-text)] mt-2"
                                 >
-                                    HMJTK Polban
+                                    Himpunan Mahasiswa Jurusan Teknik Kimia
                                 </span>
                             </h1>
                             <div
@@ -45,33 +46,28 @@ const setActiveImage = (index) => {
                         </div>
 
                         <div class="prose prose-lg max-w-none">
-                            <p class="mb-4 text-[var(--light-text)]">
-                                The center or core of an activity or
-                                organization. The centrum is often the focal
-                                point or source of everything that happens
-                                around it.
-                            </p>
-                            <p class="mb-4 text-[var(--light-text)]">
-                                Elaboration is a further explanation of the
-                                objectives, work plans or strategies that will
-                                be implemented. Elaboration ensures that
-                                information submitted is complete, clear and can
-                                be understood by all parties involved,
-                                especially HIMATEKK ITS members.
-                            </p>
-                            <p class="italic text-[var(--light-text)]">
-                                It is hoped that Himatekk ITS can develop more
-                                advanced in the future with ocean-wide
-                                elaboration among ITS FT-IRS Chemical
-                                Engineering students so that the existence of
-                                this organization can be felt in all aspects of
-                                its benefits.
+                            <div
+                                v-if="himpunan?.description"
+                                class="text-[var(--light-text)]"
+                                v-html="himpunan.description"
+                            ></div>
+                            <p v-else class="text-[var(--light-text)]">
+                                Belum ada deskripsi himpunan
                             </p>
                         </div>
                     </div>
 
-                    <!-- Empty space for the right side -->
-                    <div class="hidden md:block md:col-span-6"></div>
+                    <!-- Logo Himpunan -->
+                    <div
+                        class="hidden md:flex md:col-span-6 items-center justify-center"
+                    >
+                        <img
+                            v-if="himpunan?.logo"
+                            :src="himpunan.logo"
+                            :alt="himpunan?.name"
+                            class="max-w-md w-full h-auto object-contain"
+                        />
+                    </div>
                 </div>
             </div>
         </section>

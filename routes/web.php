@@ -74,6 +74,8 @@ Route::middleware('auth')->group(function () {
         ->name('lentera-restorasi.update');
     Route::delete('/lentera-restorasi/{image}', [LenteraRestorasiImageController::class, 'destroy'])
         ->name('lentera-restorasi.destroy');
+    Route::post('/lentera-restorasi/himpunan/update', [LenteraRestorasiImageController::class, 'updateHimpunan'])
+        ->name('lentera-restorasi.himpunan.update');
 
     // Department routes
     Route::get('/departments', [DepartmentController::class, 'index'])->name('departments.index');
@@ -126,6 +128,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
     Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
+
+
 });
 
 // New about route

@@ -19,7 +19,7 @@ const mobileMenuItems = [
         dropdown: true,
         items: [
             { text: navTitle, href: "/ruang-optima" },
-            { text: "About Us", href: "/about" },
+            { text: "History", href: "/about" },
         ],
     },
     { text: "Department", href: "/department" },
@@ -162,7 +162,7 @@ const auth = computed(() => usePage().props.auth);
                                             isActiveRoute('/about'),
                                     }"
                                 >
-                                    About Us
+                                    History
                                 </Link>
                             </div>
                         </div>

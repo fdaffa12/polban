@@ -17,6 +17,7 @@ use App\Models\LenteraRestorasiImage;
 use App\Models\LenteraRestorasiContent;
 use Carbon\Carbon;
 use App\Models\Setting;
+use App\Models\Himpunan;
 
 class HomeController extends Controller
 {
@@ -260,6 +261,7 @@ class HomeController extends Controller
         $coreValues = LenteraRestorasiCoreValue::all();
         $images = LenteraRestorasiImage::all();
         $content = LenteraRestorasiContent::first();
+        $himpunan = Himpunan::first();
 
         return Inertia::render('LenteraRestorasi', [
             'content' => [
@@ -294,7 +296,12 @@ class HomeController extends Controller
                 'au_multiple_image' => collect($images)->pluck('image')->map(function ($image) {
                     return asset('storage/' . $image);
                 })->toArray()
-            ]
+            ],
+            'himpunan' => $himpunan ? [
+                'name' => $himpunan->name,
+                'description' => nl2br($himpunan->description),
+                'logo' => $himpunan->logo ? asset('storage/' . $himpunan->logo) : null
+            ] : null
         ]);
     }
 
