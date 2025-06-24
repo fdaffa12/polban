@@ -2,6 +2,7 @@
 import { ref, computed } from "vue";
 import { router } from "@inertiajs/vue3";
 import GuestLayout from "@/Layouts/GuestLayout.vue";
+import { useIntersectionObserver } from "@/composables/useIntersectionObserver";
 import {
     format,
     startOfMonth,
@@ -133,6 +134,8 @@ const getStatusText = (status) => {
             return "Akan Datang";
     }
 };
+
+useIntersectionObserver();
 </script>
 
 <template>
@@ -140,10 +143,12 @@ const getStatusText = (status) => {
         <div class="py-6 sm:py-12 bg-[var(--color-background)]">
             <div class="container-custom">
                 <!-- Calendar Container -->
-                <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                <div
+                    class="bg-white rounded-2xl shadow-lg overflow-hidden float-in-section"
+                >
                     <!-- Header Calendar -->
                     <div
-                        class="bg-gradient-to-r from-[var(--color-primary-dark)] to-[var(--color-primary)] p-4 sm:p-6"
+                        class="bg-gradient-to-r from-[var(--color-primary-dark)] to-[var(--color-primary)] p-4 sm:p-6 float-in-section delay-100"
                     >
                         <div
                             class="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
@@ -176,7 +181,7 @@ const getStatusText = (status) => {
                     </div>
 
                     <!-- Calendar Grid -->
-                    <div class="p-2 sm:p-6">
+                    <div class="p-2 sm:p-6 float-in-section delay-200">
                         <div
                             class="grid grid-cols-7 gap-[1px] bg-[var(--color-primary-dark)] rounded-xl overflow-hidden"
                         >
@@ -192,7 +197,8 @@ const getStatusText = (status) => {
                                     'Sat',
                                 ]"
                                 :key="day"
-                                class="bg-[var(--color-primary-dark)] text-white py-2 sm:py-3 text-center text-xs sm:text-sm font-medium"
+                                class="bg-[var(--color-primary-dark)] text-white py-2 sm:py-3 text-center text-xs sm:text-sm font-medium float-in-section"
+                                :class="`delay-${(index + 3) * 100}`"
                             >
                                 <!-- Responsive day display -->
                                 <span class="hidden sm:inline">{{ day }}</span>
@@ -203,11 +209,12 @@ const getStatusText = (status) => {
 
                             <!-- Calendar days -->
                             <div
-                                v-for="day in calendarDays"
+                                v-for="(day, index) in calendarDays"
                                 :key="day"
-                                class="bg-white relative transition-all duration-200 calendar-cell"
+                                class="bg-white relative transition-all duration-200 calendar-cell float-in-section"
                                 :class="{
                                     'bg-[var(--color-primary)]/5': isToday(day),
+                                    [`delay-${(index + 10) * 50}`]: true,
                                 }"
                             >
                                 <!-- Date number -->
@@ -473,5 +480,64 @@ const getStatusText = (status) => {
 /* Remove scrollbar */
 .calendar-cell > div:last-child {
     overflow: visible;
+}
+
+/* Tambahkan style untuk float-in animation */
+@keyframes floatIn {
+    0% {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.float-in-section {
+    opacity: 0;
+    transform: translateY(50px);
+}
+
+.float-in-section.visible {
+    animation: floatIn 0.8s ease-out forwards;
+}
+
+.delay-100 {
+    animation-delay: 0.1s;
+}
+
+.delay-200 {
+    animation-delay: 0.2s;
+}
+
+.delay-300 {
+    animation-delay: 0.3s;
+}
+
+.delay-400 {
+    animation-delay: 0.4s;
+}
+
+.delay-500 {
+    animation-delay: 0.5s;
+}
+
+/* Tambahkan delay untuk grid items */
+.delay-550 {
+    animation-delay: 0.55s;
+}
+.delay-600 {
+    animation-delay: 0.6s;
+}
+.delay-650 {
+    animation-delay: 0.65s;
+}
+/* ... dan seterusnya sesuai kebutuhan ... */
+
+/* Pastikan animasi berjalan smooth */
+* {
+    backface-visibility: hidden;
+    -webkit-font-smoothing: antialiased;
 }
 </style>

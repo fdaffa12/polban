@@ -351,3 +351,36 @@ body {
     transform: translateX(-100%);
     opacity: 0;
 }
+
+/* Tambahkan di bagian keyframes */
+@keyframes floatIn {
+    0% {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Tambahkan class untuk animasi */
+.float-in-section {
+    opacity: 0;
+    transform: translateY(50px);
+}
+
+.float-in-section.visible {
+    animation: floatIn 0.8s ease-out forwards;
+}
+
+/* Tambahkan variasi delay */
+.delay-100 {
+    animation-delay: 0.1s;
+}
+.delay-200 {
+    animation-delay: 0.2s;
+}
+.delay-300 {
+    animation-delay: 0.3s;
+}

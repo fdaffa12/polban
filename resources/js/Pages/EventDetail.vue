@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from "vue";
 import { router } from "@inertiajs/vue3";
 import GuestLayout from "@/Layouts/GuestLayout.vue";
+import { useIntersectionObserver } from "@/composables/useIntersectionObserver";
 
 const props = defineProps({
     event: Object,
@@ -99,20 +100,22 @@ const nextPreviewImage = () => {
         previewImageIndex.value = 0;
     }
 };
+
+useIntersectionObserver();
 </script>
 
 <template>
     <GuestLayout :title="event.event_name">
         <!-- Event Header -->
         <section
-            class="relative py-12"
+            class="relative py-12 float-in-section"
             :style="{
                 background: `linear-gradient(to bottom, white, white 30%, var(--color-background))`,
             }"
         >
             <div class="container-custom">
                 <nav
-                    class="flex items-center space-x-2 text-sm mb-8"
+                    class="flex items-center space-x-2 text-sm mb-8 float-in-section delay-100"
                     :style="{ color: 'var(--light-text)' }"
                 >
                     <a
@@ -137,7 +140,7 @@ const nextPreviewImage = () => {
                     <!-- Main Content Column -->
                     <div>
                         <div
-                            class="inline-block px-4 py-2 rounded-full text-sm font-medium text-white mb-6"
+                            class="inline-block px-4 py-2 rounded-full text-sm font-medium text-white mb-6 float-in-section delay-200"
                             :style="{
                                 backgroundColor: getStatusColor(event.status),
                             }"
@@ -146,14 +149,14 @@ const nextPreviewImage = () => {
                         </div>
 
                         <h1
-                            class="heading-responsive font-bold mb-6"
+                            class="heading-responsive font-bold mb-6 float-in-section delay-300"
                             :style="{ color: 'var(--text-color)' }"
                         >
                             {{ event.event_name }}
                         </h1>
 
                         <div
-                            class="flex items-center space-x-6 text-sm mb-8"
+                            class="flex items-center space-x-6 text-sm mb-8 float-in-section delay-400"
                             :style="{ color: 'var(--light-text)' }"
                         >
                             <div class="flex items-center space-x-2">
@@ -224,16 +227,21 @@ const nextPreviewImage = () => {
                         </div>
 
                         <!-- Featured Image -->
-                        <div v-if="event.event_flyer" class="mb-8">
+                        <div
+                            v-if="event.event_flyer"
+                            class="mb-8 float-in-section delay-500"
+                        >
                             <img
                                 :src="event.event_flyer"
                                 :alt="event.event_name"
-                                class="w-full h-96 object-cover rounded-2xl shadow-lg"
+                                class="w-full object-cover rounded-2xl shadow-lg"
                             />
                         </div>
 
                         <!-- Event Details -->
-                        <div class="bg-white rounded-2xl shadow-lg p-6 mb-8">
+                        <div
+                            class="bg-white rounded-2xl shadow-lg p-6 mb-8 float-in-section delay-600"
+                        >
                             <h2
                                 class="text-xl font-bold mb-4"
                                 :style="{ color: 'var(--text-color)' }"
@@ -241,7 +249,7 @@ const nextPreviewImage = () => {
                                 Detail Event
                             </h2>
 
-                            <!-- Event Dates and Times - Updated Design -->
+                            <!-- Event Dates and Times -->
                             <div
                                 v-if="event.dates && event.dates.length > 0"
                                 class="mb-6"
@@ -256,7 +264,8 @@ const nextPreviewImage = () => {
                                     <div
                                         v-for="(date, index) in event.dates"
                                         :key="index"
-                                        class="flex items-center justify-between p-4 border border-gray-200 rounded-xl hover:border-[var(--color-primary)] transition-colors duration-300"
+                                        class="flex items-center justify-between p-4 border border-gray-200 rounded-xl hover:border-[var(--color-primary)] transition-colors duration-300 float-in-section"
+                                        :class="`delay-${(index + 7) * 100}`"
                                     >
                                         <div class="flex items-center gap-4">
                                             <div class="flex-shrink-0">
@@ -344,7 +353,7 @@ const nextPreviewImage = () => {
                                 event.event_gallery &&
                                 event.event_gallery.length > 0
                             "
-                            class="mb-8"
+                            class="mb-8 float-in-section delay-700"
                         >
                             <h2
                                 class="text-xl font-bold mb-4"
@@ -361,7 +370,8 @@ const nextPreviewImage = () => {
                                             image, index
                                         ) in event.event_gallery"
                                         :key="index"
-                                        class="relative h-48 rounded-xl overflow-hidden group cursor-pointer"
+                                        class="relative h-48 rounded-xl overflow-hidden group cursor-pointer float-in-section"
+                                        :class="`delay-${(index + 8) * 100}`"
                                         @click="openImagePreview(index)"
                                     >
                                         <img
@@ -485,7 +495,7 @@ const nextPreviewImage = () => {
                     </div>
 
                     <!-- Sidebar Column -->
-                    <div>
+                    <div class="float-in-section delay-300">
                         <div
                             class="bg-white rounded-2xl shadow-lg p-4 lg:p-6 lg:sticky lg:top-8"
                         >
@@ -500,9 +510,12 @@ const nextPreviewImage = () => {
                                 class="space-y-3 lg:space-y-4"
                             >
                                 <article
-                                    v-for="relatedEvent in popularEvents"
+                                    v-for="(
+                                        relatedEvent, index
+                                    ) in popularEvents"
                                     :key="relatedEvent.id"
-                                    class="group cursor-pointer border-b border-gray-100 pb-3 lg:pb-4 last:border-b-0 last:pb-0"
+                                    class="group cursor-pointer border-b border-gray-100 pb-3 lg:pb-4 last:border-b-0 last:pb-0 float-in-section"
+                                    :class="`delay-${(index + 4) * 100}`"
                                     @click="goToEvent(relatedEvent.id)"
                                 >
                                     <div class="flex gap-3 lg:gap-4">
@@ -711,5 +724,72 @@ section {
 section.py-16 {
     padding-top: 2rem; /* Kurangi padding atas */
     padding-bottom: 4rem;
+}
+
+/* Tambahkan style untuk float-in animation */
+:deep(.float-in-section) {
+    will-change: transform, opacity;
+}
+
+:deep(.float-in-section.visible) {
+    will-change: auto;
+}
+
+@keyframes floatIn {
+    0% {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.float-in-section {
+    opacity: 0;
+    transform: translateY(50px);
+}
+
+.float-in-section.visible {
+    animation: floatIn 0.8s ease-out forwards;
+}
+
+.delay-100 {
+    animation-delay: 0.1s;
+}
+
+.delay-200 {
+    animation-delay: 0.2s;
+}
+
+.delay-300 {
+    animation-delay: 0.3s;
+}
+
+.delay-400 {
+    animation-delay: 0.4s;
+}
+
+.delay-500 {
+    animation-delay: 0.5s;
+}
+
+.delay-600 {
+    animation-delay: 0.6s;
+}
+
+.delay-700 {
+    animation-delay: 0.7s;
+}
+
+.delay-800 {
+    animation-delay: 0.8s;
+}
+
+/* Pastikan animasi berjalan smooth */
+* {
+    backface-visibility: hidden;
+    -webkit-font-smoothing: antialiased;
 }
 </style>

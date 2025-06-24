@@ -3,6 +3,7 @@ import GuestLayout from "@/Layouts/GuestLayout.vue";
 import { ref, onMounted } from "vue";
 import { Carousel, Slide, Navigation, Pagination } from "vue3-carousel";
 import "vue3-carousel/dist/carousel.css";
+import { useIntersectionObserver } from "@/composables/useIntersectionObserver";
 
 const props = defineProps({
     departments: {
@@ -33,14 +34,18 @@ const getLayoutType = (members) => {
     if (count === 1) return "single";
     return "none";
 };
+
+useIntersectionObserver();
 </script>
 
 <template>
     <GuestLayout title="Department">
         <!-- Hero Section -->
-        <section class="py-16 bg-white">
+        <section class="py-16 bg-white float-in-section">
             <div class="container-custom">
-                <div class="text-center max-w-4xl mx-auto mb-20 space-y-6">
+                <div
+                    class="text-center max-w-4xl mx-auto mb-20 space-y-6 float-in-section delay-100"
+                >
                     <div
                         class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border"
                         :style="{ borderColor: 'var(--color-secondary)' }"
@@ -96,7 +101,7 @@ const getLayoutType = (members) => {
 
                 <!-- Department Navigation -->
                 <div
-                    class="flex flex-wrap gap-3 justify-center max-w-4xl mx-auto"
+                    class="flex flex-wrap gap-3 justify-center max-w-4xl mx-auto float-in-section delay-200"
                 >
                     <button
                         v-for="department in departments"
@@ -136,7 +141,7 @@ const getLayoutType = (members) => {
         <section
             class="py-24 relative overflow-hidden"
             :style="{
-                background: `linear-gradient(to bottom, white 0%, var(--color-background) 100%)`
+                background: `linear-gradient(to bottom, white 0%, var(--color-background) 100%)`,
             }"
         >
             <!-- Gradient overlay at bottom -->
@@ -152,15 +157,15 @@ const getLayoutType = (members) => {
                 <div v-for="department in departments" :key="department.id">
                     <div
                         v-show="activeDepartment === department.id"
-                        class="space-y-24 animate-fade-in"
+                        class="space-y-24 animate-fade-in float-in-section"
                     >
                         <!-- Board of Department Section -->
                         <div
                             v-if="department.board_members?.length"
-                            class="space-y-12"
+                            class="space-y-12 float-in-section"
                         >
                             <div
-                                class="text-center max-w-3xl mx-auto space-y-6"
+                                class="text-center max-w-3xl mx-auto space-y-6 float-in-section delay-100"
                             >
                                 <div
                                     class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border"
@@ -199,7 +204,9 @@ const getLayoutType = (members) => {
                             </div>
 
                             <!-- Dynamic Layout for Board Members -->
-                            <div class="relative max-w-7xl mx-auto">
+                            <div
+                                class="relative max-w-7xl mx-auto float-in-section delay-200"
+                            >
                                 <!-- Carousel Layout (>3 members) -->
                                 <div
                                     v-if="
@@ -388,10 +395,10 @@ const getLayoutType = (members) => {
                         <!-- Section Head Section -->
                         <div
                             v-if="department.section_heads?.length"
-                            class="space-y-12"
+                            class="space-y-12 float-in-section"
                         >
                             <div
-                                class="text-center max-w-3xl mx-auto space-y-6"
+                                class="text-center max-w-3xl mx-auto space-y-6 float-in-section delay-100"
                             >
                                 <div
                                     class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border"
@@ -430,7 +437,9 @@ const getLayoutType = (members) => {
                             </div>
 
                             <!-- Dynamic Layout for Section Heads -->
-                            <div class="relative max-w-7xl mx-auto">
+                            <div
+                                class="relative max-w-7xl mx-auto float-in-section delay-200"
+                            >
                                 <!-- Carousel Layout (>3 members) -->
                                 <div
                                     v-if="
@@ -619,10 +628,10 @@ const getLayoutType = (members) => {
                         <!-- Staff Section -->
                         <div
                             v-if="department.staff_members?.length"
-                            class="space-y-12"
+                            class="space-y-12 float-in-section"
                         >
                             <div
-                                class="text-center max-w-3xl mx-auto space-y-6"
+                                class="text-center max-w-3xl mx-auto space-y-6 float-in-section delay-100"
                             >
                                 <div
                                     class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border"
@@ -661,7 +670,9 @@ const getLayoutType = (members) => {
                             </div>
 
                             <!-- Dynamic Layout for Staff Members -->
-                            <div class="relative max-w-7xl mx-auto">
+                            <div
+                                class="relative max-w-7xl mx-auto float-in-section delay-200"
+                            >
                                 <!-- Carousel Layout (>3 members) -->
                                 <div
                                     v-if="
@@ -1009,5 +1020,52 @@ const getLayoutType = (members) => {
     .card-body {
         @apply p-3;
     }
+}
+
+/* Tambahkan style untuk float-in animation */
+:deep(.float-in-section) {
+    will-change: transform, opacity;
+}
+
+:deep(.float-in-section.visible) {
+    will-change: auto;
+}
+
+@keyframes floatIn {
+    0% {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.float-in-section {
+    opacity: 0;
+    transform: translateY(50px);
+}
+
+.float-in-section.visible {
+    animation: floatIn 0.8s ease-out forwards;
+}
+
+.delay-100 {
+    animation-delay: 0.1s;
+}
+
+.delay-200 {
+    animation-delay: 0.2s;
+}
+
+.delay-300 {
+    animation-delay: 0.3s;
+}
+
+/* Pastikan animasi berjalan smooth */
+* {
+    backface-visibility: hidden;
+    -webkit-font-smoothing: antialiased;
 }
 </style>

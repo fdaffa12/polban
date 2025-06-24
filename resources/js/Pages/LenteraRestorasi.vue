@@ -4,6 +4,7 @@ import { Head } from "@inertiajs/vue3";
 import { Carousel, Slide, Navigation, Pagination } from "vue3-carousel";
 import "vue3-carousel/dist/carousel.css";
 import { ref } from "vue";
+import { useIntersectionObserver } from "@/composables/useIntersectionObserver";
 
 const props = defineProps({
     content: {
@@ -17,6 +18,8 @@ const activeImage = ref(0);
 const setActiveImage = (index) => {
     activeImage.value = index;
 };
+
+useIntersectionObserver();
 </script>
 
 <template>
@@ -24,11 +27,13 @@ const setActiveImage = (index) => {
         <Head title="Ruang Optima" />
 
         <!-- Hero Section -->
-        <section class="py-12 bg-white">
+        <section class="py-12 bg-white float-in-section">
             <div class="container-custom">
                 <div class="grid grid-cols-12 gap-8">
                     <!-- Text Content -->
-                    <div class="col-span-12 md:col-span-6 space-y-8">
+                    <div
+                        class="col-span-12 md:col-span-6 space-y-8 float-in-section delay-100"
+                    >
                         <div class="space-y-4">
                             <h1
                                 class="text-4xl md:text-5xl font-bold text-[var(--text-color)] leading-tight"
@@ -59,7 +64,7 @@ const setActiveImage = (index) => {
 
                     <!-- Logo Himpunan -->
                     <div
-                        class="hidden md:flex md:col-span-6 items-center justify-center"
+                        class="hidden md:flex md:col-span-6 items-center justify-center float-in-section delay-200"
                     >
                         <img
                             v-if="himpunan?.logo"
@@ -73,9 +78,11 @@ const setActiveImage = (index) => {
         </section>
 
         <!-- Gallery Section -->
-        <section class="py-20 bg-white">
+        <section class="py-20 bg-white float-in-section">
             <div class="container-custom">
-                <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                <div
+                    class="text-center max-w-3xl mx-auto mb-16 space-y-4 float-in-section delay-100"
+                >
                     <span
                         class="text-[var(--color-primary)] font-medium text-lg tracking-wide"
                     >
@@ -91,7 +98,9 @@ const setActiveImage = (index) => {
                     ></div>
                 </div>
 
-                <div class="relative max-w-7xl mx-auto">
+                <div
+                    class="relative max-w-7xl mx-auto float-in-section delay-200"
+                >
                     <!-- Title Navigation -->
                     <div class="flex flex-wrap gap-4 mb-8 justify-center">
                         <button
@@ -183,11 +192,13 @@ const setActiveImage = (index) => {
 
         <!-- Vision & Mission Section -->
         <section
-            class="py-20 bg-gradient-to-b from-white to-[var(--color-background)]/10"
+            class="py-20 bg-gradient-to-b from-white to-[var(--color-background)]/10 float-in-section"
         >
             <div class="container-custom">
                 <div class="max-w-7xl mx-auto">
-                    <div class="text-center max-w-3xl mx-auto mb-20 space-y-4">
+                    <div
+                        class="text-center max-w-3xl mx-auto mb-20 space-y-4 float-in-section delay-100"
+                    >
                         <span
                             class="text-[var(--color-primary)] font-medium text-lg tracking-wide"
                         >
@@ -204,7 +215,7 @@ const setActiveImage = (index) => {
                     </div>
 
                     <!-- Combined Vision & Mission Carousel -->
-                    <div class="max-w-5xl mx-auto">
+                    <div class="max-w-5xl mx-auto float-in-section delay-200">
                         <Carousel
                             :items-to-show="1"
                             :wrap-around="true"
@@ -275,9 +286,11 @@ const setActiveImage = (index) => {
         </section>
 
         <!-- Core Values Section -->
-        <section class="py-20 bg-[var(--color-background)]/5">
+        <section class="py-20 bg-[var(--color-background)]/5 float-in-section">
             <div class="container-custom">
-                <div class="text-center max-w-3xl mx-auto mb-20 space-y-4">
+                <div
+                    class="text-center max-w-3xl mx-auto mb-20 space-y-4 float-in-section delay-100"
+                >
                     <span
                         class="text-[var(--color-primary)] font-medium text-lg tracking-wide"
                     >
@@ -293,7 +306,9 @@ const setActiveImage = (index) => {
                     ></div>
                 </div>
 
-                <div class="max-w-4xl mx-auto space-y-6">
+                <div
+                    class="max-w-4xl mx-auto space-y-6 float-in-section delay-200"
+                >
                     <div
                         v-for="value in content.coreValues"
                         :key="value.id"
@@ -584,5 +599,47 @@ const setActiveImage = (index) => {
 .container-custom {
     @apply px-4 sm:px-6 lg:px-8 mx-auto;
     max-width: 1280px;
+}
+
+/* Tambahkan style untuk float-in animation */
+:deep(.float-in-section) {
+    will-change: transform, opacity;
+}
+
+:deep(.float-in-section.visible) {
+    will-change: auto;
+}
+
+/* Tambahkan keyframes jika belum ada di global.css */
+@keyframes floatIn {
+    0% {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.float-in-section {
+    opacity: 0;
+    transform: translateY(50px);
+}
+
+.float-in-section.visible {
+    animation: floatIn 0.8s ease-out forwards;
+}
+
+.delay-100 {
+    animation-delay: 0.1s;
+}
+
+.delay-200 {
+    animation-delay: 0.2s;
+}
+
+.delay-300 {
+    animation-delay: 0.3s;
 }
 </style>

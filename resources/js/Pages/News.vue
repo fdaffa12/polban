@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from "vue";
 import { router } from "@inertiajs/vue3";
 import GuestLayout from "@/Layouts/GuestLayout.vue";
+import { useIntersectionObserver } from "@/composables/useIntersectionObserver";
 
 const props = defineProps({
     categories: Array,
@@ -53,18 +54,23 @@ const loadMore = () => {
 onMounted(() => {
     displayedCount.value = 5;
 });
+
+useIntersectionObserver();
 </script>
 
 <template>
     <GuestLayout title="Portal Berita">
         <!-- Main Container -->
-        <section class="relative py-12" :style="{ backgroundColor: 'white' }">
+        <section
+            class="relative py-12 float-in-section"
+            :style="{ backgroundColor: 'white' }"
+        >
             <div class="container-custom">
                 <div class="grid-cols-layout">
                     <!-- Left Column (Main Content) -->
                     <div>
                         <!-- Title and Description -->
-                        <div class="mb-8">
+                        <div class="mb-8 float-in-section delay-100">
                             <h1
                                 class="text-3xl lg:text-4xl xl:text-5xl font-bold mb-4"
                                 :style="{ color: 'var(--text-color)' }"
@@ -81,7 +87,7 @@ onMounted(() => {
                         </div>
 
                         <!-- Category Navigation -->
-                        <div class="mb-8">
+                        <div class="mb-8 float-in-section delay-200">
                             <div class="flex flex-wrap gap-2 lg:gap-3">
                                 <button
                                     @click="filterByCategory(null)"
@@ -157,9 +163,10 @@ onMounted(() => {
                         <!-- Articles List -->
                         <div class="space-y-4 lg:space-y-6 mb-8">
                             <article
-                                v-for="article in displayedArticles"
+                                v-for="(article, index) in displayedArticles"
                                 :key="article.id"
-                                class="group bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer"
+                                class="group bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer float-in-section"
+                                :class="`delay-${(index + 3) * 100}`"
                                 @click="goToArticle(article.slug)"
                             >
                                 <div class="flex flex-col md:flex-row">
@@ -238,7 +245,10 @@ onMounted(() => {
                         </div>
 
                         <!-- Load More Button -->
-                        <div v-if="canLoadMore" class="text-center">
+                        <div
+                            v-if="canLoadMore"
+                            class="text-center float-in-section delay-200"
+                        >
                             <button
                                 @click="loadMore"
                                 :disabled="loading"
@@ -254,7 +264,7 @@ onMounted(() => {
                     </div>
 
                     <!-- Right Column (Sidebar) -->
-                    <div>
+                    <div class="float-in-section delay-300">
                         <div
                             class="bg-white rounded-2xl shadow-lg p-4 lg:p-6 lg:sticky lg:top-8"
                         >
@@ -266,9 +276,10 @@ onMounted(() => {
                             </h2>
                             <div class="space-y-3 lg:space-y-4">
                                 <article
-                                    v-for="post in popularPosts"
+                                    v-for="(post, index) in popularPosts"
                                     :key="post.id"
-                                    class="group cursor-pointer border-b border-gray-100 pb-3 lg:pb-4 last:border-b-0 last:pb-0"
+                                    class="group cursor-pointer border-b border-gray-100 pb-3 lg:pb-4 last:border-b-0 last:pb-0 float-in-section"
+                                    :class="`delay-${(index + 4) * 100}`"
                                     @click="goToArticle(post.slug)"
                                 >
                                     <div class="flex gap-3 lg:gap-4">
@@ -375,6 +386,74 @@ onMounted(() => {
 @media (min-width: 1024px) {
     .container-custom {
         padding: 0 3rem;
+    }
+}
+
+/* Tambahkan style untuk float-in animation */
+:deep(.float-in-section) {
+    will-change: transform, opacity;
+}
+
+:deep(.float-in-section.visible) {
+    will-change: auto;
+}
+
+@keyframes floatIn {
+    0% {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.float-in-section {
+    opacity: 0;
+    transform: translateY(50px);
+}
+
+.float-in-section.visible {
+    animation: floatIn 0.8s ease-out forwards;
+}
+
+.delay-100 {
+    animation-delay: 0.1s;
+}
+
+.delay-200 {
+    animation-delay: 0.2s;
+}
+
+.delay-300 {
+    animation-delay: 0.3s;
+}
+
+.delay-400 {
+    animation-delay: 0.4s;
+}
+
+.delay-500 {
+    animation-delay: 0.5s;
+}
+
+.delay-600 {
+    animation-delay: 0.6s;
+}
+
+/* Pastikan animasi berjalan smooth */
+* {
+    backface-visibility: hidden;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Grid layout untuk desktop */
+@media (min-width: 1024px) {
+    .grid-cols-layout {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 2rem;
     }
 }
 </style>

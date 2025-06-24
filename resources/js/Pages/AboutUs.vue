@@ -3,6 +3,7 @@ import GuestLayout from "@/Layouts/GuestLayout.vue";
 import { Head } from "@inertiajs/vue3";
 import { Carousel, Slide, Navigation } from "vue3-carousel";
 import "vue3-carousel/dist/carousel.css";
+import { useIntersectionObserver } from "@/composables/useIntersectionObserver";
 
 const props = defineProps({
     about: {
@@ -10,6 +11,8 @@ const props = defineProps({
         required: true,
     },
 });
+
+useIntersectionObserver();
 </script>
 
 <template>
@@ -18,7 +21,7 @@ const props = defineProps({
 
         <!-- Hero Section with Parallax -->
         <section
-            class="relative min-h-[90vh] flex items-center justify-center overflow-hidden"
+            class="relative min-h-[90vh] flex items-center justify-center overflow-hidden float-in-section"
         >
             <div class="absolute inset-0 z-0">
                 <img
@@ -60,12 +63,14 @@ const props = defineProps({
 
         <!-- About & Gallery Section -->
         <section
-            class="py-16 bg-gradient-to-b from-white to-[var(--color-background)]/10"
+            class="py-16 bg-gradient-to-b from-white to-[var(--color-background)]/10 float-in-section"
         >
             <div class="container-custom">
                 <!-- About Content -->
                 <div class="max-w-4xl mx-auto mb-32">
-                    <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                    <div
+                        class="text-center max-w-3xl mx-auto mb-16 space-y-4 float-in-section delay-100"
+                    >
                         <h2
                             class="text-[var(--color-primary)] font-semibold text-lg mb-4 animate-fade-in"
                         >
@@ -82,7 +87,7 @@ const props = defineProps({
                     </div>
 
                     <div
-                        class="prose prose-lg mx-auto prose-p:leading-relaxed"
+                        class="prose prose-lg mx-auto prose-p:leading-relaxed float-in-section delay-200"
                         v-html="about.au_desc"
                     ></div>
                 </div>
@@ -90,7 +95,9 @@ const props = defineProps({
                 <!-- Gallery -->
                 <div class="max-w-7xl mx-auto mb-20">
                     <!-- Gallery Title -->
-                    <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                    <div
+                        class="text-center max-w-3xl mx-auto mb-16 space-y-4 float-in-section delay-100"
+                    >
                         <span
                             class="text-[var(--color-primary)] font-medium text-lg tracking-wide"
                         >
@@ -107,64 +114,70 @@ const props = defineProps({
                     </div>
 
                     <!-- Responsive Carousel -->
-                    <Carousel
-                        v-if="about.au_multiple_image?.length"
-                        :items-to-show="4"
-                        :breakpoints="{
-                            320: {
-                                itemsToShow: 1,
-                                snapAlign: 'center',
-                            },
-                            640: {
-                                itemsToShow: 2,
-                                snapAlign: 'center',
-                            },
-                            768: {
-                                itemsToShow: 3,
-                                snapAlign: 'center',
-                            },
-                            1024: {
-                                itemsToShow: 4,
-                                snapAlign: 'center',
-                            },
-                        }"
-                        :wrap-around="true"
-                        :transition="500"
-                        :autoplay="3000"
-                        class="gallery-carousel"
-                    >
-                        <Slide
-                            v-for="(image, index) in about.au_multiple_image"
-                            :key="index"
-                            class="px-3"
+                    <div class="float-in-section delay-200">
+                        <Carousel
+                            v-if="about.au_multiple_image?.length"
+                            :items-to-show="4"
+                            :breakpoints="{
+                                320: {
+                                    itemsToShow: 1,
+                                    snapAlign: 'center',
+                                },
+                                640: {
+                                    itemsToShow: 2,
+                                    snapAlign: 'center',
+                                },
+                                768: {
+                                    itemsToShow: 3,
+                                    snapAlign: 'center',
+                                },
+                                1024: {
+                                    itemsToShow: 4,
+                                    snapAlign: 'center',
+                                },
+                            }"
+                            :wrap-around="true"
+                            :transition="500"
+                            :autoplay="3000"
+                            class="gallery-carousel"
                         >
-                            <div
-                                class="relative aspect-[4/5] rounded-2xl overflow-hidden group"
+                            <Slide
+                                v-for="(
+                                    image, index
+                                ) in about.au_multiple_image"
+                                :key="index"
+                                class="px-3"
                             >
-                                <img
-                                    :src="image"
-                                    :alt="`Gallery Image ${index + 1}`"
-                                    class="w-full h-full object-cover transform transition duration-700 group-hover:scale-110"
-                                />
                                 <div
-                                    class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"
-                                ></div>
-                            </div>
-                        </Slide>
+                                    class="relative aspect-[4/5] rounded-2xl overflow-hidden group"
+                                >
+                                    <img
+                                        :src="image"
+                                        :alt="`Gallery Image ${index + 1}`"
+                                        class="w-full h-full object-cover transform transition duration-700 group-hover:scale-110"
+                                    />
+                                    <div
+                                        class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"
+                                    ></div>
+                                </div>
+                            </Slide>
 
-                        <template #addons>
-                            <Navigation />
-                        </template>
-                    </Carousel>
+                            <template #addons>
+                                <Navigation />
+                            </template>
+                        </Carousel>
+                    </div>
                 </div>
             </div>
         </section>
 
         <!-- History & Values Section -->
-        <section class="py-16 bg-[var(--color-background)]/5">
+        <section class="py-16 bg-[var(--color-background)]/5 float-in-section">
             <div class="container-custom">
                 <!-- Center Title -->
-                <div class="text-center max-w-3xl mx-auto mb-20 space-y-4">
+                <div
+                    class="text-center max-w-3xl mx-auto mb-20 space-y-4 float-in-section delay-100"
+                >
                     <span
                         class="text-[var(--color-primary)] font-medium text-lg tracking-wide"
                         >Discover Our Legacy</span
@@ -179,7 +192,9 @@ const props = defineProps({
                     ></div>
                 </div>
 
-                <div class="grid md:grid-cols-2 gap-20">
+                <div
+                    class="grid md:grid-cols-2 gap-20 float-in-section delay-200"
+                >
                     <!-- History Column -->
                     <div
                         class="group hover:shadow-xl transition-all duration-500 space-y-8 backdrop-blur-sm bg-white/30 p-10 rounded-2xl shadow-lg border border-white/20"
@@ -388,5 +403,52 @@ const props = defineProps({
 
 .animate-fade-in {
     animation: fade-in 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Tambahkan style untuk float-in animation */
+:deep(.float-in-section) {
+    will-change: transform, opacity;
+}
+
+:deep(.float-in-section.visible) {
+    will-change: auto;
+}
+
+@keyframes floatIn {
+    0% {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.float-in-section {
+    opacity: 0;
+    transform: translateY(50px);
+}
+
+.float-in-section.visible {
+    animation: floatIn 0.8s ease-out forwards;
+}
+
+.delay-100 {
+    animation-delay: 0.1s;
+}
+
+.delay-200 {
+    animation-delay: 0.2s;
+}
+
+.delay-300 {
+    animation-delay: 0.3s;
+}
+
+/* Pastikan animasi berjalan smooth */
+* {
+    backface-visibility: hidden;
+    -webkit-font-smoothing: antialiased;
 }
 </style>

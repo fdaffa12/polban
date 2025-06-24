@@ -2,11 +2,12 @@
 import { ref, computed, onMounted } from "vue";
 import { router } from "@inertiajs/vue3";
 import GuestLayout from "@/Layouts/GuestLayout.vue";
+import { useIntersectionObserver } from "@/composables/useIntersectionObserver";
 
 const props = defineProps({
     article: Object,
     relatedArticles: Array,
-    popularPosts: Array, // Add this line
+    popularPosts: Array,
 });
 
 const goToArticle = (slug) => {
@@ -14,20 +15,22 @@ const goToArticle = (slug) => {
 };
 
 const popularPosts = computed(() => props.popularPosts);
+
+useIntersectionObserver();
 </script>
 
 <template>
     <GuestLayout :title="article.title">
         <!-- Article Header -->
         <section
-            class="relative py-12"
+            class="relative py-12 float-in-section"
             :style="{
                 background: `linear-gradient(to bottom, white, white 30%, var(--color-background))`,
             }"
         >
             <div class="container-custom">
                 <nav
-                    class="flex items-center space-x-2 text-sm mb-8"
+                    class="flex items-center space-x-2 text-sm mb-8 float-in-section delay-100"
                     :style="{ color: 'var(--light-text)' }"
                 >
                     <a
@@ -52,21 +55,21 @@ const popularPosts = computed(() => props.popularPosts);
                     <!-- Main Content Column -->
                     <div>
                         <div
-                            class="inline-block px-4 py-2 rounded-full text-sm font-medium text-white mb-6"
+                            class="inline-block px-4 py-2 rounded-full text-sm font-medium text-white mb-6 float-in-section delay-200"
                             :style="{ backgroundColor: 'var(--color-primary)' }"
                         >
                             {{ article.category.name }}
                         </div>
 
                         <h1
-                            class="heading-responsive font-bold mb-6"
+                            class="heading-responsive font-bold mb-6 float-in-section delay-300"
                             :style="{ color: 'var(--text-color)' }"
                         >
                             {{ article.title }}
                         </h1>
 
                         <div
-                            class="flex items-center space-x-6 text-sm mb-8"
+                            class="flex items-center space-x-6 text-sm mb-8 float-in-section delay-400"
                             :style="{ color: 'var(--light-text)' }"
                         >
                             <div class="flex items-center space-x-2">
@@ -115,24 +118,27 @@ const popularPosts = computed(() => props.popularPosts);
                         </div>
 
                         <!-- Featured Image -->
-                        <div v-if="article.featured_image" class="mb-8">
+                        <div
+                            v-if="article.featured_image"
+                            class="mb-8 float-in-section delay-500"
+                        >
                             <img
                                 :src="article.featured_image"
                                 :alt="article.title"
-                                class="w-full h-96 object-cover rounded-2xl shadow-lg"
+                                class="w-full object-cover rounded-2xl shadow-lg"
                             />
                         </div>
 
                         <!-- Article Content -->
                         <div
-                            class="prose prose-lg max-w-none"
+                            class="prose prose-lg max-w-none float-in-section delay-600"
                             :style="{ color: 'var(--text-color)' }"
                             v-html="article.content"
                         ></div>
                     </div>
 
                     <!-- Sidebar Column -->
-                    <div>
+                    <div class="float-in-section delay-300">
                         <div
                             class="bg-white rounded-2xl shadow-lg p-4 lg:p-6 lg:sticky lg:top-8"
                         >
@@ -144,9 +150,10 @@ const popularPosts = computed(() => props.popularPosts);
                             </h2>
                             <div class="space-y-3 lg:space-y-4">
                                 <article
-                                    v-for="post in popularPosts"
+                                    v-for="(post, index) in popularPosts"
                                     :key="post.id"
-                                    class="group cursor-pointer border-b border-gray-100 pb-3 lg:pb-4 last:border-b-0 last:pb-0"
+                                    class="group cursor-pointer border-b border-gray-100 pb-3 lg:pb-4 last:border-b-0 last:pb-0 float-in-section"
+                                    :class="`delay-${(index + 4) * 100}`"
                                     @click="goToArticle(post.slug)"
                                 >
                                     <div class="flex gap-3 lg:gap-4">
@@ -320,5 +327,64 @@ const popularPosts = computed(() => props.popularPosts);
 /* Add this new style */
 section {
     min-height: 100vh; /* This ensures the gradient covers the full height */
+}
+
+/* Tambahkan style untuk float-in animation */
+:deep(.float-in-section) {
+    will-change: transform, opacity;
+}
+
+:deep(.float-in-section.visible) {
+    will-change: auto;
+}
+
+@keyframes floatIn {
+    0% {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.float-in-section {
+    opacity: 0;
+    transform: translateY(50px);
+}
+
+.float-in-section.visible {
+    animation: floatIn 0.8s ease-out forwards;
+}
+
+.delay-100 {
+    animation-delay: 0.1s;
+}
+
+.delay-200 {
+    animation-delay: 0.2s;
+}
+
+.delay-300 {
+    animation-delay: 0.3s;
+}
+
+.delay-400 {
+    animation-delay: 0.4s;
+}
+
+.delay-500 {
+    animation-delay: 0.5s;
+}
+
+.delay-600 {
+    animation-delay: 0.6s;
+}
+
+/* Pastikan animasi berjalan smooth */
+* {
+    backface-visibility: hidden;
+    -webkit-font-smoothing: antialiased;
 }
 </style>

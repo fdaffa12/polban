@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from "vue";
 import { router } from "@inertiajs/vue3";
 import GuestLayout from "@/Layouts/GuestLayout.vue";
+import { useIntersectionObserver } from "@/composables/useIntersectionObserver";
 
 const props = defineProps({
     departments: Array,
@@ -89,18 +90,23 @@ const getStatusText = (status) => {
 onMounted(() => {
     displayedCount.value = 5;
 });
+
+useIntersectionObserver();
 </script>
 
 <template>
     <GuestLayout title="Portal Event">
         <!-- Main Container -->
-        <section class="relative py-12" :style="{ backgroundColor: 'white' }">
+        <section
+            class="relative py-12 float-in-section"
+            :style="{ backgroundColor: 'white' }"
+        >
             <div class="container-custom">
                 <div class="grid-cols-layout">
                     <!-- Left Column (Main Content) -->
                     <div>
                         <!-- Title and Description -->
-                        <div class="mb-8">
+                        <div class="mb-8 float-in-section delay-100">
                             <h1
                                 class="text-3xl lg:text-4xl xl:text-5xl font-bold mb-4"
                                 :style="{ color: 'var(--text-color)' }"
@@ -117,7 +123,7 @@ onMounted(() => {
                         </div>
 
                         <!-- Department Navigation -->
-                        <div class="mb-8">
+                        <div class="mb-8 float-in-section delay-200">
                             <div class="flex flex-wrap gap-2 lg:gap-3">
                                 <button
                                     @click="filterByDepartment(null)"
@@ -193,9 +199,10 @@ onMounted(() => {
                         <!-- Events List -->
                         <div class="space-y-4 lg:space-y-6 mb-8">
                             <article
-                                v-for="event in displayedEvents"
+                                v-for="(event, index) in displayedEvents"
                                 :key="event.id"
-                                class="group bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer"
+                                class="group bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer float-in-section"
+                                :class="`delay-${(index + 3) * 100}`"
                                 @click="goToEvent(event.id)"
                             >
                                 <div class="flex flex-col md:flex-row">
@@ -349,7 +356,10 @@ onMounted(() => {
                         </div>
 
                         <!-- Load More Button -->
-                        <div v-if="canLoadMore" class="text-center">
+                        <div
+                            v-if="canLoadMore"
+                            class="text-center float-in-section delay-200"
+                        >
                             <button
                                 @click="loadMore"
                                 :disabled="loading"
@@ -412,5 +422,64 @@ onMounted(() => {
     .grid-cols-layout {
         grid-template-columns: 2fr 1fr;
     }
+}
+
+/* Tambahkan style untuk float-in animation */
+:deep(.float-in-section) {
+    will-change: transform, opacity;
+}
+
+:deep(.float-in-section.visible) {
+    will-change: auto;
+}
+
+@keyframes floatIn {
+    0% {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.float-in-section {
+    opacity: 0;
+    transform: translateY(50px);
+}
+
+.float-in-section.visible {
+    animation: floatIn 0.8s ease-out forwards;
+}
+
+.delay-100 {
+    animation-delay: 0.1s;
+}
+
+.delay-200 {
+    animation-delay: 0.2s;
+}
+
+.delay-300 {
+    animation-delay: 0.3s;
+}
+
+.delay-400 {
+    animation-delay: 0.4s;
+}
+
+.delay-500 {
+    animation-delay: 0.5s;
+}
+
+.delay-600 {
+    animation-delay: 0.6s;
+}
+
+/* Pastikan animasi berjalan smooth */
+* {
+    backface-visibility: hidden;
+    -webkit-font-smoothing: antialiased;
 }
 </style>

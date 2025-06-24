@@ -4,6 +4,7 @@ import { Link } from "@inertiajs/vue3";
 import "vue3-carousel/dist/carousel.css";
 import { Carousel, Slide, Pagination, Navigation } from "vue3-carousel";
 import { onMounted } from "vue";
+import { useIntersectionObserver } from "@/composables/useIntersectionObserver";
 
 const props = defineProps({
     canLogin: Boolean,
@@ -37,13 +38,15 @@ const props = defineProps({
         default: () => [],
     },
 });
+
+useIntersectionObserver();
 </script>
 
 <template>
     <GuestLayout title="Home">
         <!-- Hero Section -->
         <div
-            class="relative min-h-screen flex items-center justify-center overflow-hidden bg-gray-900"
+            class="relative min-h-screen flex items-center justify-center overflow-hidden bg-gray-900 float-in-section"
         >
             <!-- Background Image with Overlay -->
             <div class="absolute inset-0 z-0">
@@ -78,7 +81,9 @@ const props = defineProps({
         </div>
 
         <!-- About Us Section (now Himpunan Section) -->
-        <section class="py-20 bg-white relative overflow-hidden">
+        <section
+            class="py-20 bg-white relative overflow-hidden float-in-section"
+        >
             <!-- Decorative Elements -->
             <div class="absolute inset-0 pointer-events-none">
                 <div
@@ -161,19 +166,20 @@ const props = defineProps({
 
         <!-- Update Events Section -->
         <section
-            class="py-20 bg-gradient-to-b from-white via-[var(--color-background)]/30 to-white"
+            class="py-20 bg-gradient-to-b from-white via-[var(--color-background)]/30 to-white float-in-section"
         >
             <div class="container-custom">
                 <!-- Header Section dengan animasi -->
-                <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                <div
+                    class="text-center max-w-3xl mx-auto mb-16 space-y-4 float-in-section delay-100"
+                >
                     <h2
-                        class="text-[var(--color-primary)] font-semibold text-lg mb-4 animate-fade-in"
+                        class="text-[var(--color-primary)] font-semibold text-lg mb-4"
                     >
                         Event Terbaru
                     </h2>
                     <h3
-                        class="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight animate-fade-in"
-                        style="animation-delay: 0.2s"
+                        class="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight"
                     >
                         Kegiatan dan Acara
                         <span
@@ -182,16 +188,15 @@ const props = defineProps({
                             HMJTK
                         </span>
                     </h3>
-                    <p
-                        class="text-lg text-gray-600 animate-fade-in"
-                        style="animation-delay: 0.3s"
-                    >
+                    <p class="text-lg text-gray-600">
                         Temukan berbagai kegiatan menarik yang diselenggarakan
                         oleh HMJTK Polban
                     </p>
                 </div>
 
-                <div class="grid grid-cols-12 gap-4 md:gap-8">
+                <div
+                    class="grid grid-cols-12 gap-4 md:gap-8 float-in-section delay-200"
+                >
                     <!-- Carousel Column -->
                     <div class="col-span-12 lg:col-span-9">
                         <div
@@ -504,19 +509,20 @@ const props = defineProps({
 
         <!-- News Articles Section -->
         <section
-            class="py-20 bg-gradient-to-b from-white via-[var(--color-background)]/30 to-white"
+            class="py-20 bg-gradient-to-b from-white via-[var(--color-background)]/30 to-white float-in-section"
         >
             <div class="container-custom">
                 <!-- Header Section -->
-                <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                <div
+                    class="text-center max-w-3xl mx-auto mb-16 space-y-4 float-in-section delay-100"
+                >
                     <h2
-                        class="text-[var(--color-primary)] font-semibold text-lg mb-4 animate-fade-in"
+                        class="text-[var(--color-primary)] font-semibold text-lg mb-4"
                     >
                         Berita Terbaru
                     </h2>
                     <h3
-                        class="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight animate-fade-in"
-                        style="animation-delay: 0.2s"
+                        class="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight"
                     >
                         Kabar dan Informasi
                         <span
@@ -525,16 +531,15 @@ const props = defineProps({
                             HMJTK
                         </span>
                     </h3>
-                    <p
-                        class="text-lg text-gray-600 animate-fade-in"
-                        style="animation-delay: 0.3s"
-                    >
+                    <p class="text-lg text-gray-600">
                         Temukan berita dan informasi terkini seputar HMJTK
                         Polban
                     </p>
                 </div>
 
-                <div class="grid grid-cols-12 gap-4 md:gap-8">
+                <div
+                    class="grid grid-cols-12 gap-4 md:gap-8 float-in-section delay-200"
+                >
                     <!-- CTA Column -->
                     <div class="col-span-12 lg:col-span-3 flex flex-col gap-4">
                         <!-- View All Articles Card -->
@@ -780,19 +785,20 @@ const props = defineProps({
         </section>
 
         <section
-            class="py-20 bg-gradient-to-b from-white via-blue-50/30 to-white"
+            class="py-20 bg-gradient-to-b from-white via-blue-50/30 to-white float-in-section"
         >
             <div class="container-custom">
                 <!-- Header Section -->
-                <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                <div
+                    class="text-center max-w-3xl mx-auto mb-16 space-y-4 float-in-section delay-100"
+                >
                     <h2
-                        class="text-[var(--color-primary)] font-semibold text-lg mb-4 animate-fade-in"
+                        class="text-[var(--color-primary)] font-semibold text-lg mb-4"
                     >
                         Departemen HMJTK
                     </h2>
                     <h3
-                        class="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight animate-fade-in"
-                        style="animation-delay: 0.2s"
+                        class="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight"
                     >
                         Struktur
                         <span
@@ -801,17 +807,16 @@ const props = defineProps({
                             Organisasi
                         </span>
                     </h3>
-                    <p
-                        class="text-lg text-gray-600 animate-fade-in"
-                        style="animation-delay: 0.3s"
-                    >
+                    <p class="text-lg text-gray-600">
                         Kenali lebih dekat departemen-departemen yang ada di
                         HMJTK Polban
                     </p>
                 </div>
 
                 <!-- Department Carousel -->
-                <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div
+                    class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 float-in-section delay-200"
+                >
                     <Carousel
                         :items-to-show="4"
                         :wrap-around="true"
@@ -1052,6 +1057,14 @@ const props = defineProps({
     .department-carousel .carousel__slide--next {
         transform: scale(0.95);
     }
+}
+
+:deep(.float-in-section) {
+    will-change: transform, opacity;
+}
+
+:deep(.float-in-section.visible) {
+    will-change: auto;
 }
 </style>
 
