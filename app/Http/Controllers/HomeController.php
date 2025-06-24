@@ -332,24 +332,30 @@ class HomeController extends Controller
                 'id' => $department->id,
                 'dept_name' => $department->dept_name,
                 'image' => $department->image ? "/storage/{$department->image}" : null,
-                // Perbaiki mapping untuk board_members
+                // Board of Department Members
                 'board_members' => $department->members
                     ->where('job_type', 'board_of_dept')
                     ->values()
                     ->map(fn($member) => $this->mapMember($member))
-                    ->toArray(), // Tambahkan toArray()
-                // Perbaiki mapping untuk section_heads  
+                    ->toArray(),
+                // Vice Board of Department Members
+                'vice_board_members' => $department->members
+                    ->where('job_type', 'vice_board_of_dept')
+                    ->values()
+                    ->map(fn($member) => $this->mapMember($member))
+                    ->toArray(),
+                // Section Head Members
                 'section_heads' => $department->members
                     ->where('job_type', 'section_head_dept')
                     ->values()
                     ->map(fn($member) => $this->mapMember($member))
-                    ->toArray(), // Tambahkan toArray()
-                // Perbaiki mapping untuk staff_members
+                    ->toArray(),
+                // Staff Members
                 'staff_members' => $department->members
                     ->where('job_type', 'staff')
                     ->values()
                     ->map(fn($member) => $this->mapMember($member))
-                    ->toArray() // Tambahkan toArray()
+                    ->toArray()
             ];
         });
 

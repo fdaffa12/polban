@@ -392,6 +392,239 @@ useIntersectionObserver();
                             </div>
                         </div>
 
+                        <!-- Vice Board of Department Section -->
+                        <div
+                            v-if="department.vice_board_members?.length"
+                            class="space-y-12 float-in-section"
+                        >
+                            <div
+                                class="text-center max-w-3xl mx-auto space-y-6 float-in-section delay-100"
+                            >
+                                <div
+                                    class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border"
+                                    :style="{
+                                        borderColor: 'var(--color-secondary)',
+                                    }"
+                                >
+                                    <div
+                                        class="w-2 h-2 rounded-full"
+                                        :style="{
+                                            backgroundColor:
+                                                'var(--color-primary)',
+                                        }"
+                                    ></div>
+                                    <span
+                                        class="font-semibold text-sm tracking-wide uppercase"
+                                        :style="{
+                                            color: 'var(--color-primary)',
+                                        }"
+                                    >
+                                        Vice Board of Department
+                                    </span>
+                                </div>
+                                <h2
+                                    class="text-4xl font-bold leading-tight"
+                                    :style="{ color: 'var(--text-color)' }"
+                                >
+                                    {{ department.dept_name }}
+                                    <span
+                                        class="block text-lg font-normal mt-2"
+                                        :style="{ color: 'var(--light-text)' }"
+                                    >
+                                        Vice Leadership Team
+                                    </span>
+                                </h2>
+                            </div>
+
+                            <!-- Dynamic Layout for Vice Board Members -->
+                            <div
+                                class="relative max-w-7xl mx-auto float-in-section delay-200"
+                            >
+                                <!-- Carousel Layout (>3 members) -->
+                                <div
+                                    v-if="
+                                        getLayoutType(
+                                            department.vice_board_members
+                                        ) === 'carousel'
+                                    "
+                                >
+                                    <Carousel
+                                        :items-to-show="3"
+                                        :wrap-around="true"
+                                        :transition="500"
+                                        :snap-align="'center'"
+                                        :breakpoints="{
+                                            320: {
+                                                itemsToShow: 1,
+                                                snapAlign: 'center',
+                                            },
+                                            640: {
+                                                itemsToShow: 2,
+                                                snapAlign: 'center',
+                                            },
+                                            1024: {
+                                                itemsToShow: 3,
+                                                snapAlign: 'center',
+                                            },
+                                        }"
+                                        class="modern-carousel"
+                                    >
+                                        <Slide
+                                            v-for="member in department.vice_board_members"
+                                            :key="member.id"
+                                            class="px-4"
+                                        >
+                                            <div class="member-card">
+                                                <!-- Card Header -->
+                                                <div class="card-header">
+                                                    <h3 class="member-name">
+                                                        {{ member.name }}
+                                                    </h3>
+                                                    <p class="member-position">
+                                                        {{ member.position }}
+                                                    </p>
+                                                    <p class="member-job-title">
+                                                        {{ member.job_titles }}
+                                                    </p>
+                                                </div>
+                                                <!-- Card Body -->
+                                                <div class="card-body">
+                                                    <div
+                                                        class="member-image-container"
+                                                    >
+                                                        <img
+                                                            v-if="member.image"
+                                                            :src="member.image"
+                                                            :alt="member.name"
+                                                            class="member-image"
+                                                        />
+                                                        <div
+                                                            v-else
+                                                            class="member-placeholder"
+                                                        >
+                                                            <span
+                                                                class="placeholder-text"
+                                                                >{{
+                                                                    member
+                                                                        .name[0]
+                                                                }}</span
+                                                            >
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </Slide>
+                                        <template #addons>
+                                            <Navigation />
+                                            <Pagination />
+                                        </template>
+                                    </Carousel>
+                                </div>
+
+                                <!-- Grid Layout (2 members) -->
+                                <div
+                                    v-else-if="
+                                        getLayoutType(
+                                            department.vice_board_members
+                                        ) === 'grid-2'
+                                    "
+                                    class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto"
+                                >
+                                    <div
+                                        v-for="member in department.vice_board_members"
+                                        :key="member.id"
+                                        class="member-card"
+                                    >
+                                        <!-- Card Header -->
+                                        <div class="card-header">
+                                            <h3 class="member-name">
+                                                {{ member.name }}
+                                            </h3>
+                                            <p class="member-position">
+                                                {{ member.position }}
+                                            </p>
+                                            <p class="member-job-title">
+                                                {{ member.job_titles }}
+                                            </p>
+                                        </div>
+                                        <!-- Card Body -->
+                                        <div class="card-body">
+                                            <div class="member-image-container">
+                                                <img
+                                                    v-if="member.image"
+                                                    :src="member.image"
+                                                    :alt="member.name"
+                                                    class="member-image"
+                                                />
+                                                <div
+                                                    v-else
+                                                    class="member-placeholder"
+                                                >
+                                                    <span
+                                                        class="placeholder-text"
+                                                        >{{
+                                                            member.name[0]
+                                                        }}</span
+                                                    >
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Single Layout (1 member) -->
+                                <div
+                                    v-else-if="
+                                        getLayoutType(
+                                            department.vice_board_members
+                                        ) === 'single'
+                                    "
+                                    class="flex justify-center"
+                                >
+                                    <div
+                                        v-for="member in department.vice_board_members"
+                                        :key="member.id"
+                                        class="member-card max-w-sm"
+                                    >
+                                        <!-- Card Header -->
+                                        <div class="card-header">
+                                            <h3 class="member-name">
+                                                {{ member.name }}
+                                            </h3>
+                                            <p class="member-position">
+                                                {{ member.position }}
+                                            </p>
+                                            <p class="member-job-title">
+                                                {{ member.job_titles }}
+                                            </p>
+                                        </div>
+                                        <!-- Card Body -->
+                                        <div class="card-body">
+                                            <div class="member-image-container">
+                                                <img
+                                                    v-if="member.image"
+                                                    :src="member.image"
+                                                    :alt="member.name"
+                                                    class="member-image"
+                                                />
+                                                <div
+                                                    v-else
+                                                    class="member-placeholder"
+                                                >
+                                                    <span
+                                                        class="placeholder-text"
+                                                        >{{
+                                                            member.name[0]
+                                                        }}</span
+                                                    >
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Section Head Section -->
                         <div
                             v-if="department.section_heads?.length"
