@@ -201,7 +201,8 @@ class LenteraRestorasiImageController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
-            'logo' => 'nullable|image|max:2048'
+            'logo' => 'nullable|image|max:2048',
+            'yt_link' => 'nullable|string|url'
         ]);
 
         try {
@@ -221,6 +222,7 @@ class LenteraRestorasiImageController extends Controller
 
             $himpunan->name = $request->name;
             $himpunan->description = $request->description;
+            $himpunan->yt_link = $request->yt_link;
             $himpunan->save();
 
             return redirect()->back()->with('success', 'Himpunan updated successfully');

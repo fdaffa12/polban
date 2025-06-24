@@ -362,12 +362,14 @@ const himpunanForm = useForm({
     name: props.himpunan?.name || "",
     description: props.himpunan?.description || "",
     logo: null,
+    yt_link: props.himpunan?.yt_link || "",
 });
 
 const openHimpunanModal = () => {
     himpunanForm.name = props.himpunan?.name || "";
     himpunanForm.description = props.himpunan?.description || "";
     himpunanForm.logo = null;
+    himpunanForm.yt_link = props.himpunan?.yt_link || "";
     showHimpunanModal.value = true;
 };
 
@@ -413,7 +415,7 @@ const submitHimpunan = () => {
                                 :alt="himpunan.name"
                                 class="w-32 h-32 object-cover rounded-lg"
                             />
-                            <div>
+                            <div class="flex-grow">
                                 <h3 class="text-lg font-medium">
                                     {{ himpunan.name }}
                                 </h3>
@@ -421,6 +423,24 @@ const submitHimpunan = () => {
                                     class="mt-2"
                                     v-html="himpunan.description"
                                 ></div>
+                                <div v-if="himpunan.yt_link" class="mt-4">
+                                    <a
+                                        :href="himpunan.yt_link"
+                                        target="_blank"
+                                        class="inline-flex items-center text-red-600 hover:text-red-700"
+                                    >
+                                        <svg
+                                            class="w-5 h-5 mr-2"
+                                            fill="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"
+                                            />
+                                        </svg>
+                                        Watch on YouTube
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -817,12 +837,15 @@ const submitHimpunan = () => {
                         @close="closeHimpunanModal"
                     >
                         <div class="p-6">
-                            <h2 class="text-lg font-medium">
+                            <h2 class="text-lg font-medium mb-4">
                                 {{
                                     himpunan ? "Edit Himpunan" : "Add Himpunan"
                                 }}
                             </h2>
-                            <form @submit.prevent="submitHimpunan" class="mt-6">
+                            <form
+                                @submit.prevent="submitHimpunan"
+                                class="space-y-4"
+                            >
                                 <div>
                                     <InputLabel for="name" value="Name" />
                                     <TextInput
@@ -838,22 +861,18 @@ const submitHimpunan = () => {
                                     />
                                 </div>
 
-                                <div class="mt-6">
+                                <div>
                                     <InputLabel
                                         for="description"
                                         value="Description"
                                     />
-                                    <QuillEditor
+                                    <textarea
                                         id="description"
-                                        v-model:content="
-                                            himpunanForm.description
-                                        "
-                                        :options="editorOptions"
-                                        contentType="html"
-                                        theme="snow"
-                                        class="mt-1"
-                                        style="min-height: 200px"
-                                    />
+                                        v-model="himpunanForm.description"
+                                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                                        rows="4"
+                                        required
+                                    ></textarea>
                                     <InputError
                                         :message="
                                             himpunanForm.errors.description
@@ -862,7 +881,25 @@ const submitHimpunan = () => {
                                     />
                                 </div>
 
-                                <div class="mt-6">
+                                <div>
+                                    <InputLabel
+                                        for="yt_link"
+                                        value="YouTube Link"
+                                    />
+                                    <TextInput
+                                        id="yt_link"
+                                        v-model="himpunanForm.yt_link"
+                                        type="url"
+                                        class="mt-1 block w-full"
+                                        placeholder="https://www.youtube.com/watch?v=..."
+                                    />
+                                    <InputError
+                                        :message="himpunanForm.errors.yt_link"
+                                        class="mt-2"
+                                    />
+                                </div>
+
+                                <div>
                                     <InputLabel for="logo" value="Logo" />
                                     <input
                                         type="file"
@@ -872,7 +909,7 @@ const submitHimpunan = () => {
                                                 $event.target.files[0]
                                         "
                                         accept="image/*"
-                                        class="mt-1 block w-full"
+                                        class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                                     />
                                     <InputError
                                         :message="himpunanForm.errors.logo"
@@ -880,7 +917,7 @@ const submitHimpunan = () => {
                                     />
                                 </div>
 
-                                <div class="mt-6 flex justify-end gap-4">
+                                <div class="mt-6 flex justify-end">
                                     <PrimaryButton
                                         :disabled="himpunanForm.processing"
                                     >

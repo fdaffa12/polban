@@ -11,6 +11,7 @@ class Himpunan extends Model
     protected $fillable = [
         'name',
         'description',
-        'logo'
+        'logo',
+        'yt_link'
     ];
 }

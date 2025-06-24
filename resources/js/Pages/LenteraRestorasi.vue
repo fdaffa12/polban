@@ -80,15 +80,10 @@ useIntersectionObserver();
                 <div
                     class="text-center max-w-3xl mx-auto mb-16 space-y-4 float-in-section delay-100"
                 >
-                    <span
-                        class="text-[var(--color-primary)] font-medium text-lg tracking-wide"
-                    >
-                        Our Gallery
-                    </span>
                     <h2
                         class="text-4xl md:text-5xl font-bold text-[var(--text-color)] leading-tight"
                     >
-                        Moments & Memories
+                        {{ himpunan?.name || "HMJTK Polban" }} Logo
                     </h2>
                     <div
                         class="w-20 h-1 bg-[var(--color-primary)] mx-auto mt-6 rounded-full"
