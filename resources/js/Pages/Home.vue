@@ -32,6 +32,10 @@ const props = defineProps({
         type: Array,
         default: () => [],
     },
+    deptLogos: {
+        type: Array,
+        default: () => [],
+    },
 });
 </script>
 
@@ -875,8 +879,8 @@ const props = defineProps({
                         </template>
 
                         <Slide
-                            v-for="department in departments"
-                            :key="department.id"
+                            v-for="deptLogo in deptLogos"
+                            :key="deptLogo.id"
                             class="px-2 py-3"
                         >
                             <div
@@ -886,8 +890,8 @@ const props = defineProps({
                                     class="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-[var(--color-secondary)]/10 to-[var(--color-primary)]/10"
                                 >
                                     <img
-                                        :src="department.image"
-                                        :alt="department.dept_name"
+                                        :src="deptLogo.image"
+                                        :alt="deptLogo.title"
                                         class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                                     />
                                     <div
@@ -898,7 +902,7 @@ const props = defineProps({
                                     <h4
                                         class="text-base font-semibold text-gray-800 text-center line-clamp-2 group-hover:text-[var(--color-primary)] transition-colors duration-300"
                                     >
-                                        {{ department.dept_name }}
+                                        {{ deptLogo.title }}
                                     </h4>
                                 </div>
                             </div>

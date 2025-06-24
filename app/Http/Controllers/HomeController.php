@@ -18,6 +18,7 @@ use App\Models\LenteraRestorasiContent;
 use Carbon\Carbon;
 use App\Models\Setting;
 use App\Models\Himpunan;
+use App\Models\DeptLogo;
 
 class HomeController extends Controller
 {
@@ -220,6 +221,14 @@ class HomeController extends Controller
             ];
         });
 
+        $deptLogos = DeptLogo::all()->map(function ($deptLogo) {
+            return [
+                'id' => $deptLogo->id,
+                'title' => $deptLogo->title,
+                'image' => $deptLogo->image ? "/storage/{$deptLogo->image}" : null,
+            ];
+        });
+
         return Inertia::render('Home', [
             'canLogin' => true,
             'canRegister' => true,
@@ -237,6 +246,7 @@ class HomeController extends Controller
             'events' => $mappedEvents,
             'newsArticles' => $newsArticles,
             'departments' => $departments,
+            'deptLogos' => $deptLogos,
         ]);
     }
 
