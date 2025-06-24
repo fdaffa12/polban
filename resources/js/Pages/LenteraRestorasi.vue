@@ -27,51 +27,48 @@ useIntersectionObserver();
         <Head title="Ruang Optima" />
 
         <!-- Hero Section -->
-        <section class="py-12 bg-white float-in-section">
-            <div class="container-custom">
-                <div class="grid grid-cols-12 gap-8">
-                    <!-- Text Content -->
-                    <div
-                        class="col-span-12 md:col-span-6 space-y-8 float-in-section delay-100"
-                    >
-                        <div class="space-y-4">
-                            <h1
-                                class="text-4xl md:text-5xl font-bold text-[var(--text-color)] leading-tight"
-                            >
-                                {{ himpunan?.name || "HMJTK Polban" }}
-                                <span
-                                    class="block text-xl md:text-2xl font-light text-[var(--light-text)] mt-2"
-                                >
-                                    Himpunan Mahasiswa Jurusan Teknik Kimia
-                                </span>
-                            </h1>
-                            <div
-                                class="w-20 h-1 bg-[var(--color-primary)]"
-                            ></div>
-                        </div>
+        <section
+            class="relative min-h-[70vh] flex items-center justify-center overflow-hidden bg-gray-900 float-in-section"
+        >
+            <!-- Background Image with Overlay -->
+            <div class="absolute inset-0 z-0">
+                <img
+                    v-if="himpunan?.logo"
+                    :src="himpunan.logo"
+                    :alt="himpunan?.name"
+                    class="w-full h-full object-cover"
+                />
+                <div
+                    class="absolute inset-0 bg-gradient-to-b from-gray-900/70 via-gray-900/60 to-gray-900/80"
+                ></div>
+                <!-- Optional Pattern Overlay -->
+                <div class="absolute inset-0 bg-grid-pattern opacity-10"></div>
+            </div>
 
-                        <div class="prose prose-lg max-w-none">
-                            <div
-                                v-if="himpunan?.description"
-                                class="text-[var(--light-text)]"
-                                v-html="himpunan.description"
-                            ></div>
-                            <p v-else class="text-[var(--light-text)]">
-                                Belum ada deskripsi himpunan
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Logo Himpunan -->
-                    <div
-                        class="hidden md:flex md:col-span-6 items-center justify-center float-in-section delay-200"
+            <!-- Content -->
+            <div class="container-custom relative z-10">
+                <div
+                    class="max-w-4xl mx-auto text-center space-y-8 animate-fade-in px-4"
+                >
+                    <h1
+                        class="text-4xl md:text-6xl font-bold text-white leading-tight"
                     >
-                        <img
-                            v-if="himpunan?.logo"
-                            :src="himpunan.logo"
-                            :alt="himpunan?.name"
-                            class="max-w-md w-full h-auto object-contain"
-                        />
+                        {{ himpunan?.name || "HMJTK Polban" }}
+                    </h1>
+                    <div
+                        class="w-20 h-1 bg-[var(--color-primary)] mx-auto"
+                    ></div>
+                    <blockquote
+                        class="italic text-xl md:text-2xl text-white/90 font-light"
+                    >
+                        "Himpunan Mahasiswa Jurusan Teknik Kimia"
+                    </blockquote>
+                    <div class="prose prose-lg max-w-none text-white/80 italic">
+                        <div
+                            v-if="himpunan?.description"
+                            v-html="himpunan.description"
+                        ></div>
+                        <p v-else>"Belum ada deskripsi himpunan"</p>
                     </div>
                 </div>
             </div>
