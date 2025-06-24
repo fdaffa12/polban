@@ -234,7 +234,6 @@ useIntersectionObserver();
                                                 color: 'var(--light-text)',
                                             }"
                                         >
-                                            <span>{{ article.author }}</span>
                                             <span>{{
                                                 article.created_at
                                             }}</span>
