@@ -642,10 +642,13 @@ watch(searchQuery, () => {
                                 required
                             >
                                 <option value="board_of_dept">
-                                    Board of Department
+                                    Ketua Departemen
+                                </option>
+                                <option value="vice_board_of_dept">
+                                    Wakil Ketua Departemen
                                 </option>
                                 <option value="section_head_dept">
-                                    Section Head
+                                    Kepala Divisi
                                 </option>
                                 <option value="staff">Staff</option>
                             </select>

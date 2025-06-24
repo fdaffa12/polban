@@ -75,7 +75,7 @@ class DepartmentController extends Controller
                 'department_id' => 'required|exists:departments,id',
                 'name' => 'required|string|max:255',
                 'image' => 'required|image|max:10248',
-                'job_type' => 'required|in:board_of_dept,section_head_dept,staff',
+                'job_type' => 'required|in:board_of_dept,vice_board_of_dept,section_head_dept,staff',
                 'job_titles' => 'required|string|max:255',
                 'position' => 'nullable|string|max:255',
             ]);
@@ -104,7 +104,7 @@ class DepartmentController extends Controller
             'department_id' => 'required|exists:departments,id',
             'name' => 'required|string|max:255',
             'image' => 'nullable|image|max:10248',
-            'job_type' => 'required|in:board_of_dept,section_head_dept,staff',
+            'job_type' => 'required|in:board_of_dept,vice_board_of_dept,section_head_dept,staff',
             'job_titles' => 'required|string|max:255',
             'position' => 'nullable|string|max:255',
         ]);
