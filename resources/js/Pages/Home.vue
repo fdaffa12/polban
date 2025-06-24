@@ -205,7 +205,18 @@ useIntersectionObserver();
                             <Carousel
                                 v-if="events.length > 0"
                                 :autoplay="3000"
-                                :items-to-show="3"
+                                :items-to-show="1"
+                                :breakpoints="{
+                                    640: {
+                                        itemsToShow: 1.5,
+                                    },
+                                    768: {
+                                        itemsToShow: 2,
+                                    },
+                                    1024: {
+                                        itemsToShow: 3,
+                                    },
+                                }"
                                 :wrap-around="true"
                                 :mouseDrag="true"
                                 :touchDrag="true"
@@ -693,7 +704,18 @@ useIntersectionObserver();
                             <Carousel
                                 v-if="newsArticles.length > 0"
                                 :autoplay="3000"
-                                :items-to-show="3"
+                                :items-to-show="1"
+                                :breakpoints="{
+                                    640: {
+                                        itemsToShow: 1.5,
+                                    },
+                                    768: {
+                                        itemsToShow: 2,
+                                    },
+                                    1024: {
+                                        itemsToShow: 3,
+                                    },
+                                }"
                                 :wrap-around="true"
                                 :mouseDrag="true"
                                 :touchDrag="true"
@@ -1021,12 +1043,40 @@ useIntersectionObserver();
 @media (max-width: 640px) {
     :deep(.carousel__slide) {
         transform: none;
-        opacity: 1;
-        filter: none;
+        opacity: 0.8;
+        filter: blur(0);
     }
 
     :deep(.carousel__slide--active) {
+        opacity: 1;
         transform: none;
+    }
+
+    .carousel__item > div {
+        @apply shadow-md;
+    }
+
+    /* Adjust text sizes for mobile */
+    .carousel__item h4 {
+        @apply text-lg;
+    }
+
+    .carousel__item p {
+        @apply text-xs;
+    }
+
+    /* Adjust padding for mobile */
+    .carousel__item .p-6 {
+        @apply p-4;
+    }
+
+    /* Adjust button size for mobile */
+    .carousel__item .px-6 {
+        @apply px-4;
+    }
+
+    .carousel__item .py-2 {
+        @apply py-1.5;
     }
 }
 
@@ -1120,6 +1170,58 @@ useIntersectionObserver();
 
 :deep(.float-in-section.visible) {
     will-change: auto;
+}
+
+/* Card Responsive Styles */
+.carousel__item {
+    @apply h-full;
+}
+
+.carousel__item > div {
+    height: auto !important;
+    @screen md {
+        height: 600px !important;
+    }
+}
+
+.carousel__item .relative {
+    height: 200px !important;
+    @screen sm {
+        height: 250px !important;
+    }
+    @screen md {
+        height: 300px !important;
+    }
+}
+
+.carousel__item .p-6 {
+    height: auto !important;
+    @screen md {
+        height: 300px !important;
+    }
+}
+
+/* Tablet Specific Styles */
+@media (min-width: 641px) and (max-width: 1024px) {
+    :deep(.carousel__slide) {
+        opacity: 0.7;
+        filter: blur(1px);
+        transform: scale(0.95);
+    }
+
+    :deep(.carousel__slide--active) {
+        opacity: 1;
+        filter: blur(0);
+        transform: scale(1);
+    }
+
+    .carousel__item h4 {
+        @apply text-base;
+    }
+
+    .carousel__item p {
+        @apply text-sm;
+    }
 }
 </style>
 
