@@ -40,6 +40,17 @@ const props = defineProps({
 });
 
 useIntersectionObserver();
+
+const getYoutubeEmbedUrl = (url) => {
+    if (!url) return "";
+    // Handle both youtube.com and youtu.be URLs
+    const regExp =
+        /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+    return match && match[2].length === 11
+        ? `https://www.youtube.com/embed/${match[2]}`
+        : "";
+};
 </script>
 
 <template>
@@ -159,6 +170,58 @@ useIntersectionObserver();
                                 />
                             </svg>
                         </Link>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cabinet Profile Video Section -->
+        <section
+            v-if="himpunan?.yt_link"
+            class="py-20 bg-gradient-to-b from-white via-[var(--color-background)]/30 to-white float-in-section"
+        >
+            <div class="container-custom">
+                <!-- Header Section dengan animasi -->
+                <div
+                    class="text-center max-w-3xl mx-auto mb-16 space-y-4 float-in-section delay-100"
+                >
+                    <h2
+                        class="text-[var(--color-primary)] font-semibold text-lg mb-4"
+                    >
+                        Our Profile
+                    </h2>
+                    <h3
+                        class="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight"
+                    >
+                        Cabinet Profile
+                        <span
+                            class="bg-clip-text text-transparent bg-gradient-to-r from-[var(--color-primary-dark)] to-[var(--color-primary)]"
+                        >
+                            Video
+                        </span>
+                    </h3>
+                    <p class="text-lg text-gray-600">
+                        Get to know more about our cabinet through this video
+                    </p>
+                </div>
+
+                <!-- Video Container -->
+                <div class="max-w-4xl mx-auto float-in-section delay-200">
+                    <div
+                        class="bg-white rounded-3xl p-4 shadow-xl shadow-[var(--color-primary)]/10"
+                    >
+                        <div
+                            class="relative pb-[56.25%] h-0 rounded-2xl overflow-hidden transform transition-transform hover:scale-[1.01] duration-300"
+                        >
+                            <iframe
+                                :src="getYoutubeEmbedUrl(himpunan.yt_link)"
+                                class="absolute top-0 left-0 w-full h-full"
+                                title="Cabinet Profile Video"
+                                frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen
+                            ></iframe>
+                        </div>
                     </div>
                 </div>
             </div>

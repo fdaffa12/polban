@@ -241,6 +241,7 @@ class HomeController extends Controller
                 'name' => $himpunan->name,
                 'description' => strip_tags($himpunan->description),
                 'logo' => $himpunan->logo ? "/storage/{$himpunan->logo}" : null,
+                'yt_link' => $himpunan->yt_link,
             ] : null,
             'featuredEvent' => $featuredEvent,
             'events' => $mappedEvents,
