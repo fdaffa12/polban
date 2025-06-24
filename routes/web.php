@@ -129,6 +129,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
     Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
 
+    // Department Logo routes
+    Route::post('/dept-logos', [DepartmentController::class, 'storeDeptLogo'])->name('dept-logos.store');
+    Route::post('/dept-logos/{deptLogo}', [DepartmentController::class, 'updateDeptLogo'])->name('dept-logos.update');
+    Route::delete('/dept-logos/{deptLogo}', [DepartmentController::class, 'destroyDeptLogo'])->name('dept-logos.destroy');
 
 });
 

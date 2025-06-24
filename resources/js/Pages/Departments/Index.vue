@@ -14,6 +14,7 @@ import Swal from "sweetalert2";
 
 const props = defineProps({
     departments: Array,
+    deptLogos: Array,
 });
 
 const toast = useToast();
@@ -206,6 +207,80 @@ const filteredDepartments = computed(() => {
         }))
         .filter((department) => department.members.length > 0);
 });
+
+// Department Logo Management
+const showDeptLogoModal = ref(false);
+const editingDeptLogo = ref(null);
+const deptLogoForm = useForm({
+    title: "",
+    image: null,
+});
+
+const openDeptLogoModal = (logo = null) => {
+    editingDeptLogo.value = logo;
+    if (logo) {
+        deptLogoForm.title = logo.title;
+        deptLogoForm.image = null;
+    } else {
+        deptLogoForm.reset();
+    }
+    showDeptLogoModal.value = true;
+};
+
+const closeDeptLogoModal = () => {
+    showDeptLogoModal.value = false;
+    editingDeptLogo.value = null;
+    deptLogoForm.reset();
+};
+
+const submitDeptLogo = () => {
+    if (editingDeptLogo.value) {
+        deptLogoForm.post(
+            route("dept-logos.update", editingDeptLogo.value.id),
+            {
+                preserveScroll: true,
+                forceFormData: true,
+                onSuccess: () => {
+                    closeDeptLogoModal();
+                    toast.success("Department logo updated successfully");
+                },
+                onError: () => toast.error("Failed to update department logo"),
+            }
+        );
+    } else {
+        deptLogoForm.post(route("dept-logos.store"), {
+            preserveScroll: true,
+            forceFormData: true,
+            onSuccess: () => {
+                closeDeptLogoModal();
+                toast.success("Department logo added successfully");
+            },
+            onError: () => toast.error("Failed to add department logo"),
+        });
+    }
+};
+
+const deleteDeptLogo = (logo) => {
+    Swal.fire({
+        title: "Delete Department Logo?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            router.delete(route("dept-logos.destroy", logo.id), {
+                preserveScroll: true,
+                onSuccess: () => {
+                    toast.success("Department logo deleted successfully");
+                },
+                onError: () => toast.error("Failed to delete department logo"),
+            });
+        }
+    });
+};
 </script>
 
 <template>
@@ -350,6 +425,65 @@ const filteredDepartments = computed(() => {
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tambahkan section baru setelah Departments section -->
+                <div
+                    class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-4 sm:p-6 mt-6"
+                >
+                    <!-- Header Section -->
+                    <div
+                        class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6"
+                    >
+                        <div>
+                            <h2 class="text-xl font-semibold">
+                                Department Logos
+                            </h2>
+                            <p class="text-sm text-gray-500">
+                                These logos will be displayed on the front page
+                                of the website
+                            </p>
+                        </div>
+                        <PrimaryButton @click="openDeptLogoModal()">
+                            Add Department Logo
+                        </PrimaryButton>
+                    </div>
+
+                    <!-- Department Logos Grid -->
+                    <div
+                        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+                    >
+                        <div
+                            v-for="logo in deptLogos"
+                            :key="logo.id"
+                            class="border rounded-lg p-4 bg-gray-50"
+                        >
+                            <div class="aspect-w-4 aspect-h-3 mb-3">
+                                <img
+                                    :src="`/storage/${logo.image}`"
+                                    :alt="logo.title"
+                                    class="w-full h-full object-cover rounded-md"
+                                />
+                            </div>
+                            <h4 class="font-medium text-gray-900">
+                                {{ logo.title }}
+                            </h4>
+                            <div class="mt-3 flex justify-end gap-2">
+                                <button
+                                    @click="openDeptLogoModal(logo)"
+                                    class="p-1.5 text-blue-600 hover:text-blue-800 rounded hover:bg-blue-50"
+                                >
+                                    <Edit class="w-4 h-4" />
+                                </button>
+                                <button
+                                    @click="deleteDeptLogo(logo)"
+                                    class="p-1.5 text-red-600 hover:text-red-800 rounded hover:bg-red-50"
+                                >
+                                    <Trash2 class="w-4 h-4" />
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -521,6 +655,64 @@ const filteredDepartments = computed(() => {
                     <div class="mt-6 flex justify-end">
                         <PrimaryButton :disabled="memberForm.processing">
                             {{ editingMember ? "Update" : "Save" }}
+                        </PrimaryButton>
+                    </div>
+                </form>
+            </div>
+        </Modal>
+
+        <!-- Department Logo Modal -->
+        <Modal :show="showDeptLogoModal" @close="closeDeptLogoModal">
+            <div class="p-6">
+                <h2 class="text-lg font-medium">
+                    {{
+                        editingDeptLogo
+                            ? "Edit Department Logo"
+                            : "Add New Department Logo"
+                    }}
+                </h2>
+                <p class="text-sm text-gray-500 mt-1">
+                    This logo will be displayed on the front page of the website
+                </p>
+                <form @submit.prevent="submitDeptLogo" class="mt-6">
+                    <div class="space-y-4">
+                        <div>
+                            <InputLabel for="title" value="Title" />
+                            <TextInput
+                                id="title"
+                                v-model="deptLogoForm.title"
+                                type="text"
+                                class="mt-1 block w-full"
+                                required
+                            />
+                            <InputError
+                                :message="deptLogoForm.errors.title"
+                                class="mt-2"
+                            />
+                        </div>
+
+                        <div>
+                            <InputLabel for="logo_image" value="Logo Image" />
+                            <input
+                                type="file"
+                                id="logo_image"
+                                @input="
+                                    deptLogoForm.image = $event.target.files[0]
+                                "
+                                accept="image/*"
+                                class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                                :required="!editingDeptLogo"
+                            />
+                            <InputError
+                                :message="deptLogoForm.errors.image"
+                                class="mt-2"
+                            />
+                        </div>
+                    </div>
+
+                    <div class="mt-6 flex justify-end gap-4">
+                        <PrimaryButton :disabled="deptLogoForm.processing">
+                            {{ editingDeptLogo ? "Update" : "Save" }}
                         </PrimaryButton>
                     </div>
                 </form>

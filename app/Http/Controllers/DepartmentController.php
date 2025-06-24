@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Department;
 use App\Models\Member;
+use App\Models\DeptLogo;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
@@ -15,6 +16,7 @@ class DepartmentController extends Controller
     {
         return Inertia::render('Departments/Index', [
             'departments' => Department::with('members')->latest()->get(),
+            'deptLogos' => DeptLogo::latest()->get(),
         ]);
     }
 
@@ -135,5 +137,53 @@ class DepartmentController extends Controller
         $member->delete();
 
         return redirect()->back()->with('success', 'Member deleted successfully');
+    }
+
+    public function storeDeptLogo(Request $request)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'image' => 'required|image|max:10248',
+        ]);
+
+        $path = $request->file('image')->store('dept-logos', 'public');
+
+        DeptLogo::create([
+            'title' => $request->title,
+            'image' => $path,
+        ]);
+
+        return redirect()->back()->with('success', 'Department logo added successfully');
+    }
+
+    public function updateDeptLogo(Request $request, DeptLogo $deptLogo)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'image' => 'nullable|image|max:10248',
+        ]);
+
+        if ($request->hasFile('image')) {
+            if ($deptLogo->image && Storage::disk('public')->exists($deptLogo->image)) {
+                Storage::disk('public')->delete($deptLogo->image);
+            }
+            $path = $request->file('image')->store('dept-logos', 'public');
+            $deptLogo->image = $path;
+        }
+
+        $deptLogo->title = $request->title;
+        $deptLogo->save();
+
+        return redirect()->back()->with('success', 'Department logo updated successfully');
+    }
+
+    public function destroyDeptLogo(DeptLogo $deptLogo)
+    {
+        if ($deptLogo->image && Storage::disk('public')->exists($deptLogo->image)) {
+            Storage::disk('public')->delete($deptLogo->image);
+        }
+        $deptLogo->delete();
+
+        return redirect()->back()->with('success', 'Department logo deleted successfully');
     }
 }
