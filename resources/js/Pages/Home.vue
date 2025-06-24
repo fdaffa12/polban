@@ -176,12 +176,12 @@ useIntersectionObserver();
                     <h2
                         class="text-[var(--color-primary)] font-semibold text-lg mb-4"
                     >
-                        Event Terbaru
+                        Our Activities
                     </h2>
                     <h3
                         class="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight"
                     >
-                        Kegiatan dan Acara
+                        Event & Activities
                         <span
                             class="bg-clip-text text-transparent bg-gradient-to-r from-[var(--color-primary-dark)] to-[var(--color-primary)]"
                         >
@@ -189,8 +189,8 @@ useIntersectionObserver();
                         </span>
                     </h3>
                     <p class="text-lg text-gray-600">
-                        Temukan berbagai kegiatan menarik yang diselenggarakan
-                        oleh HMJTK Polban
+                        Find various interesting activities organized by HMJTK
+                        Polban
                     </p>
                 </div>
 
@@ -205,7 +205,7 @@ useIntersectionObserver();
                             <Carousel
                                 v-if="events.length > 0"
                                 :autoplay="3000"
-                                :items-to-show="1.5"
+                                :items-to-show="3"
                                 :wrap-around="true"
                                 :mouseDrag="true"
                                 :touchDrag="true"
@@ -215,145 +215,156 @@ useIntersectionObserver();
                                 <Slide v-for="event in events" :key="event.id">
                                     <div class="carousel__item">
                                         <div
-                                            class="relative h-[400px] md:h-[500px] rounded-2xl overflow-hidden"
+                                            class="bg-white rounded-2xl shadow-lg overflow-hidden h-[600px] transition-all duration-300"
                                         >
-                                            <!-- Image -->
-                                            <img
-                                                :src="event.event_flyer"
-                                                :alt="event.event_name"
-                                                class="w-full h-full object-cover"
-                                            />
+                                            <!-- Card Header -->
+                                            <div class="relative h-[300px]">
+                                                <img
+                                                    :src="event.event_flyer"
+                                                    :alt="event.event_name"
+                                                    class="w-full h-full object-cover"
+                                                />
+                                                <div
+                                                    class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent"
+                                                ></div>
 
-                                            <!-- Gradient Overlay -->
-                                            <div
-                                                class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent"
-                                            ></div>
-
-                                            <!-- Content -->
-                                            <div
-                                                class="absolute bottom-0 left-0 right-0 p-6 md:p-8"
-                                            >
-                                                <div class="space-y-4">
-                                                    <!-- Status Badge -->
-                                                    <div class="flex gap-2">
-                                                        <span
-                                                            class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium"
-                                                            :class="{
-                                                                'bg-[var(--color-secondary)] text-white':
-                                                                    event.status ===
-                                                                    'ongoing',
-                                                                'bg-[var(--color-primary)] text-white':
-                                                                    event.status ===
-                                                                    'upcoming',
-                                                                'bg-gray-600 text-white':
-                                                                    event.status ===
-                                                                    'past',
-                                                            }"
-                                                        >
-                                                            {{
+                                                <!-- Status Badges - Positioned at top -->
+                                                <div
+                                                    class="absolute top-4 left-4 flex gap-2"
+                                                >
+                                                    <span
+                                                        class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium"
+                                                        :class="{
+                                                            'bg-[var(--color-secondary)] text-white':
                                                                 event.status ===
-                                                                "ongoing"
-                                                                    ? "Sedang Berlangsung"
-                                                                    : event.status ===
-                                                                      "upcoming"
-                                                                    ? "Akan Datang"
-                                                                    : "Selesai"
-                                                            }}
-                                                        </span>
-                                                        <span
-                                                            class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[var(--color-primary)] text-white"
-                                                        >
-                                                            {{
-                                                                event.fee_type ===
-                                                                "free"
-                                                                    ? "Gratis"
-                                                                    : "Berbayar"
-                                                            }}
-                                                        </span>
-                                                    </div>
-
-                                                    <!-- Title -->
-                                                    <h4
-                                                        class="text-2xl md:text-3xl font-bold text-white"
-                                                    >
-                                                        {{ event.event_name }}
-                                                    </h4>
-
-                                                    <!-- Date -->
-                                                    <p
-                                                        class="text-[var(--color-primary)]/80 text-sm"
+                                                                'ongoing',
+                                                            'bg-[var(--color-primary)] text-white':
+                                                                event.status ===
+                                                                'upcoming',
+                                                            'bg-gray-600 text-white':
+                                                                event.status ===
+                                                                'past',
+                                                        }"
                                                     >
                                                         {{
-                                                            event.end_date
-                                                                ? `${new Date(
-                                                                      event.start_date
-                                                                  ).toLocaleDateString(
-                                                                      "id-ID",
-                                                                      {
-                                                                          weekday:
-                                                                              "long",
-                                                                          year: "numeric",
-                                                                          month: "long",
-                                                                          day: "numeric",
-                                                                      }
-                                                                  )} - ${new Date(
-                                                                      event.end_date
-                                                                  ).toLocaleDateString(
-                                                                      "id-ID",
-                                                                      {
-                                                                          weekday:
-                                                                              "long",
-                                                                          year: "numeric",
-                                                                          month: "long",
-                                                                          day: "numeric",
-                                                                      }
-                                                                  )}`
-                                                                : new Date(
-                                                                      event.start_date
-                                                                  ).toLocaleDateString(
-                                                                      "id-ID",
-                                                                      {
-                                                                          weekday:
-                                                                              "long",
-                                                                          year: "numeric",
-                                                                          month: "long",
-                                                                          day: "numeric",
-                                                                      }
-                                                                  )
+                                                            event.status ===
+                                                            "ongoing"
+                                                                ? "Sedang Berlangsung"
+                                                                : event.status ===
+                                                                  "upcoming"
+                                                                ? "Akan Datang"
+                                                                : "Selesai"
                                                         }}
-                                                    </p>
-
-                                                    <!-- Description -->
-                                                    <p
-                                                        class="text-gray-300 line-clamp-3 text-base md:text-lg"
+                                                    </span>
+                                                    <span
+                                                        class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[var(--color-primary)] text-white"
                                                     >
-                                                        {{ event.event_detail }}
-                                                    </p>
+                                                        {{
+                                                            event.fee_type ===
+                                                            "free"
+                                                                ? "Gratis"
+                                                                : "Berbayar"
+                                                        }}
+                                                    </span>
+                                                </div>
+                                            </div>
 
-                                                    <!-- Button -->
-                                                    <div
-                                                        class="flex items-center gap-4 pt-2"
+                                            <!-- Card Body -->
+                                            <div
+                                                class="p-6 flex flex-col h-[300px]"
+                                            >
+                                                <!-- Title -->
+                                                <h4
+                                                    class="text-xl font-bold text-gray-900 mb-3 line-clamp-2"
+                                                >
+                                                    {{ event.event_name }}
+                                                </h4>
+
+                                                <!-- Date -->
+                                                <p
+                                                    class="text-[var(--color-primary)] text-sm mb-4 flex items-center"
+                                                >
+                                                    <svg
+                                                        class="w-4 h-4 mr-2"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        viewBox="0 0 24 24"
                                                     >
-                                                        <Link
-                                                            :href="`/event/${event.id}`"
-                                                            class="inline-flex items-center px-6 py-2 rounded-lg bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] text-white transition-all duration-300"
+                                                        <path
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                                        />
+                                                    </svg>
+                                                    {{
+                                                        event.end_date
+                                                            ? `${new Date(
+                                                                  event.start_date
+                                                              ).toLocaleDateString(
+                                                                  "id-ID",
+                                                                  {
+                                                                      weekday:
+                                                                          "long",
+                                                                      year: "numeric",
+                                                                      month: "long",
+                                                                      day: "numeric",
+                                                                  }
+                                                              )} - ${new Date(
+                                                                  event.end_date
+                                                              ).toLocaleDateString(
+                                                                  "id-ID",
+                                                                  {
+                                                                      weekday:
+                                                                          "long",
+                                                                      year: "numeric",
+                                                                      month: "long",
+                                                                      day: "numeric",
+                                                                  }
+                                                              )}`
+                                                            : new Date(
+                                                                  event.start_date
+                                                              ).toLocaleDateString(
+                                                                  "id-ID",
+                                                                  {
+                                                                      weekday:
+                                                                          "long",
+                                                                      year: "numeric",
+                                                                      month: "long",
+                                                                      day: "numeric",
+                                                                  }
+                                                              )
+                                                    }}
+                                                </p>
+
+                                                <!-- Description -->
+                                                <p
+                                                    class="text-gray-600 line-clamp-3 text-sm flex-grow"
+                                                >
+                                                    {{ event.event_detail }}
+                                                </p>
+
+                                                <!-- Button -->
+                                                <div class="mt-4">
+                                                    <Link
+                                                        :href="`/event/${event.id}`"
+                                                        class="inline-flex items-center justify-center w-full px-6 py-2 rounded-lg bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] text-white transition-all duration-300"
+                                                    >
+                                                        Selengkapnya
+                                                        <svg
+                                                            class="w-5 h-5 ml-2"
+                                                            fill="none"
+                                                            stroke="currentColor"
+                                                            viewBox="0 0 24 24"
                                                         >
-                                                            Selengkapnya
-                                                            <svg
-                                                                class="w-5 h-5 ml-2"
-                                                                fill="none"
-                                                                stroke="currentColor"
-                                                                viewBox="0 0 24 24"
-                                                            >
-                                                                <path
-                                                                    stroke-linecap="round"
-                                                                    stroke-linejoin="round"
-                                                                    stroke-width="2"
-                                                                    d="M9 5l7 7-7 7"
-                                                                />
-                                                            </svg>
-                                                        </Link>
-                                                    </div>
+                                                            <path
+                                                                stroke-linecap="round"
+                                                                stroke-linejoin="round"
+                                                                stroke-width="2"
+                                                                d="M9 5l7 7-7 7"
+                                                            />
+                                                        </svg>
+                                                    </Link>
                                                 </div>
                                             </div>
                                         </div>
@@ -519,12 +530,12 @@ useIntersectionObserver();
                     <h2
                         class="text-[var(--color-primary)] font-semibold text-lg mb-4"
                     >
-                        Berita Terbaru
+                        Latest News
                     </h2>
                     <h3
                         class="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight"
                     >
-                        Kabar dan Informasi
+                        News and Updates
                         <span
                             class="bg-clip-text text-transparent bg-gradient-to-r from-[var(--color-primary-dark)] to-[var(--color-primary)]"
                         >
@@ -532,8 +543,7 @@ useIntersectionObserver();
                         </span>
                     </h3>
                     <p class="text-lg text-gray-600">
-                        Temukan berita dan informasi terkini seputar HMJTK
-                        Polban
+                        Find the latest news and updates about HMJTK Polban
                     </p>
                 </div>
 
@@ -575,7 +585,7 @@ useIntersectionObserver();
                                         />
                                     </svg>
                                     <h3 class="text-2xl font-bold">
-                                        Artikel Terbaru
+                                        Latest Articles
                                     </h3>
                                 </div>
 
@@ -598,8 +608,7 @@ useIntersectionObserver();
                                         <p
                                             class="text-sm text-[var(--color-background)]"
                                         >
-                                            Informasi terkini seputar kegiatan
-                                            dan prestasi HMJTK
+                                            Latest news and updates about HMJTK
                                         </p>
                                     </div>
                                     <div class="flex items-start gap-3">
@@ -619,8 +628,7 @@ useIntersectionObserver();
                                         <p
                                             class="text-sm text-[var(--color-background)]"
                                         >
-                                            Update berkala tentang teknologi dan
-                                            inovasi terbaru
+                                            Latest news and updates about HMJTK
                                         </p>
                                     </div>
                                     <div class="flex items-start gap-3">
@@ -640,8 +648,7 @@ useIntersectionObserver();
                                         <p
                                             class="text-sm text-[var(--color-background)]"
                                         >
-                                            Artikel diperbarui secara rutin
-                                            setiap minggu
+                                            Latest news and updates about HMJTK
                                         </p>
                                     </div>
                                 </div>
@@ -650,9 +657,9 @@ useIntersectionObserver();
                                     <p
                                         class="text-sm text-[var(--color-background)] italic"
                                     >
-                                        "Tetap terhubung dengan perkembangan
-                                        terkini di HMJTK melalui artikel-artikel
-                                        informatif kami"
+                                        "Stay connected with the latest news and
+                                        updates about HMJTK through our
+                                        informative articles"
                                     </p>
                                 </div>
                             </div>
@@ -661,7 +668,7 @@ useIntersectionObserver();
                                 href="/news"
                                 class="relative z-10 inline-flex items-center justify-center px-6 py-3 rounded-xl bg-white text-[var(--color-primary)] hover:bg-[var(--color-background)] transition-colors duration-300 font-semibold group-hover:shadow-lg"
                             >
-                                <span>Lihat Semua Artikel</span>
+                                <span>View All Articles</span>
                                 <svg
                                     class="w-5 h-5 ml-2"
                                     fill="none"
@@ -686,7 +693,7 @@ useIntersectionObserver();
                             <Carousel
                                 v-if="newsArticles.length > 0"
                                 :autoplay="3000"
-                                :items-to-show="1.5"
+                                :items-to-show="3"
                                 :wrap-around="true"
                                 :mouseDrag="true"
                                 :touchDrag="true"
@@ -699,76 +706,102 @@ useIntersectionObserver();
                                 >
                                     <div class="carousel__item">
                                         <div
-                                            class="relative h-[400px] md:h-[500px] rounded-2xl overflow-hidden"
+                                            class="bg-white rounded-2xl shadow-lg overflow-hidden h-[600px] transition-all duration-300"
                                         >
-                                            <!-- Image -->
-                                            <img
-                                                :src="article.featured_image"
-                                                :alt="article.title"
-                                                class="w-full h-full object-cover"
-                                            />
+                                            <!-- Card Header -->
+                                            <div class="relative h-[300px]">
+                                                <img
+                                                    :src="
+                                                        article.featured_image
+                                                    "
+                                                    :alt="article.title"
+                                                    class="w-full h-full object-cover"
+                                                />
+                                                <div
+                                                    class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent"
+                                                ></div>
+                                            </div>
 
-                                            <!-- Gradient Overlay -->
+                                            <!-- Card Body -->
                                             <div
-                                                class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent"
-                                            ></div>
-
-                                            <!-- Content -->
-                                            <div
-                                                class="absolute bottom-0 left-0 right-0 p-6 md:p-8"
+                                                class="p-6 flex flex-col h-[300px]"
                                             >
-                                                <div class="space-y-4">
-                                                    <!-- Date & Author -->
-                                                    <div
-                                                        class="flex items-center gap-2 text-[var(--color-secondary)] text-sm"
+                                                <!-- Date & Author -->
+                                                <div
+                                                    class="flex items-center gap-2 text-[var(--color-primary)] text-sm mb-3"
+                                                >
+                                                    <svg
+                                                        class="w-4 h-4"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        viewBox="0 0 24 24"
                                                     >
-                                                        <span>{{
-                                                            article.created_at
-                                                        }}</span>
-                                                        <span>•</span>
-                                                        <span>{{
-                                                            article.author
-                                                        }}</span>
-                                                    </div>
-
-                                                    <!-- Title -->
-                                                    <h4
-                                                        class="text-2xl md:text-3xl font-bold text-white"
+                                                        <path
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                                        />
+                                                    </svg>
+                                                    <span>{{
+                                                        article.created_at
+                                                    }}</span>
+                                                    <span>•</span>
+                                                    <span
+                                                        class="flex items-center"
                                                     >
-                                                        {{ article.title }}
-                                                    </h4>
-
-                                                    <!-- Description -->
-                                                    <p
-                                                        class="text-gray-300 line-clamp-3 text-base md:text-lg"
-                                                    >
-                                                        {{ article.content }}
-                                                    </p>
-
-                                                    <!-- Button -->
-                                                    <div
-                                                        class="flex items-center gap-4 pt-2"
-                                                    >
-                                                        <Link
-                                                            :href="`/article/${article.slug}`"
-                                                            class="inline-flex items-center px-6 py-2 rounded-lg bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] text-white transition-all duration-300"
+                                                        <svg
+                                                            class="w-4 h-4 mr-1"
+                                                            fill="none"
+                                                            stroke="currentColor"
+                                                            viewBox="0 0 24 24"
                                                         >
-                                                            Baca Selengkapnya
-                                                            <svg
-                                                                class="w-5 h-5 ml-2"
-                                                                fill="none"
-                                                                stroke="currentColor"
-                                                                viewBox="0 0 24 24"
-                                                            >
-                                                                <path
-                                                                    stroke-linecap="round"
-                                                                    stroke-linejoin="round"
-                                                                    stroke-width="2"
-                                                                    d="M9 5l7 7-7 7"
-                                                                />
-                                                            </svg>
-                                                        </Link>
-                                                    </div>
+                                                            <path
+                                                                stroke-linecap="round"
+                                                                stroke-linejoin="round"
+                                                                stroke-width="2"
+                                                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                                                            />
+                                                        </svg>
+                                                        {{ article.author }}
+                                                    </span>
+                                                </div>
+
+                                                <!-- Title -->
+                                                <h4
+                                                    class="text-xl font-bold text-gray-900 mb-3 line-clamp-2"
+                                                >
+                                                    {{ article.title }}
+                                                </h4>
+
+                                                <!-- Description -->
+                                                <p
+                                                    class="text-gray-600 line-clamp-3 text-sm flex-grow"
+                                                >
+                                                    {{ article.content }}
+                                                </p>
+
+                                                <!-- Button -->
+                                                <div class="mt-4">
+                                                    <Link
+                                                        :href="`/article/${article.slug}`"
+                                                        class="inline-flex items-center justify-center w-full px-6 py-2 rounded-lg bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] text-white transition-all duration-300"
+                                                    >
+                                                        Read More
+                                                        <svg
+                                                            class="w-5 h-5 ml-2"
+                                                            fill="none"
+                                                            stroke="currentColor"
+                                                            viewBox="0 0 24 24"
+                                                        >
+                                                            <path
+                                                                stroke-linecap="round"
+                                                                stroke-linejoin="round"
+                                                                stroke-width="2"
+                                                                d="M9 5l7 7-7 7"
+                                                            />
+                                                        </svg>
+                                                    </Link>
                                                 </div>
                                             </div>
                                         </div>
@@ -792,24 +825,18 @@ useIntersectionObserver();
                 <div
                     class="text-center max-w-3xl mx-auto mb-16 space-y-4 float-in-section delay-100"
                 >
-                    <h2
-                        class="text-[var(--color-primary)] font-semibold text-lg mb-4"
-                    >
-                        Departemen HMJTK
-                    </h2>
                     <h3
                         class="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight"
                     >
-                        Struktur
+                        Part of
                         <span
                             class="bg-clip-text text-transparent bg-gradient-to-r from-[var(--color-primary-dark)] to-[var(--color-primary)]"
                         >
-                            Organisasi
+                            HMJTK
                         </span>
                     </h3>
                     <p class="text-lg text-gray-600">
-                        Kenali lebih dekat departemen-departemen yang ada di
-                        HMJTK Polban
+                        Get to know the departments that make up HMJTK Polban
                     </p>
                 </div>
 
@@ -919,6 +946,7 @@ useIntersectionObserver();
 <style scoped>
 :deep(.carousel__viewport) {
     @apply rounded-2xl;
+    padding: 20px 0;
 }
 
 :deep(.carousel__track) {
@@ -926,9 +954,9 @@ useIntersectionObserver();
 }
 
 :deep(.carousel__slide) {
-    @apply rounded-2xl;
-    opacity: 0.4;
-    filter: blur(3px);
+    @apply rounded-2xl px-2;
+    opacity: 0.5;
+    filter: blur(2px);
     transform: scale(0.9);
     transition: all 0.5s ease;
 }
@@ -936,7 +964,8 @@ useIntersectionObserver();
 :deep(.carousel__slide--active) {
     opacity: 1;
     filter: blur(0);
-    transform: scale(1.05);
+    transform: scale(1);
+    z-index: 2;
 }
 
 :deep(.carousel__prev),
@@ -967,12 +996,38 @@ useIntersectionObserver();
     padding: 20px 0;
 }
 
-.carousel__item {
-    @apply transition-all duration-500;
+/* Responsive styles */
+@media (max-width: 1024px) {
+    :deep(.carousel__slide) {
+        transform: scale(0.95);
+    }
+
+    :deep(.carousel__slide--active) {
+        transform: scale(1);
+    }
 }
 
-.carousel__slide--active .carousel__item {
-    @apply shadow-2xl;
+@media (max-width: 768px) {
+    :deep(.carousel__viewport) {
+        padding: 10px 0;
+    }
+
+    :deep(.carousel__slide) {
+        opacity: 0.7;
+        filter: blur(1px);
+    }
+}
+
+@media (max-width: 640px) {
+    :deep(.carousel__slide) {
+        transform: none;
+        opacity: 1;
+        filter: none;
+    }
+
+    :deep(.carousel__slide--active) {
+        transform: none;
+    }
 }
 
 @keyframes fade-in {
