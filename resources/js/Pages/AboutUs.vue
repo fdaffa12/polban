@@ -19,90 +19,55 @@ useIntersectionObserver();
     <GuestLayout title="About Us">
         <Head title="About Us" />
 
-        <!-- Hero Section with Parallax -->
-        <section
-            class="relative min-h-[90vh] flex items-center justify-center overflow-hidden float-in-section"
-        >
-            <div class="absolute inset-0 z-0">
-                <img
-                    :src="about.image"
-                    class="w-full h-full object-cover scale-105 brightness-75"
-                    alt="HMJTK Hero"
-                />
-                <!-- Single black overlay with reduced opacity -->
-                <div class="absolute inset-0 bg-black/50"></div>
-            </div>
+        <!-- Hero Section -->
+        <section class="py-20 bg-white float-in-section">
+            <div class="container-custom">
+                <div class="max-w-5xl">
+                    <div class="space-y-6 float-in-section delay-100">
+                        <div class="space-y-2">
+                            <span
+                                class="text-[var(--color-primary)] font-semibold text-lg tracking-wide"
+                            >
+                                About Us
+                            </span>
+                            <h1
+                                class="text-4xl md:text-5xl lg:text-6xl font-bold text-[var(--text-color)] leading-tight"
+                            >
+                                {{ about.title }}
+                                <span
+                                    class="block text-xl md:text-2xl font-light text-[var(--light-text)] mt-4"
+                                >
+                                    Himpunan Mahasiswa Jurusan Teknik Kimia
+                                </span>
+                            </h1>
+                        </div>
 
-            <div class="container-custom relative z-40">
-                <div
-                    class="max-w-4xl mx-auto text-center space-y-8 animate-fade-in px-4"
-                >
-                    <span
-                        class="text-[var(--color-primary)] font-semibold text-lg md:text-2xl tracking-wide"
-                    >
-                        Welcome to
-                    </span>
-                    <h1
-                        class="text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-tight"
-                    >
-                        {{ about.title }}
-                        <span
-                            class="text-[var(--color-secondary)] block mt-4 text-3xl md:text-4xl font-light"
-                        >
-                            HMJTK Polban
-                        </span>
-                    </h1>
-                    <p
-                        class="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto"
-                    >
-                        Himpunan Mahasiswa Jurusan Teknik Kimia
-                    </p>
+                        <div class="w-20 h-1 bg-[var(--color-primary)]"></div>
+
+                        <div class="prose prose-lg max-w-3xl">
+                            <div
+                                class="text-lg md:text-xl text-[var(--light-text)]"
+                            >
+                                {{ about.description }}
+                            </div>
+                            <div class="mt-6" v-html="about.au_desc"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- About & Gallery Section -->
+        <!-- Gallery Section -->
         <section
             class="py-16 bg-gradient-to-b from-white to-[var(--color-background)]/10 float-in-section"
         >
             <div class="container-custom">
-                <!-- About Content -->
-                <div class="max-w-4xl mx-auto mb-32">
-                    <div
-                        class="text-center max-w-3xl mx-auto mb-16 space-y-4 float-in-section delay-100"
-                    >
-                        <h2
-                            class="text-[var(--color-primary)] font-semibold text-lg mb-4 animate-fade-in"
-                        >
-                            Our Story
-                        </h2>
-                        <h3
-                            class="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight animate-fade-in"
-                        >
-                            About Us
-                        </h3>
-                        <p class="text-lg text-gray-600 animate-fade-in">
-                            {{ about.description }}
-                        </p>
-                    </div>
-
-                    <div
-                        class="prose prose-lg mx-auto prose-p:leading-relaxed float-in-section delay-200"
-                        v-html="about.au_desc"
-                    ></div>
-                </div>
-
                 <!-- Gallery -->
-                <div class="max-w-7xl mx-auto mb-20">
+                <div class="max-w-7xl mx-auto">
                     <!-- Gallery Title -->
                     <div
                         class="text-center max-w-3xl mx-auto mb-16 space-y-4 float-in-section delay-100"
                     >
-                        <span
-                            class="text-[var(--color-primary)] font-medium text-lg tracking-wide"
-                        >
-                            Our Gallery
-                        </span>
                         <h2
                             class="text-4xl md:text-5xl font-bold text-[var(--text-color)] leading-tight"
                         >
@@ -166,113 +131,6 @@ useIntersectionObserver();
                                 <Navigation />
                             </template>
                         </Carousel>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- History & Values Section -->
-        <section class="py-16 bg-[var(--color-background)]/5 float-in-section">
-            <div class="container-custom">
-                <!-- Center Title -->
-                <div
-                    class="text-center max-w-3xl mx-auto mb-20 space-y-4 float-in-section delay-100"
-                >
-                    <span
-                        class="text-[var(--color-primary)] font-medium text-lg tracking-wide"
-                        >Discover Our Legacy</span
-                    >
-                    <h2
-                        class="text-4xl md:text-5xl font-bold text-[var(--text-color)] leading-tight"
-                    >
-                        Our Journey & Core Values
-                    </h2>
-                    <div
-                        class="w-20 h-1 bg-[var(--color-primary)] mx-auto mt-6 rounded-full"
-                    ></div>
-                </div>
-
-                <div
-                    class="grid md:grid-cols-2 gap-20 float-in-section delay-200"
-                >
-                    <!-- History Column -->
-                    <div
-                        class="group hover:shadow-xl transition-all duration-500 space-y-8 backdrop-blur-sm bg-white/30 p-10 rounded-2xl shadow-lg border border-white/20"
-                    >
-                        <div class="flex items-center gap-4">
-                            <div
-                                class="w-12 h-12 rounded-full bg-[var(--color-primary)]/10 flex items-center justify-center"
-                            >
-                                <svg
-                                    class="w-6 h-6 text-[var(--color-primary)]"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                                    />
-                                </svg>
-                            </div>
-                            <div>
-                                <span
-                                    class="block text-[var(--color-primary)] font-medium text-sm tracking-wider"
-                                    >Looking Back</span
-                                >
-                                <h2
-                                    class="text-2xl md:text-3xl font-bold text-[var(--text-color)]"
-                                >
-                                    Our History
-                                </h2>
-                            </div>
-                        </div>
-                        <div
-                            class="prose prose-lg prose-p:leading-relaxed prose-p:text-[var(--light-text)]"
-                            v-html="about.history"
-                        ></div>
-                    </div>
-
-                    <!-- Values Column -->
-                    <div
-                        class="group hover:shadow-xl transition-all duration-500 space-y-8 backdrop-blur-sm bg-white/30 p-10 rounded-2xl shadow-lg border border-white/20"
-                    >
-                        <div class="flex items-center gap-4">
-                            <div
-                                class="w-12 h-12 rounded-full bg-[var(--color-primary)]/10 flex items-center justify-center"
-                            >
-                                <svg
-                                    class="w-6 h-6 text-[var(--color-primary)]"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-                                    />
-                                </svg>
-                            </div>
-                            <div>
-                                <span
-                                    class="block text-[var(--color-primary)] font-medium text-sm tracking-wider"
-                                    >What Drives Us</span
-                                >
-                                <h2
-                                    class="text-2xl md:text-3xl font-bold text-[var(--text-color)]"
-                                >
-                                    Our Values
-                                </h2>
-                            </div>
-                        </div>
-                        <div
-                            class="prose prose-lg prose-p:leading-relaxed prose-p:text-[var(--light-text)]"
-                            v-html="about.au_values"
-                        ></div>
                     </div>
                 </div>
             </div>
