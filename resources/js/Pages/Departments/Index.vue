@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { useForm } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Modal from "@/Components/Modal.vue";
@@ -208,6 +208,33 @@ const filteredDepartments = computed(() => {
         .filter((department) => department.members.length > 0);
 });
 
+// Pagination
+const currentPage = ref(1);
+const itemsPerPage = 3;
+
+const paginatedDepartments = computed(() => {
+    const filteredDepts = filteredDepartments.value;
+    const start = (currentPage.value - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    return filteredDepts.slice(start, end);
+});
+
+const totalPages = computed(() => {
+    return Math.ceil(filteredDepartments.value.length / itemsPerPage);
+});
+
+const nextPage = () => {
+    if (currentPage.value < totalPages.value) {
+        currentPage.value++;
+    }
+};
+
+const prevPage = () => {
+    if (currentPage.value > 1) {
+        currentPage.value--;
+    }
+};
+
 // Department Logo Management
 const showDeptLogoModal = ref(false);
 const editingDeptLogo = ref(null);
@@ -281,6 +308,11 @@ const deleteDeptLogo = (logo) => {
         }
     });
 };
+
+// Update searchQuery watcher
+watch(searchQuery, () => {
+    currentPage.value = 1; // Reset ke halaman pertama ketika melakukan pencarian
+});
 </script>
 
 <template>
@@ -290,6 +322,64 @@ const deleteDeptLogo = (logo) => {
                 <div
                     class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-4 sm:p-6"
                 >
+                    <!-- Tambahkan section baru setelah Departments section -->
+                    <div
+                        class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-4 sm:p-6 mt-6"
+                    >
+                        <!-- Header Section -->
+                        <div
+                            class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6"
+                        >
+                            <div>
+                                <h2 class="text-xl font-semibold">
+                                    Department Logos
+                                </h2>
+                                <p class="text-sm text-gray-500">
+                                    These logos will be displayed on the front
+                                    page of the website
+                                </p>
+                            </div>
+                            <PrimaryButton @click="openDeptLogoModal()">
+                                Add Department Logo
+                            </PrimaryButton>
+                        </div>
+
+                        <!-- Department Logos Grid -->
+                        <div
+                            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+                        >
+                            <div
+                                v-for="logo in deptLogos"
+                                :key="logo.id"
+                                class="border rounded-lg p-4 bg-gray-50"
+                            >
+                                <div class="aspect-w-4 aspect-h-3 mb-3">
+                                    <img
+                                        :src="`/storage/${logo.image}`"
+                                        :alt="logo.title"
+                                        class="w-full h-full object-cover rounded-md"
+                                    />
+                                </div>
+                                <h4 class="font-medium text-gray-900">
+                                    {{ logo.title }}
+                                </h4>
+                                <div class="mt-3 flex justify-end gap-2">
+                                    <button
+                                        @click="openDeptLogoModal(logo)"
+                                        class="p-1.5 text-blue-600 hover:text-blue-800 rounded hover:bg-blue-50"
+                                    >
+                                        <Edit class="w-4 h-4" />
+                                    </button>
+                                    <button
+                                        @click="deleteDeptLogo(logo)"
+                                        class="p-1.5 text-red-600 hover:text-red-800 rounded hover:bg-red-50"
+                                    >
+                                        <Trash2 class="w-4 h-4" />
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <!-- Header Section -->
                     <div
                         class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6"
@@ -315,7 +405,7 @@ const deleteDeptLogo = (logo) => {
                     <!-- Departments List -->
                     <div class="space-y-6">
                         <div
-                            v-for="department in filteredDepartments"
+                            v-for="department in paginatedDepartments"
                             :key="department.id"
                             class="border rounded-lg p-4"
                         >
@@ -427,64 +517,29 @@ const deleteDeptLogo = (logo) => {
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
 
-                <!-- Tambahkan section baru setelah Departments section -->
-                <div
-                    class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-4 sm:p-6 mt-6"
-                >
-                    <!-- Header Section -->
-                    <div
-                        class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6"
-                    >
-                        <div>
-                            <h2 class="text-xl font-semibold">
-                                Department Logos
-                            </h2>
-                            <p class="text-sm text-gray-500">
-                                These logos will be displayed on the front page
-                                of the website
-                            </p>
-                        </div>
-                        <PrimaryButton @click="openDeptLogoModal()">
-                            Add Department Logo
-                        </PrimaryButton>
-                    </div>
-
-                    <!-- Department Logos Grid -->
-                    <div
-                        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
-                    >
+                        <!-- Pagination Controls -->
                         <div
-                            v-for="logo in deptLogos"
-                            :key="logo.id"
-                            class="border rounded-lg p-4 bg-gray-50"
+                            v-if="totalPages > 1"
+                            class="mt-6 flex justify-center items-center gap-4"
                         >
-                            <div class="aspect-w-4 aspect-h-3 mb-3">
-                                <img
-                                    :src="`/storage/${logo.image}`"
-                                    :alt="logo.title"
-                                    class="w-full h-full object-cover rounded-md"
-                                />
-                            </div>
-                            <h4 class="font-medium text-gray-900">
-                                {{ logo.title }}
-                            </h4>
-                            <div class="mt-3 flex justify-end gap-2">
-                                <button
-                                    @click="openDeptLogoModal(logo)"
-                                    class="p-1.5 text-blue-600 hover:text-blue-800 rounded hover:bg-blue-50"
-                                >
-                                    <Edit class="w-4 h-4" />
-                                </button>
-                                <button
-                                    @click="deleteDeptLogo(logo)"
-                                    class="p-1.5 text-red-600 hover:text-red-800 rounded hover:bg-red-50"
-                                >
-                                    <Trash2 class="w-4 h-4" />
-                                </button>
-                            </div>
+                            <button
+                                @click="prevPage"
+                                :disabled="currentPage === 1"
+                                class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                Previous
+                            </button>
+                            <span class="text-sm text-gray-600">
+                                Page {{ currentPage }} of {{ totalPages }}
+                            </span>
+                            <button
+                                @click="nextPage"
+                                :disabled="currentPage === totalPages"
+                                class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                Next
+                            </button>
                         </div>
                     </div>
                 </div>
