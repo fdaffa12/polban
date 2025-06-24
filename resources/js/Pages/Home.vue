@@ -884,21 +884,18 @@ const props = defineProps({
                             class="px-2 py-3"
                         >
                             <div
-                                class="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 group overflow-hidden h-full"
+                                class="group h-full flex flex-col items-center"
                             >
                                 <div
-                                    class="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-[var(--color-secondary)]/10 to-[var(--color-primary)]/10"
+                                    class="relative w-full h-auto overflow-hidden"
                                 >
                                     <img
                                         :src="deptLogo.image"
                                         :alt="deptLogo.title"
-                                        class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                        class="w-full h-auto object-contain transition-transform duration-300 group-hover:scale-105"
                                     />
-                                    <div
-                                        class="absolute inset-0 bg-gradient-to-t from-[var(--color-primary-dark)]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                                    ></div>
                                 </div>
-                                <div class="p-4">
+                                <div class="mt-3">
                                     <h4
                                         class="text-base font-semibold text-gray-800 text-center line-clamp-2 group-hover:text-[var(--color-primary)] transition-colors duration-300"
                                     >
