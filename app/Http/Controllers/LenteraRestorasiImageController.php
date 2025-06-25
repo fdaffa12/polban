@@ -170,22 +170,68 @@ class LenteraRestorasiImageController extends Controller
     // Mission Methods
     public function storeMission(Request $request)
     {
-        $request->validate([
-            'mission' => 'required|string'
-        ]);
+        try {
+            $request->validate([
+                'type' => 'required|in:caption,image',
+                'mission' => $request->type === 'caption' ? 'required|string' : 'nullable',
+                'image' => $request->type === 'image' ? 'required|image|max:2048' : 'nullable',
+            ]);
 
-        LenteraRestorasiMission::create($request->all());
-        return redirect()->back()->with('success', 'Mission added successfully');
+            $data = [
+                'type' => $request->type,
+                'mission' => $request->type === 'image' ? 'Image Mission' : $request->mission
+            ];
+
+            if ($request->type === 'image' && $request->hasFile('image')) {
+                $path = $request->file('image')->store('missions', 'public');
+                $data['image'] = $path;
+            }
+
+            LenteraRestorasiMission::create($data);
+
+            return redirect()->back()->with('success', 'Mission added successfully');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to add mission');
+        }
     }
 
     public function updateMission(Request $request, LenteraRestorasiMission $mission)
     {
         $request->validate([
-            'mission' => 'required|string'
+            'type' => 'required|in:caption,image',
+            'mission' => $request->type === 'caption' ? 'required|string' : 'nullable',
+            'image' => $request->type === 'image' ? 'nullable|image|max:2048' : 'nullable',
         ]);
 
-        $mission->update($request->all());
-        return redirect()->back()->with('success', 'Mission updated successfully');
+        try {
+            $data = [
+                'type' => $request->type,
+                'mission' => $request->type === 'image' ? 'Image Mission' : $request->mission
+            ];
+
+            if ($request->type === 'image') {
+                if ($request->hasFile('image')) {
+                    if ($mission->image && Storage::disk('public')->exists($mission->image)) {
+                        Storage::disk('public')->delete($mission->image);
+                    }
+                    $path = $request->file('image')->store('missions', 'public');
+                    $data['image'] = $path;
+                } else {
+                    $data['image'] = $mission->image;
+                }
+            } else {
+                $data['image'] = null;
+                if ($mission->image && Storage::disk('public')->exists($mission->image)) {
+                    Storage::disk('public')->delete($mission->image);
+                }
+            }
+
+            $mission->update($data);
+
+            return redirect()->back()->with('success', 'Mission updated successfully');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to update mission');
+        }
     }
 
     public function destroyMission(LenteraRestorasiMission $mission)

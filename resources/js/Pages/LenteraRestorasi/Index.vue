@@ -133,19 +133,45 @@ const deleteVision = (vision) => {
 // Mission Management
 const showMissionModal = ref(false);
 const editingMission = ref(null);
-const missionForm = useForm({ mission: "" });
+const missionForm = useForm({
+    type: "caption",
+    mission: "",
+    image: null,
+});
 
 const openMissionModal = (mission = null) => {
     editingMission.value = mission;
     if (mission) {
+        missionForm.type = mission.type;
         missionForm.mission = mission.mission;
+        missionForm.image = null;
     } else {
         missionForm.reset();
+        missionForm.type = "caption";
     }
     showMissionModal.value = true;
 };
 
 const submitMission = () => {
+    if (missionForm.type === "image") {
+        let formData = new FormData();
+        formData.append("type", missionForm.type);
+        formData.append("image", missionForm.image);
+
+        missionForm._method = "POST";
+        missionForm.transform((data) => {
+            let formData = new FormData();
+            formData.append("type", data.type);
+            if (data.image) {
+                formData.append("image", data.image);
+            }
+            if (data.mission) {
+                formData.append("mission", data.mission);
+            }
+            return formData;
+        });
+    }
+
     if (editingMission.value) {
         missionForm.post(
             route("lentera-restorasi.mission.update", editingMission.value.id),
@@ -155,7 +181,9 @@ const submitMission = () => {
                     closeMissionModal();
                     toast.success("Mission updated successfully");
                 },
-                onError: () => toast.error("Failed to update mission"),
+                onError: () => {
+                    toast.error("Failed to update mission");
+                },
             }
         );
     } else {
@@ -165,7 +193,9 @@ const submitMission = () => {
                 closeMissionModal();
                 toast.success("Mission added successfully");
             },
-            onError: () => toast.error("Failed to add mission"),
+            onError: () => {
+                toast.error("Failed to add mission");
+            },
         });
     }
 };
@@ -551,7 +581,23 @@ const submitHimpunan = () => {
                             class="border rounded-lg p-4"
                         >
                             <div class="flex justify-between">
-                                <div v-html="mission.mission"></div>
+                                <!-- Tampilkan konten berdasarkan tipe -->
+                                <div
+                                    v-if="mission.type === 'caption'"
+                                    v-html="mission.mission"
+                                ></div>
+                                <div
+                                    v-else-if="mission.type === 'image'"
+                                    class="w-full"
+                                >
+                                    <img
+                                        :src="`/storage/${mission.image}`"
+                                        :alt="
+                                            mission.mission || 'Mission Image'
+                                        "
+                                        class="w-full h-48 object-cover rounded-lg"
+                                    />
+                                </div>
                                 <div class="flex gap-2">
                                     <button
                                         @click="openMissionModal(mission)"
@@ -838,8 +884,26 @@ const submitHimpunan = () => {
                                         : "Add New Mission"
                                 }}
                             </h2>
-                            <form @submit.prevent="submitMission" class="mt-6">
-                                <div>
+                            <form
+                                @submit.prevent="submitMission"
+                                class="mt-6"
+                                enctype="multipart/form-data"
+                            >
+                                <!-- Tipe Mission -->
+                                <div class="mb-4">
+                                    <InputLabel for="type" value="Type" />
+                                    <select
+                                        v-model="missionForm.type"
+                                        id="type"
+                                        class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                    >
+                                        <option value="caption">Caption</option>
+                                        <option value="image">Image</option>
+                                    </select>
+                                </div>
+
+                                <!-- Caption Input -->
+                                <div v-if="missionForm.type === 'caption'">
                                     <InputLabel for="mission" value="Mission" />
                                     <QuillEditor
                                         id="mission"
@@ -854,6 +918,69 @@ const submitHimpunan = () => {
                                         :message="missionForm.errors.mission"
                                         class="mt-2"
                                     />
+                                </div>
+
+                                <!-- Image Input -->
+                                <div
+                                    v-if="missionForm.type === 'image'"
+                                    class="mt-4"
+                                >
+                                    <InputLabel
+                                        for="mission_image"
+                                        value="Mission Image"
+                                    />
+                                    <input
+                                        type="file"
+                                        id="mission_image"
+                                        @input="
+                                            missionForm.image =
+                                                $event.target.files[0]
+                                        "
+                                        accept="image/*"
+                                        class="mt-1 block w-full"
+                                        :required="
+                                            !editingMission ||
+                                            missionForm.type === 'image'
+                                        "
+                                    />
+                                    <InputError
+                                        :message="missionForm.errors.image"
+                                        class="mt-2"
+                                    />
+
+                                    <!-- Preview gambar yang sudah ada -->
+                                    <div
+                                        v-if="
+                                            editingMission &&
+                                            editingMission.image
+                                        "
+                                        class="mt-2"
+                                    >
+                                        <p class="text-sm text-gray-600 mb-2">
+                                            Current Image:
+                                        </p>
+                                        <img
+                                            :src="`/storage/${editingMission.image}`"
+                                            class="w-full h-48 object-cover rounded-lg"
+                                            alt="Current Mission Image"
+                                        />
+                                    </div>
+
+                                    <!-- Preview gambar baru -->
+                                    <div v-if="missionForm.image" class="mt-2">
+                                        <p class="text-sm text-gray-600 mb-2">
+                                            New Image Preview:
+                                        </p>
+                                        <img
+                                            :src="
+                                                URL.createObjectURL(
+                                                    missionForm.image
+                                                )
+                                            "
+                                            class="w-full h-48 object-cover rounded-lg"
+                                            alt="New Mission Image Preview"
+                                        />
+                                    </div>
                                 </div>
 
                                 <div class="mt-6 flex justify-end gap-4">
