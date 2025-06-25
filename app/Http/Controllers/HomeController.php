@@ -287,20 +287,26 @@ class HomeController extends Controller
                 'visions' => $visions->map(function ($vision) {
                     return [
                         'id' => $vision->id,
-                        'content' => nl2br($vision->vision)
+                        'type' => $vision->type,
+                        'content' => $vision->type === 'caption' ? nl2br($vision->vision) : null,
+                        'image' => $vision->type === 'image' ? asset('storage/' . $vision->image) : null
                     ];
                 }),
-                'missions' => $missions->map(function ($mission, $index) {
+                'missions' => $missions->map(function ($mission) {
                     return [
                         'id' => $mission->id,
-                        'content' => nl2br($mission->mission)
+                        'type' => $mission->type,
+                        'content' => $mission->type === 'caption' ? nl2br($mission->mission) : null,
+                        'image' => $mission->type === 'image' ? asset('storage/' . $mission->image) : null
                     ];
                 }),
                 'coreValues' => $coreValues->map(function ($value) {
                     return [
                         'id' => $value->id,
                         'title' => $value->title,
-                        'description' => nl2br($value->description)
+                        'type' => $value->type,
+                        'description' => $value->type === 'caption' ? nl2br($value->description) : null,
+                        'image' => $value->type === 'image' ? asset('storage/' . $value->image) : null
                     ];
                 }),
                 'images' => $images->map(function ($image) {

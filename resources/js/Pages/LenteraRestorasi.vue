@@ -23,8 +23,8 @@ useIntersectionObserver();
 </script>
 
 <template>
-    <GuestLayout title="Ruang Optima">
-        <Head title="Ruang Optima" />
+    <GuestLayout :title="himpunan?.name || 'HMJTK Polban'">
+        <Head :title="himpunan?.name || 'HMJTK Polban'" />
 
         <!-- Hero Section -->
         <section
@@ -215,12 +215,24 @@ useIntersectionObserver();
                             :autoplay="0"
                             class="vision-mission-carousel"
                         >
-                            <!-- Vision Slide First -->
+                            <!-- Vision Slides -->
                             <Slide
                                 v-for="(vision, index) in content.visions"
                                 :key="`vision-${index}`"
                             >
-                                <div class="px-4">
+                                <!-- Tampilan untuk tipe image -->
+                                <div
+                                    v-if="vision.type === 'image'"
+                                    class="h-full flex items-center"
+                                >
+                                    <img
+                                        :src="vision.image"
+                                        :alt="'Vision Image'"
+                                        class="w-full h-auto rounded-lg max-h-[600px] object-contain"
+                                    />
+                                </div>
+                                <!-- Tampilan untuk tipe caption -->
+                                <div v-else class="px-4">
                                     <div
                                         class="bg-white/50 backdrop-blur-sm p-8 md:p-12 rounded-2xl shadow-lg border border-white/20"
                                     >
@@ -246,7 +258,19 @@ useIntersectionObserver();
                                 v-for="(mission, index) in content.missions"
                                 :key="`mission-${mission.id}`"
                             >
-                                <div class="px-4">
+                                <!-- Tampilan untuk tipe image -->
+                                <div
+                                    v-if="mission.type === 'image'"
+                                    class="h-full flex items-center"
+                                >
+                                    <img
+                                        :src="mission.image"
+                                        :alt="'Mission Image'"
+                                        class="w-full h-auto rounded-lg max-h-[600px] object-contain"
+                                    />
+                                </div>
+                                <!-- Tampilan untuk tipe caption -->
+                                <div v-else class="px-4">
                                     <div
                                         class="bg-white/50 backdrop-blur-sm p-8 md:p-12 rounded-2xl shadow-lg border border-white/20"
                                     >
@@ -334,6 +358,15 @@ useIntersectionObserver();
                                 >
                                     {{ value.title }}
                                 </h3>
+                                <!-- Tampilkan gambar jika tipe adalah image -->
+                                <div v-if="value.type === 'image'" class="mt-4">
+                                    <img
+                                        :src="value.image"
+                                        :alt="value.title"
+                                        class="w-full h-auto rounded-lg shadow-md"
+                                    />
+                                </div>
+                                <!-- Tampilkan teks jika tipe adalah caption -->
                                 <p
                                     class="text-[var(--light-text)] text-lg leading-relaxed"
                                     v-html="value.description"
