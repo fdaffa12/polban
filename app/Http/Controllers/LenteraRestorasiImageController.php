@@ -92,12 +92,22 @@ class LenteraRestorasiImageController extends Controller
     {
         try {
             $request->validate([
-                'vision' => 'required|string'
+                'type' => 'required|in:caption,image',
+                'vision' => $request->type === 'caption' ? 'required|string' : 'nullable',
+                'image' => $request->type === 'image' ? 'required|image|max:2048' : 'nullable',
             ]);
 
-            LenteraRestorasiVision::create([
-                'vision' => $request->vision
-            ]);
+            $data = [
+                'type' => $request->type,
+                'vision' => $request->type === 'image' ? 'Image Vision' : $request->vision
+            ];
+
+            if ($request->type === 'image' && $request->hasFile('image')) {
+                $path = $request->file('image')->store('visions', 'public');
+                $data['image'] = $path;
+            }
+
+            LenteraRestorasiVision::create($data);
 
             return redirect()->back()->with('success', 'Vision added successfully');
         } catch (\Exception $e) {
@@ -108,13 +118,35 @@ class LenteraRestorasiImageController extends Controller
     public function updateVision(Request $request, LenteraRestorasiVision $vision)
     {
         $request->validate([
-            'vision' => 'required|string'
+            'type' => 'required|in:caption,image',
+            'vision' => $request->type === 'caption' ? 'required|string' : 'nullable',
+            'image' => $request->type === 'image' ? 'nullable|image|max:2048' : 'nullable',
         ]);
 
         try {
-            $vision->update([
-                'vision' => $request->vision
-            ]);
+            $data = [
+                'type' => $request->type,
+                'vision' => $request->type === 'image' ? 'Image Vision' : $request->vision
+            ];
+
+            if ($request->type === 'image') {
+                if ($request->hasFile('image')) {
+                    if ($vision->image && Storage::disk('public')->exists($vision->image)) {
+                        Storage::disk('public')->delete($vision->image);
+                    }
+                    $path = $request->file('image')->store('visions', 'public');
+                    $data['image'] = $path;
+                } else {
+                    $data['image'] = $vision->image;
+                }
+            } else {
+                $data['image'] = null;
+                if ($vision->image && Storage::disk('public')->exists($vision->image)) {
+                    Storage::disk('public')->delete($vision->image);
+                }
+            }
+
+            $vision->update($data);
 
             return redirect()->back()->with('success', 'Vision updated successfully');
         } catch (\Exception $e) {
@@ -125,6 +157,9 @@ class LenteraRestorasiImageController extends Controller
     public function destroyVision(LenteraRestorasiVision $vision)
     {
         try {
+            if ($vision->type === 'image' && $vision->image) {
+                Storage::disk('public')->delete($vision->image);
+            }
             $vision->delete();
             return redirect()->back()->with('success', 'Vision deleted successfully');
         } catch (\Exception $e) {

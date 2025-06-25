@@ -27,19 +27,45 @@ const toast = useToast();
 // Vision Management
 const showVisionModal = ref(false);
 const editingVision = ref(null);
-const visionForm = useForm({ vision: "" });
+const visionForm = useForm({
+    type: "caption",
+    vision: "",
+    image: null,
+});
 
 const openVisionModal = (vision = null) => {
     editingVision.value = vision;
     if (vision) {
+        visionForm.type = vision.type;
         visionForm.vision = vision.vision;
+        visionForm.image = null;
     } else {
         visionForm.reset();
+        visionForm.type = "caption";
     }
     showVisionModal.value = true;
 };
 
 const submitVision = () => {
+    if (visionForm.type === "image") {
+        let formData = new FormData();
+        formData.append("type", visionForm.type);
+        formData.append("image", visionForm.image);
+
+        visionForm._method = "POST";
+        visionForm.transform((data) => {
+            let formData = new FormData();
+            formData.append("type", data.type);
+            if (data.image) {
+                formData.append("image", data.image);
+            }
+            if (data.vision) {
+                formData.append("vision", data.vision);
+            }
+            return formData;
+        });
+    }
+
     if (editingVision.value) {
         visionForm.post(
             route("lentera-restorasi.vision.update", editingVision.value.id),
@@ -49,7 +75,9 @@ const submitVision = () => {
                     closeVisionModal();
                     toast.success("Vision updated successfully");
                 },
-                onError: () => toast.error("Failed to update vision"),
+                onError: () => {
+                    toast.error("Failed to update vision");
+                },
             }
         );
     } else {
@@ -59,7 +87,9 @@ const submitVision = () => {
                 closeVisionModal();
                 toast.success("Vision added successfully");
             },
-            onError: () => toast.error("Failed to add vision"),
+            onError: () => {
+                toast.error("Failed to add vision");
+            },
         });
     }
 };
@@ -467,7 +497,21 @@ const submitHimpunan = () => {
                             class="border rounded-lg p-4"
                         >
                             <div class="flex justify-between">
-                                <div v-html="vision.vision"></div>
+                                <!-- Tampilkan konten berdasarkan tipe -->
+                                <div
+                                    v-if="vision.type === 'caption'"
+                                    v-html="vision.vision"
+                                ></div>
+                                <div
+                                    v-else-if="vision.type === 'image'"
+                                    class="w-full"
+                                >
+                                    <img
+                                        :src="`/storage/${vision.image}`"
+                                        :alt="vision.vision || 'Vision Image'"
+                                        class="w-full h-48 object-cover rounded-lg"
+                                    />
+                                </div>
                                 <div class="flex gap-2">
                                     <button
                                         @click="openVisionModal(vision)"
@@ -691,8 +735,30 @@ const submitHimpunan = () => {
                                         : "Add New Vision"
                                 }}
                             </h2>
-                            <form @submit.prevent="submitVision" class="mt-6">
-                                <div>
+                            <form
+                                @submit.prevent="submitVision"
+                                class="mt-6"
+                                enctype="multipart/form-data"
+                            >
+                                <!-- Tipe Vision -->
+                                <div class="mb-4">
+                                    <InputLabel for="type" value="Type" />
+                                    <select
+                                        v-model="visionForm.type"
+                                        id="type"
+                                        class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                    >
+                                        <option value="caption">Caption</option>
+                                        <option value="image">Image</option>
+                                    </select>
+                                    <InputError
+                                        :message="visionForm.errors.type"
+                                        class="mt-2"
+                                    />
+                                </div>
+
+                                <!-- Caption Input -->
+                                <div v-if="visionForm.type === 'caption'">
                                     <InputLabel for="vision" value="Vision" />
                                     <QuillEditor
                                         id="vision"
@@ -707,6 +773,48 @@ const submitHimpunan = () => {
                                         :message="visionForm.errors.vision"
                                         class="mt-2"
                                     />
+                                </div>
+
+                                <!-- Image Input -->
+                                <div
+                                    v-if="visionForm.type === 'image'"
+                                    class="mt-4"
+                                >
+                                    <InputLabel
+                                        for="vision_image"
+                                        value="Vision Image"
+                                    />
+                                    <input
+                                        type="file"
+                                        id="vision_image"
+                                        @input="
+                                            visionForm.image =
+                                                $event.target.files[0]
+                                        "
+                                        accept="image/*"
+                                        class="mt-1 block w-full"
+                                        :required="
+                                            !editingVision ||
+                                            visionForm.type === 'image'
+                                        "
+                                    />
+                                    <InputError
+                                        :message="visionForm.errors.image"
+                                        class="mt-2"
+                                    />
+
+                                    <!-- Preview Image jika ada -->
+                                    <div v-if="visionForm.image" class="mt-2">
+                                        <img
+                                            :src="
+                                                URL.createObjectURL(
+                                                    visionForm.image
+                                                )
+                                            "
+                                            class="w-full h-48 object-cover rounded-lg"
+                                            alt="Preview"
+                                        />
+                                    </div>
                                 </div>
 
                                 <div class="mt-6 flex justify-end gap-4">
