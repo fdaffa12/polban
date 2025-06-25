@@ -82,9 +82,9 @@ const getYoutubeEmbedUrl = (url) => {
                     <h1
                         class="text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-tight"
                     >
-                        Selamat Datang di Website
+                        Himpunan Mahasiswa Teknik Kimia POLBAN
                         <span class="text-[var(--color-primary)] block mt-2">
-                            Himpunan Mahasiswa Teknik Kimia POLBAN
+                            Politeknik Negeri Bandung
                         </span>
                     </h1>
                 </div>
