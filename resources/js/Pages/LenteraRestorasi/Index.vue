@@ -401,6 +401,7 @@ const showModal = ref(false);
 const editingImage = ref(null);
 const form = useForm({
     title: "",
+    description: "",
     image: null,
 });
 
@@ -408,6 +409,7 @@ const openModal = (image = null) => {
     editingImage.value = image;
     if (image) {
         form.title = image.title;
+        form.description = image.description;
     } else {
         form.reset();
     }
@@ -741,6 +743,12 @@ const submitHimpunan = () => {
                                     <h3 class="font-medium">
                                         {{ image.title }}
                                     </h3>
+                                    <p
+                                        v-if="image.description"
+                                        class="text-sm mt-2 text-gray-200"
+                                    >
+                                        {{ image.description }}
+                                    </p>
                                     <div class="flex gap-2 mt-2 justify-center">
                                         <button
                                             @click="openModal(image)"
@@ -786,7 +794,25 @@ const submitHimpunan = () => {
                                     />
                                 </div>
 
-                                <div class="mt-6">
+                                <div class="mt-4">
+                                    <InputLabel
+                                        for="description"
+                                        value="Description"
+                                    />
+                                    <textarea
+                                        id="description"
+                                        v-model="form.description"
+                                        rows="4"
+                                        class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                        placeholder="Enter image description (optional)"
+                                    ></textarea>
+                                    <InputError
+                                        :message="form.errors.description"
+                                        class="mt-2"
+                                    />
+                                </div>
+
+                                <div class="mt-4">
                                     <InputLabel for="image" value="Image" />
                                     <input
                                         type="file"

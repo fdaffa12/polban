@@ -29,14 +29,16 @@ class LenteraRestorasiImageController extends Controller
     {
         $request->validate([
             'title' => 'required|string|max:255',
-            'image' => 'required|image|max:2048'
+            'image' => 'required|image|max:2048',
+            'description' => 'nullable|string'
         ]);
 
         $path = $request->file('image')->store('lentera-restorasi', 'public');
 
         LenteraRestorasiImage::create([
             'title' => $request->title,
-            'image' => $path
+            'image' => $path,
+            'description' => $request->description
         ]);
 
         return redirect()->back()->with('success', 'Image uploaded successfully');
@@ -46,7 +48,8 @@ class LenteraRestorasiImageController extends Controller
     {
         $request->validate([
             'title' => 'required|string|max:255',
-            'image' => 'nullable|image|max:2048'
+            'image' => 'nullable|image|max:2048',
+            'description' => 'nullable|string'
         ]);
 
         try {
@@ -61,6 +64,7 @@ class LenteraRestorasiImageController extends Controller
             }
 
             $image->title = $request->title;
+            $image->description = $request->description;
             $image->save();
 
             return redirect()->back()->with('success', 'Image updated successfully');
