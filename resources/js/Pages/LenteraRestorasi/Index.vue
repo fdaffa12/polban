@@ -240,22 +240,48 @@ const deleteMission = (mission) => {
 const showCoreValueModal = ref(false);
 const editingCoreValue = ref(null);
 const coreValueForm = useForm({
+    type: "caption",
     title: "",
     description: "",
+    image: null,
 });
 
 const openCoreValueModal = (coreValue = null) => {
     editingCoreValue.value = coreValue;
     if (coreValue) {
+        coreValueForm.type = coreValue.type;
         coreValueForm.title = coreValue.title;
         coreValueForm.description = coreValue.description;
+        coreValueForm.image = null;
     } else {
         coreValueForm.reset();
+        coreValueForm.type = "caption";
     }
     showCoreValueModal.value = true;
 };
 
 const submitCoreValue = () => {
+    if (coreValueForm.type === "image") {
+        let formData = new FormData();
+        formData.append("type", coreValueForm.type);
+        formData.append("title", coreValueForm.title);
+        formData.append("image", coreValueForm.image);
+
+        coreValueForm._method = "POST";
+        coreValueForm.transform((data) => {
+            let formData = new FormData();
+            formData.append("type", data.type);
+            formData.append("title", data.title);
+            if (data.image) {
+                formData.append("image", data.image);
+            }
+            if (data.description) {
+                formData.append("description", data.description);
+            }
+            return formData;
+        });
+    }
+
     if (editingCoreValue.value) {
         coreValueForm.post(
             route(
@@ -268,7 +294,9 @@ const submitCoreValue = () => {
                     closeCoreValueModal();
                     toast.success("Core Value updated successfully");
                 },
-                onError: () => toast.error("Failed to update core value"),
+                onError: () => {
+                    toast.error("Failed to update core value");
+                },
             }
         );
     } else {
@@ -278,7 +306,9 @@ const submitCoreValue = () => {
                 closeCoreValueModal();
                 toast.success("Core Value added successfully");
             },
-            onError: () => toast.error("Failed to add core value"),
+            onError: () => {
+                toast.error("Failed to add core value");
+            },
         });
     }
 };
@@ -637,16 +667,28 @@ const submitHimpunan = () => {
                             class="border rounded-lg p-4"
                         >
                             <div class="flex justify-between">
-                                <div>
+                                <div class="w-full">
                                     <h3 class="font-medium">
                                         {{ coreValue.title }}
                                     </h3>
+                                    <!-- Tampilkan konten berdasarkan tipe -->
                                     <div
+                                        v-if="coreValue.type === 'caption'"
                                         class="mt-2"
                                         v-html="coreValue.description"
                                     ></div>
+                                    <div
+                                        v-else-if="coreValue.type === 'image'"
+                                        class="mt-2"
+                                    >
+                                        <img
+                                            :src="`/storage/${coreValue.image}`"
+                                            :alt="coreValue.title"
+                                            class="w-full h-48 object-cover rounded-lg"
+                                        />
+                                    </div>
                                 </div>
-                                <div class="flex gap-2">
+                                <div class="flex gap-2 ml-4">
                                     <button
                                         @click="openCoreValueModal(coreValue)"
                                         class="text-blue-600 hover:text-blue-800"
@@ -1010,14 +1052,13 @@ const submitHimpunan = () => {
                             <form
                                 @submit.prevent="submitCoreValue"
                                 class="mt-6"
+                                enctype="multipart/form-data"
                             >
-                                <div>
-                                    <InputLabel
-                                        for="core_value_title"
-                                        value="Title"
-                                    />
+                                <!-- Title Input -->
+                                <div class="mb-4">
+                                    <InputLabel for="title" value="Title" />
                                     <TextInput
-                                        id="core_value_title"
+                                        id="title"
                                         v-model="coreValueForm.title"
                                         type="text"
                                         class="mt-1 block w-full"
@@ -1029,13 +1070,27 @@ const submitHimpunan = () => {
                                     />
                                 </div>
 
-                                <div class="mt-6">
+                                <!-- Tipe Core Value -->
+                                <div class="mb-4">
+                                    <InputLabel for="type" value="Type" />
+                                    <select
+                                        v-model="coreValueForm.type"
+                                        id="type"
+                                        class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                    >
+                                        <option value="caption">Caption</option>
+                                        <option value="image">Image</option>
+                                    </select>
+                                </div>
+
+                                <!-- Caption Input -->
+                                <div v-if="coreValueForm.type === 'caption'">
                                     <InputLabel
-                                        for="core_value_description"
+                                        for="description"
                                         value="Description"
                                     />
                                     <QuillEditor
-                                        id="core_value_description"
+                                        id="description"
                                         v-model:content="
                                             coreValueForm.description
                                         "
@@ -1051,6 +1106,72 @@ const submitHimpunan = () => {
                                         "
                                         class="mt-2"
                                     />
+                                </div>
+
+                                <!-- Image Input -->
+                                <div
+                                    v-if="coreValueForm.type === 'image'"
+                                    class="mt-4"
+                                >
+                                    <InputLabel
+                                        for="core_value_image"
+                                        value="Core Value Image"
+                                    />
+                                    <input
+                                        type="file"
+                                        id="core_value_image"
+                                        @input="
+                                            coreValueForm.image =
+                                                $event.target.files[0]
+                                        "
+                                        accept="image/*"
+                                        class="mt-1 block w-full"
+                                        :required="
+                                            !editingCoreValue ||
+                                            coreValueForm.type === 'image'
+                                        "
+                                    />
+                                    <InputError
+                                        :message="coreValueForm.errors.image"
+                                        class="mt-2"
+                                    />
+
+                                    <!-- Preview gambar yang sudah ada -->
+                                    <div
+                                        v-if="
+                                            editingCoreValue &&
+                                            editingCoreValue.image
+                                        "
+                                        class="mt-2"
+                                    >
+                                        <p class="text-sm text-gray-600 mb-2">
+                                            Current Image:
+                                        </p>
+                                        <img
+                                            :src="`/storage/${editingCoreValue.image}`"
+                                            class="w-full h-48 object-cover rounded-lg"
+                                            alt="Current Core Value Image"
+                                        />
+                                    </div>
+
+                                    <!-- Preview gambar baru -->
+                                    <div
+                                        v-if="coreValueForm.image"
+                                        class="mt-2"
+                                    >
+                                        <p class="text-sm text-gray-600 mb-2">
+                                            New Image Preview:
+                                        </p>
+                                        <img
+                                            :src="
+                                                URL.createObjectURL(
+                                                    coreValueForm.image
+                                                )
+                                            "
+                                            class="w-full h-48 object-cover rounded-lg"
+                                            alt="New Core Value Image Preview"
+                                        />
+                                    </div>
                                 </div>
 
                                 <div class="mt-6 flex justify-end gap-4">

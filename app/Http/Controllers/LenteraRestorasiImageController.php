@@ -237,6 +237,9 @@ class LenteraRestorasiImageController extends Controller
     public function destroyMission(LenteraRestorasiMission $mission)
     {
         try {
+            if ($mission->type === 'image' && $mission->image) {
+                Storage::disk('public')->delete($mission->image);
+            }
             $mission->delete();
             return redirect()->back()->with('success', 'Mission deleted successfully');
         } catch (\Exception $e) {
@@ -247,29 +250,80 @@ class LenteraRestorasiImageController extends Controller
     // Core Values Methods
     public function storeCoreValue(Request $request)
     {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string'
-        ]);
+        try {
+            $request->validate([
+                'type' => 'required|in:caption,image',
+                'title' => 'required|string|max:255',
+                'description' => $request->type === 'caption' ? 'required|string' : 'nullable',
+                'image' => $request->type === 'image' ? 'required|image|max:2048' : 'nullable',
+            ]);
 
-        LenteraRestorasiCoreValue::create($request->all());
-        return redirect()->back()->with('success', 'Core Value added successfully');
+            $data = [
+                'type' => $request->type,
+                'title' => $request->title,
+                'description' => $request->type === 'image' ? 'Image Core Value' : $request->description
+            ];
+
+            if ($request->type === 'image' && $request->hasFile('image')) {
+                $path = $request->file('image')->store('core-values', 'public');
+                $data['image'] = $path;
+            }
+
+            LenteraRestorasiCoreValue::create($data);
+
+            return redirect()->back()->with('success', 'Core Value added successfully');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to add core value');
+        }
     }
 
     public function updateCoreValue(Request $request, LenteraRestorasiCoreValue $coreValue)
     {
         $request->validate([
+            'type' => 'required|in:caption,image',
             'title' => 'required|string|max:255',
-            'description' => 'required|string'
+            'description' => $request->type === 'caption' ? 'required|string' : 'nullable',
+            'image' => $request->type === 'image' ? 'nullable|image|max:2048' : 'nullable',
         ]);
 
-        $coreValue->update($request->all());
-        return redirect()->back()->with('success', 'Core Value updated successfully');
+        try {
+            $data = [
+                'type' => $request->type,
+                'title' => $request->title,
+                'description' => $request->type === 'image' ? 'Image Core Value' : $request->description
+            ];
+
+            if ($request->type === 'image') {
+                if ($request->hasFile('image')) {
+                    if ($coreValue->image && Storage::disk('public')->exists($coreValue->image)) {
+                        Storage::disk('public')->delete($coreValue->image);
+                    }
+                    $path = $request->file('image')->store('core-values', 'public');
+                    $data['image'] = $path;
+                } else {
+                    $data['image'] = $coreValue->image;
+                }
+            } else {
+                $data['image'] = null;
+                if ($coreValue->image && Storage::disk('public')->exists($coreValue->image)) {
+                    Storage::disk('public')->delete($coreValue->image);
+                }
+            }
+
+            $coreValue->update($data);
+
+            return redirect()->back()->with('success', 'Core Value updated successfully');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to update core value');
+        }
     }
 
     public function destroyCoreValue(LenteraRestorasiCoreValue $coreValue)
     {
         try {
+            if ($coreValue->type === 'image' && $coreValue->image) {
+                Storage::disk('public')->delete($coreValue->image);
+            }
             $coreValue->delete();
             return redirect()->back()->with('success', 'Core Value deleted successfully');
         } catch (\Exception $e) {
