@@ -32,14 +32,16 @@ const filterByCategory = (categoryId) => {
     activeCategory.value = categoryId;
     displayedCount.value = 5; // Reset to initial count
     if (categoryId) {
-        router.get(`/news/category/${categoryId}`);
+        router.get(route("news.category", { categoryId }));
     } else {
-        router.get("/news");
+        router.get(route("news"));
     }
 };
 
 const goToArticle = (slug) => {
-    router.get(`/article/${slug}`);
+    if (slug) {
+        router.get(route("article.detail", { slug }));
+    }
 };
 
 const loadMore = () => {

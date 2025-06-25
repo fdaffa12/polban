@@ -200,7 +200,7 @@ class HomeController extends Controller
                 return [
                     'id' => $article->id,
                     'title' => $article->title,
-                    'slug' => $article->slug, // Add this
+                    'slug' => $article->slug,
                     'content' => Str::limit(strip_tags($article->content), 200),
                     'featured_image' => $article->featured_image ? "/storage/{$article->featured_image}" : null,
                     'created_at' => $article->created_at->format('d M Y'),
@@ -397,7 +397,7 @@ class HomeController extends Controller
             return [
                 'id' => $article->id,
                 'title' => $article->title,
-                'slug' => $article->slug, // Add this
+                'slug' => $article->slug,
                 'content' => Str::limit(strip_tags($article->content), 200),
                 'featured_image' => $article->featured_image ? "/storage/{$article->featured_image}" : null,
                 'created_at' => $article->created_at->format('d M Y'),
@@ -418,7 +418,7 @@ class HomeController extends Controller
                 ];
             }),
             'articles' => $mappedArticles,
-            'popularPosts' => $this->getPopularPosts(), // Add this line
+            'popularPosts' => $this->getPopularPosts(),
             'pagination' => [
                 'current_page' => $articles->currentPage(),
                 'last_page' => $articles->lastPage(),
@@ -447,6 +447,7 @@ class HomeController extends Controller
             return [
                 'id' => $article->id,
                 'title' => $article->title,
+                'slug' => $article->slug,
                 'content' => Str::limit(strip_tags($article->content), 200),
                 'featured_image' => $article->featured_image ? "/storage/{$article->featured_image}" : null,
                 'created_at' => $article->created_at->format('d M Y'),
@@ -468,7 +469,7 @@ class HomeController extends Controller
             }),
             'articles' => $mappedArticles,
             'activeCategory' => $categoryId,
-            'popularPosts' => $this->getPopularPosts(), // Add this line
+            'popularPosts' => $this->getPopularPosts(),
             'pagination' => [
                 'current_page' => $articles->currentPage(),
                 'last_page' => $articles->lastPage(),
@@ -508,7 +509,7 @@ class HomeController extends Controller
                 return [
                     'id' => $relatedArticle->id,
                     'title' => $relatedArticle->title,
-                    'slug' => $relatedArticle->slug, // Add this
+                    'slug' => $relatedArticle->slug,
                     'content' => Str::limit(strip_tags($relatedArticle->content), 150),
                     'featured_image' => $relatedArticle->featured_image ? "/storage/{$relatedArticle->featured_image}" : null,
                     'created_at' => $relatedArticle->created_at->format('d M Y'),
@@ -537,7 +538,7 @@ class HomeController extends Controller
                     ];
                 })
             ],
-            'popularPosts' => $this->getPopularPosts(), // Pindahkan ke sini
+            'popularPosts' => $this->getPopularPosts(),
             'relatedArticles' => $relatedArticles
         ]);
     }
@@ -554,7 +555,7 @@ class HomeController extends Controller
                 return [
                     'id' => $article->id,
                     'title' => $article->title,
-                    'slug' => $article->slug, // Add this
+                    'slug' => $article->slug,
                     'content' => Str::limit(strip_tags($article->content), 150),
                     'featured_image' => $article->featured_image ? "/storage/{$article->featured_image}" : null,
                     'created_at' => $article->created_at->format('d M Y'),
