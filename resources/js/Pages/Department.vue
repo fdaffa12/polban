@@ -41,7 +41,7 @@ useIntersectionObserver();
 <template>
     <GuestLayout title="Department">
         <!-- Hero Section -->
-        <section class="py-16 bg-white float-in-section">
+        <section class="py-16 bg-white">
             <div class="container-custom">
                 <div
                     class="text-center max-w-4xl mx-auto mb-20 space-y-6 float-in-section delay-100"

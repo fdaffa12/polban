@@ -143,9 +143,7 @@ useIntersectionObserver();
         <div class="py-6 sm:py-12 bg-[var(--color-background)]">
             <div class="container-custom">
                 <!-- Calendar Container -->
-                <div
-                    class="bg-white rounded-2xl shadow-lg overflow-hidden float-in-section"
-                >
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
                     <!-- Header Calendar -->
                     <div
                         class="bg-gradient-to-r from-[var(--color-primary-dark)] to-[var(--color-primary)] p-4 sm:p-6 float-in-section delay-100"

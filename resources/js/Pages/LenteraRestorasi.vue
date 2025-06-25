@@ -75,7 +75,7 @@ useIntersectionObserver();
         </section>
 
         <!-- Gallery Section -->
-        <section class="py-20 bg-white float-in-section">
+        <section class="py-20 bg-white">
             <div class="container-custom">
                 <div
                     class="text-center max-w-3xl mx-auto mb-16 space-y-4 float-in-section delay-100"
@@ -144,7 +144,7 @@ useIntersectionObserver();
                             class="px-3"
                         >
                             <div
-                                class="relative aspect-[4/3] rounded-2xl overflow-hidden group cursor-pointer"
+                                class="relative aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer"
                                 @click="setActiveImage(index)"
                             >
                                 <img
@@ -155,22 +155,6 @@ useIntersectionObserver();
                                         'scale-105': activeImage === index,
                                     }"
                                 />
-                                <div
-                                    class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"
-                                    :class="{
-                                        '!opacity-100': activeImage === index,
-                                    }"
-                                >
-                                    <div
-                                        class="absolute bottom-0 left-0 right-0 p-6"
-                                    >
-                                        <h4
-                                            class="text-white font-medium text-lg md:text-xl"
-                                        >
-                                            {{ image.title }}
-                                        </h4>
-                                    </div>
-                                </div>
                             </div>
                         </Slide>
 
@@ -178,13 +162,34 @@ useIntersectionObserver();
                             <Navigation />
                         </template>
                     </Carousel>
+
+                    <!-- Caption Card -->
+                    <div
+                        v-if="content.images[activeImage]"
+                        class="mt-8 max-w-2xl mx-auto text-center transition-all duration-500 float-in-section delay-300"
+                    >
+                        <h3
+                            class="text-2xl font-semibold text-[var(--text-color)] mb-6"
+                        >
+                            {{ content.images[activeImage].title }}
+                        </h3>
+                        <p
+                            v-if="content.images[activeImage].description"
+                            class="text-[var(--light-text)] italic leading-relaxed"
+                        >
+                            {{ content.images[activeImage].description }}
+                        </p>
+                        <p v-else class="text-gray-500 italic">
+                            Tidak ada deskripsi untuk gambar ini
+                        </p>
+                    </div>
                 </div>
             </div>
         </section>
 
         <!-- Vision & Mission Section -->
         <section
-            class="py-20 bg-gradient-to-b from-white to-[var(--color-background)]/10 float-in-section"
+            class="py-20 bg-gradient-to-b from-white to-[var(--color-background)]/10"
         >
             <div class="container-custom">
                 <div class="max-w-7xl mx-auto">
@@ -302,7 +307,7 @@ useIntersectionObserver();
         </section>
 
         <!-- Core Values Section -->
-        <section class="py-20 bg-[var(--color-background)]/5 float-in-section">
+        <section class="py-20 bg-[var(--color-background)]/5">
             <div class="container-custom">
                 <div
                     class="text-center max-w-3xl mx-auto mb-20 space-y-4 float-in-section delay-100"

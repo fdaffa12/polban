@@ -20,7 +20,7 @@ useIntersectionObserver();
         <Head title="About Us" />
 
         <!-- Hero Section -->
-        <section class="py-20 bg-white float-in-section">
+        <section class="py-20 bg-white">
             <div class="container-custom">
                 <div class="max-w-5xl">
                     <div class="space-y-6 float-in-section delay-100">
@@ -59,7 +59,7 @@ useIntersectionObserver();
 
         <!-- Gallery Section -->
         <section
-            class="py-16 bg-gradient-to-b from-white to-[var(--color-background)]/10 float-in-section"
+            class="py-16 bg-gradient-to-b from-white to-[var(--color-background)]/10"
         >
             <div class="container-custom">
                 <!-- Gallery -->

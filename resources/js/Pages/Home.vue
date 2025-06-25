@@ -57,7 +57,7 @@ const getYoutubeEmbedUrl = (url) => {
     <GuestLayout title="Home">
         <!-- Hero Section -->
         <div
-            class="relative min-h-screen flex items-center justify-center overflow-hidden bg-gray-900 float-in-section"
+            class="relative min-h-screen flex items-center justify-center overflow-hidden bg-gray-900"
         >
             <!-- Background Image with Overlay -->
             <div class="absolute inset-0 z-0">
@@ -92,11 +92,9 @@ const getYoutubeEmbedUrl = (url) => {
         </div>
 
         <!-- About Us Section (now Himpunan Section) -->
-        <section
-            class="py-20 bg-white relative overflow-hidden float-in-section"
-        >
+        <section class="py-20 bg-white relative overflow-hidden">
             <!-- Decorative Elements -->
-            <div class="absolute inset-0 pointer-events-none">
+            <div class="absolute inset-0 pointer-events-none float-in-section">
                 <div
                     class="absolute top-0 left-0 w-64 h-64 bg-blue-50 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"
                 ></div>
@@ -108,12 +106,12 @@ const getYoutubeEmbedUrl = (url) => {
                 ></div>
             </div>
 
-            <div class="container-custom relative z-10">
+            <div class="container-custom relative z-10 float-in-section">
                 <div
                     class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
                 >
                     <!-- Image Column -->
-                    <div class="relative">
+                    <div class="relative float-in-section">
                         <!-- Decorative Border -->
                         <div class="about-image-glow"></div>
                         <div class="relative h-[400px]">
@@ -135,7 +133,7 @@ const getYoutubeEmbedUrl = (url) => {
                     </div>
 
                     <!-- Content Column -->
-                    <div class="space-y-8">
+                    <div class="space-y-8 float-in-section">
                         <div class="relative">
                             <!-- Decorative Line -->
                             <div class="about-content-line"></div>
@@ -178,7 +176,7 @@ const getYoutubeEmbedUrl = (url) => {
         <!-- Cabinet Profile Video Section -->
         <section
             v-if="himpunan?.yt_link"
-            class="py-20 bg-gradient-to-b from-white via-[var(--color-background)]/30 to-white float-in-section"
+            class="py-20 bg-gradient-to-b from-white via-[var(--color-background)]/30 to-white"
         >
             <div class="container-custom">
                 <!-- Header Section dengan animasi -->
@@ -229,7 +227,7 @@ const getYoutubeEmbedUrl = (url) => {
 
         <!-- Update Events Section -->
         <section
-            class="py-20 bg-gradient-to-b from-white via-[var(--color-background)]/30 to-white float-in-section"
+            class="py-20 bg-gradient-to-b from-white via-[var(--color-background)]/30 to-white"
         >
             <div class="container-custom">
                 <!-- Header Section dengan animasi -->
@@ -594,7 +592,7 @@ const getYoutubeEmbedUrl = (url) => {
 
         <!-- News Articles Section -->
         <section
-            class="py-20 bg-gradient-to-b from-white via-[var(--color-background)]/30 to-white float-in-section"
+            class="py-20 bg-gradient-to-b from-white via-[var(--color-background)]/30 to-white"
         >
             <div class="container-custom">
                 <!-- Header Section -->
@@ -903,7 +901,7 @@ const getYoutubeEmbedUrl = (url) => {
         </section>
 
         <section
-            class="py-20 bg-gradient-to-b from-white via-blue-50/30 to-white float-in-section"
+            class="py-20 bg-gradient-to-b from-white via-blue-50/30 to-white"
         >
             <div class="container-custom">
                 <!-- Header Section -->

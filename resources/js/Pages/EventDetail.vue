@@ -108,7 +108,7 @@ useIntersectionObserver();
     <GuestLayout :title="event.event_name">
         <!-- Event Header -->
         <section
-            class="relative py-12 float-in-section"
+            class="relative py-12"
             :style="{
                 background: `linear-gradient(to bottom, white, white 30%, var(--color-background))`,
             }"

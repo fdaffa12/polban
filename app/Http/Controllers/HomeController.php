@@ -313,6 +313,7 @@ class HomeController extends Controller
                     return [
                         'id' => $image->id,
                         'title' => $image->title,
+                        'description' => $image->description,
                         'image' => $image->image ? asset('storage/' . $image->image) : null
                     ];
                 }),
