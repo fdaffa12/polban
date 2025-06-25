@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Department;
 use App\Models\Member;
+use App\Models\DeptLogo;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\File;
@@ -15,6 +16,7 @@ class DepartmentController extends Controller
     {
         return Inertia::render('Departments/Index', [
             'departments' => Department::with('members')->latest()->get(),
+            'deptLogos' => DeptLogo::latest()->get(),
         ]);
     }
 
@@ -125,7 +127,7 @@ class DepartmentController extends Controller
                 'department_id' => 'required|exists:departments,id',
                 'name' => 'required|string|max:255',
                 'image' => 'required|image|max:10248',
-                'job_type' => 'required|in:board_of_dept,section_head_dept,staff',
+                'job_type' => 'required|in:board_of_dept,vice_board_of_dept,section_head_dept,staff',
                 'job_titles' => 'required|string|max:255',
                 'position' => 'nullable|string|max:255',
             ]);
@@ -169,7 +171,7 @@ class DepartmentController extends Controller
             'department_id' => 'required|exists:departments,id',
             'name' => 'required|string|max:255',
             'image' => 'nullable|image|max:10248',
-            'job_type' => 'required|in:board_of_dept,section_head_dept,staff',
+            'job_type' => 'required|in:board_of_dept,vice_board_of_dept,section_head_dept,staff',
             'job_titles' => 'required|string|max:255',
             'position' => 'nullable|string|max:255',
         ]);
@@ -232,6 +234,106 @@ class DepartmentController extends Controller
         } catch (\Exception $e) {
             Log::error('Member deletion error: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Failed to delete member');
+        }
+    }
+
+    public function storeDeptLogo(Request $request)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'image' => 'required|image|max:10248',
+        ]);
+
+        try {
+            $image = $request->file('image');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+
+            // Path FISIK untuk server
+            $uploadPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/dept-logos';
+
+            // Buat folder jika belum ada
+            if (!File::exists($uploadPath)) {
+                File::makeDirectory($uploadPath, 0777, true);
+            }
+
+            // Simpan file
+            $image->move($uploadPath, $imageName);
+
+            // Path RELATIF untuk database
+            $path = 'dept-logos/' . $imageName;
+
+            DeptLogo::create([
+                'title' => $request->title,
+                'image' => $path,
+            ]);
+
+            return redirect()->back()->with('success', 'Department logo added successfully');
+        } catch (\Exception $e) {
+            Log::error('Department logo creation error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to add department logo');
+        }
+    }
+
+    public function updateDeptLogo(Request $request, DeptLogo $deptLogo)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'image' => 'nullable|image|max:10248',
+        ]);
+
+        try {
+            if ($request->hasFile('image')) {
+                // Hapus file lama jika ada
+                if ($deptLogo->image) {
+                    $oldPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/' . $deptLogo->image;
+                    if (File::exists($oldPath)) {
+                        File::delete($oldPath);
+                    }
+                }
+
+                $image = $request->file('image');
+                $imageName = time() . '.' . $image->getClientOriginalExtension();
+
+                // Path FISIK untuk server
+                $uploadPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/dept-logos';
+
+                // Buat folder jika belum ada
+                if (!File::exists($uploadPath)) {
+                    File::makeDirectory($uploadPath, 0777, true);
+                }
+
+                // Simpan file
+                $image->move($uploadPath, $imageName);
+
+                // Path RELATIF untuk database
+                $deptLogo->image = 'dept-logos/' . $imageName;
+            }
+
+            $deptLogo->title = $request->title;
+            $deptLogo->save();
+
+            return redirect()->back()->with('success', 'Department logo updated successfully');
+        } catch (\Exception $e) {
+            Log::error('Department logo update error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to update department logo');
+        }
+    }
+
+    public function destroyDeptLogo(DeptLogo $deptLogo)
+    {
+        try {
+            if ($deptLogo->image) {
+                $imagePath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/' . $deptLogo->image;
+                if (File::exists($imagePath)) {
+                    File::delete($imagePath);
+                }
+            }
+            $deptLogo->delete();
+
+            return redirect()->back()->with('success', 'Department logo deleted successfully');
+        } catch (\Exception $e) {
+            Log::error('Department logo deletion error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to delete department logo');
         }
     }
 }

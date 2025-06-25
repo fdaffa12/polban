@@ -6,6 +6,7 @@ use App\Models\LenteraRestorasiImage;
 use App\Models\LenteraRestorasiVision;
 use App\Models\LenteraRestorasiMission;
 use App\Models\LenteraRestorasiCoreValue;
+use App\Models\Himpunan;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
@@ -13,6 +14,8 @@ use Illuminate\Support\Facades\File;
 
 class LenteraRestorasiImageController extends Controller
 {
+    private $basePath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage';
+
     public function index()
     {
         return Inertia::render('LenteraRestorasi/Index', [
@@ -20,6 +23,7 @@ class LenteraRestorasiImageController extends Controller
             'visions' => LenteraRestorasiVision::latest()->get(),
             'missions' => LenteraRestorasiMission::latest()->get(),
             'coreValues' => LenteraRestorasiCoreValue::latest()->get(),
+            'himpunan' => Himpunan::first()
         ]);
     }
 
@@ -27,30 +31,26 @@ class LenteraRestorasiImageController extends Controller
     {
         $request->validate([
             'title' => 'required|string|max:255',
-            'image' => 'required|image|max:2048'
+            'image' => 'required|image|max:2048',
+            'description' => 'nullable|string'
         ]);
 
         try {
             $image = $request->file('image');
             $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $uploadPath = $this->basePath . '/lentera-restorasi';
 
-            // Path FISIK untuk server
-            $uploadPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/lentera-restorasi';
-
-            // Buat folder jika belum ada
             if (!File::exists($uploadPath)) {
                 File::makeDirectory($uploadPath, 0777, true);
             }
 
-            // Simpan file
             $image->move($uploadPath, $imageName);
-
-            // Path RELATIF untuk database
             $path = 'lentera-restorasi/' . $imageName;
 
             LenteraRestorasiImage::create([
                 'title' => $request->title,
-                'image' => $path
+                'image' => $path,
+                'description' => $request->description
             ]);
 
             return redirect()->back()->with('success', 'Image uploaded successfully');
@@ -64,14 +64,14 @@ class LenteraRestorasiImageController extends Controller
     {
         $request->validate([
             'title' => 'required|string|max:255',
-            'image' => 'nullable|image|max:2048'
+            'image' => 'nullable|image|max:2048',
+            'description' => 'nullable|string'
         ]);
 
         try {
             if ($request->hasFile('image')) {
-                // Hapus file lama jika ada
                 if ($image->image) {
-                    $oldPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/' . $image->image;
+                    $oldPath = $this->basePath . '/' . $image->image;
                     if (File::exists($oldPath)) {
                         File::delete($oldPath);
                     }
@@ -79,23 +79,18 @@ class LenteraRestorasiImageController extends Controller
 
                 $newImage = $request->file('image');
                 $imageName = time() . '.' . $newImage->getClientOriginalExtension();
+                $uploadPath = $this->basePath . '/lentera-restorasi';
 
-                // Path FISIK untuk server
-                $uploadPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/lentera-restorasi';
-
-                // Buat folder jika belum ada
                 if (!File::exists($uploadPath)) {
                     File::makeDirectory($uploadPath, 0777, true);
                 }
 
-                // Simpan file
                 $newImage->move($uploadPath, $imageName);
-
-                // Path RELATIF untuk database
                 $image->image = 'lentera-restorasi/' . $imageName;
             }
 
             $image->title = $request->title;
+            $image->description = $request->description;
             $image->save();
 
             return redirect()->back()->with('success', 'Image updated successfully');
@@ -108,16 +103,14 @@ class LenteraRestorasiImageController extends Controller
     public function destroy(LenteraRestorasiImage $image)
     {
         try {
-            // Hapus file fisik
             if ($image->image) {
-                $imagePath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/' . $image->image;
+                $imagePath = $this->basePath . '/' . $image->image;
                 if (File::exists($imagePath)) {
                     File::delete($imagePath);
                 }
             }
 
             $image->delete();
-
             return redirect()->back()->with('success', 'Image deleted successfully');
         } catch (\Exception $e) {
             Log::error('Image deletion error: ' . $e->getMessage());
@@ -130,12 +123,30 @@ class LenteraRestorasiImageController extends Controller
     {
         try {
             $request->validate([
-                'vision' => 'required|string'
+                'type' => 'required|in:caption,image',
+                'vision' => $request->type === 'caption' ? 'required|string' : 'nullable',
+                'image' => $request->type === 'image' ? 'required|image|max:2048' : 'nullable',
             ]);
 
-            LenteraRestorasiVision::create([
-                'vision' => $request->vision
-            ]);
+            $data = [
+                'type' => $request->type,
+                'vision' => $request->type === 'image' ? 'Image Vision' : $request->vision
+            ];
+
+            if ($request->type === 'image' && $request->hasFile('image')) {
+                $image = $request->file('image');
+                $imageName = time() . '_vision.' . $image->getClientOriginalExtension();
+                $uploadPath = $this->basePath . '/visions';
+
+                if (!File::exists($uploadPath)) {
+                    File::makeDirectory($uploadPath, 0777, true);
+                }
+
+                $image->move($uploadPath, $imageName);
+                $data['image'] = 'visions/' . $imageName;
+            }
+
+            LenteraRestorasiVision::create($data);
 
             return redirect()->back()->with('success', 'Vision added successfully');
         } catch (\Exception $e) {
@@ -146,13 +157,50 @@ class LenteraRestorasiImageController extends Controller
     public function updateVision(Request $request, LenteraRestorasiVision $vision)
     {
         $request->validate([
-            'vision' => 'required|string'
+            'type' => 'required|in:caption,image',
+            'vision' => $request->type === 'caption' ? 'required|string' : 'nullable',
+            'image' => $request->type === 'image' ? 'nullable|image|max:2048' : 'nullable',
         ]);
 
         try {
-            $vision->update([
-                'vision' => $request->vision
-            ]);
+            $data = [
+                'type' => $request->type,
+                'vision' => $request->type === 'image' ? 'Image Vision' : $request->vision
+            ];
+
+            if ($request->type === 'image') {
+                if ($request->hasFile('image')) {
+                    if ($vision->image) {
+                        $oldPath = $this->basePath . '/' . $vision->image;
+                        if (File::exists($oldPath)) {
+                            File::delete($oldPath);
+                        }
+                    }
+
+                    $image = $request->file('image');
+                    $imageName = time() . '_vision.' . $image->getClientOriginalExtension();
+                    $uploadPath = $this->basePath . '/visions';
+
+                    if (!File::exists($uploadPath)) {
+                        File::makeDirectory($uploadPath, 0777, true);
+                    }
+
+                    $image->move($uploadPath, $imageName);
+                    $data['image'] = 'visions/' . $imageName;
+                } else {
+                    $data['image'] = $vision->image;
+                }
+            } else {
+                if ($vision->image) {
+                    $oldPath = $this->basePath . '/' . $vision->image;
+                    if (File::exists($oldPath)) {
+                        File::delete($oldPath);
+                    }
+                }
+                $data['image'] = null;
+            }
+
+            $vision->update($data);
 
             return redirect()->back()->with('success', 'Vision updated successfully');
         } catch (\Exception $e) {
@@ -163,6 +211,12 @@ class LenteraRestorasiImageController extends Controller
     public function destroyVision(LenteraRestorasiVision $vision)
     {
         try {
+            if ($vision->type === 'image' && $vision->image) {
+                $imagePath = $this->basePath . '/' . $vision->image;
+                if (File::exists($imagePath)) {
+                    File::delete($imagePath);
+                }
+            }
             $vision->delete();
             return redirect()->back()->with('success', 'Vision deleted successfully');
         } catch (\Exception $e) {
@@ -173,27 +227,102 @@ class LenteraRestorasiImageController extends Controller
     // Mission Methods
     public function storeMission(Request $request)
     {
-        $request->validate([
-            'mission' => 'required|string'
-        ]);
+        try {
+            $request->validate([
+                'type' => 'required|in:caption,image',
+                'mission' => $request->type === 'caption' ? 'required|string' : 'nullable',
+                'image' => $request->type === 'image' ? 'required|image|max:2048' : 'nullable',
+            ]);
 
-        LenteraRestorasiMission::create($request->all());
-        return redirect()->back()->with('success', 'Mission added successfully');
+            $data = [
+                'type' => $request->type,
+                'mission' => $request->type === 'image' ? 'Image Mission' : $request->mission
+            ];
+
+            if ($request->type === 'image' && $request->hasFile('image')) {
+                $image = $request->file('image');
+                $imageName = time() . '_mission.' . $image->getClientOriginalExtension();
+                $uploadPath = $this->basePath . '/missions';
+
+                if (!File::exists($uploadPath)) {
+                    File::makeDirectory($uploadPath, 0777, true);
+                }
+
+                $image->move($uploadPath, $imageName);
+                $data['image'] = 'missions/' . $imageName;
+            }
+
+            LenteraRestorasiMission::create($data);
+
+            return redirect()->back()->with('success', 'Mission added successfully');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to add mission');
+        }
     }
 
     public function updateMission(Request $request, LenteraRestorasiMission $mission)
     {
         $request->validate([
-            'mission' => 'required|string'
+            'type' => 'required|in:caption,image',
+            'mission' => $request->type === 'caption' ? 'required|string' : 'nullable',
+            'image' => $request->type === 'image' ? 'nullable|image|max:2048' : 'nullable',
         ]);
 
-        $mission->update($request->all());
-        return redirect()->back()->with('success', 'Mission updated successfully');
+        try {
+            $data = [
+                'type' => $request->type,
+                'mission' => $request->type === 'image' ? 'Image Mission' : $request->mission
+            ];
+
+            if ($request->type === 'image') {
+                if ($request->hasFile('image')) {
+                    if ($mission->image) {
+                        $oldPath = $this->basePath . '/' . $mission->image;
+                        if (File::exists($oldPath)) {
+                            File::delete($oldPath);
+                        }
+                    }
+
+                    $image = $request->file('image');
+                    $imageName = time() . '_mission.' . $image->getClientOriginalExtension();
+                    $uploadPath = $this->basePath . '/missions';
+
+                    if (!File::exists($uploadPath)) {
+                        File::makeDirectory($uploadPath, 0777, true);
+                    }
+
+                    $image->move($uploadPath, $imageName);
+                    $data['image'] = 'missions/' . $imageName;
+                } else {
+                    $data['image'] = $mission->image;
+                }
+            } else {
+                if ($mission->image) {
+                    $oldPath = $this->basePath . '/' . $mission->image;
+                    if (File::exists($oldPath)) {
+                        File::delete($oldPath);
+                    }
+                }
+                $data['image'] = null;
+            }
+
+            $mission->update($data);
+
+            return redirect()->back()->with('success', 'Mission updated successfully');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to update mission');
+        }
     }
 
     public function destroyMission(LenteraRestorasiMission $mission)
     {
         try {
+            if ($mission->type === 'image' && $mission->image) {
+                $imagePath = $this->basePath . '/' . $mission->image;
+                if (File::exists($imagePath)) {
+                    File::delete($imagePath);
+                }
+            }
             $mission->delete();
             return redirect()->back()->with('success', 'Mission deleted successfully');
         } catch (\Exception $e) {
@@ -204,33 +333,157 @@ class LenteraRestorasiImageController extends Controller
     // Core Values Methods
     public function storeCoreValue(Request $request)
     {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string'
-        ]);
+        try {
+            $request->validate([
+                'type' => 'required|in:caption,image',
+                'title' => 'required|string|max:255',
+                'description' => $request->type === 'caption' ? 'required|string' : 'nullable',
+                'image' => $request->type === 'image' ? 'required|image|max:2048' : 'nullable',
+            ]);
 
-        LenteraRestorasiCoreValue::create($request->all());
-        return redirect()->back()->with('success', 'Core Value added successfully');
+            $data = [
+                'type' => $request->type,
+                'title' => $request->title,
+                'description' => $request->type === 'image' ? 'Image Core Value' : $request->description
+            ];
+
+            if ($request->type === 'image' && $request->hasFile('image')) {
+                $image = $request->file('image');
+                $imageName = time() . '_core_value.' . $image->getClientOriginalExtension();
+                $uploadPath = $this->basePath . '/core-values';
+
+                if (!File::exists($uploadPath)) {
+                    File::makeDirectory($uploadPath, 0777, true);
+                }
+
+                $image->move($uploadPath, $imageName);
+                $data['image'] = 'core-values/' . $imageName;
+            }
+
+            LenteraRestorasiCoreValue::create($data);
+
+            return redirect()->back()->with('success', 'Core Value added successfully');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to add core value');
+        }
     }
 
     public function updateCoreValue(Request $request, LenteraRestorasiCoreValue $coreValue)
     {
         $request->validate([
+            'type' => 'required|in:caption,image',
             'title' => 'required|string|max:255',
-            'description' => 'required|string'
+            'description' => $request->type === 'caption' ? 'required|string' : 'nullable',
+            'image' => $request->type === 'image' ? 'nullable|image|max:2048' : 'nullable',
         ]);
 
-        $coreValue->update($request->all());
-        return redirect()->back()->with('success', 'Core Value updated successfully');
+        try {
+            $data = [
+                'type' => $request->type,
+                'title' => $request->title,
+                'description' => $request->type === 'image' ? 'Image Core Value' : $request->description
+            ];
+
+            if ($request->type === 'image') {
+                if ($request->hasFile('image')) {
+                    if ($coreValue->image) {
+                        $oldPath = $this->basePath . '/' . $coreValue->image;
+                        if (File::exists($oldPath)) {
+                            File::delete($oldPath);
+                        }
+                    }
+
+                    $image = $request->file('image');
+                    $imageName = time() . '_core_value.' . $image->getClientOriginalExtension();
+                    $uploadPath = $this->basePath . '/core-values';
+
+                    if (!File::exists($uploadPath)) {
+                        File::makeDirectory($uploadPath, 0777, true);
+                    }
+
+                    $image->move($uploadPath, $imageName);
+                    $data['image'] = 'core-values/' . $imageName;
+                } else {
+                    $data['image'] = $coreValue->image;
+                }
+            } else {
+                if ($coreValue->image) {
+                    $oldPath = $this->basePath . '/' . $coreValue->image;
+                    if (File::exists($oldPath)) {
+                        File::delete($oldPath);
+                    }
+                }
+                $data['image'] = null;
+            }
+
+            $coreValue->update($data);
+
+            return redirect()->back()->with('success', 'Core Value updated successfully');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to update core value');
+        }
     }
 
     public function destroyCoreValue(LenteraRestorasiCoreValue $coreValue)
     {
         try {
+            if ($coreValue->type === 'image' && $coreValue->image) {
+                $imagePath = $this->basePath . '/' . $coreValue->image;
+                if (File::exists($imagePath)) {
+                    File::delete($imagePath);
+                }
+            }
             $coreValue->delete();
             return redirect()->back()->with('success', 'Core Value deleted successfully');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Failed to delete core value');
+        }
+    }
+
+    public function updateHimpunan(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'logo' => 'nullable|image|max:2048',
+            'yt_link' => 'nullable|string|url'
+        ]);
+
+        try {
+            $himpunan = Himpunan::first();
+            if (!$himpunan) {
+                $himpunan = new Himpunan();
+            }
+
+            if ($request->hasFile('logo')) {
+                if ($himpunan->logo) {
+                    $oldPath = $this->basePath . '/' . $himpunan->logo;
+                    if (File::exists($oldPath)) {
+                        File::delete($oldPath);
+                    }
+                }
+
+                $logo = $request->file('logo');
+                $logoName = time() . '_logo.' . $logo->getClientOriginalExtension();
+                $uploadPath = $this->basePath . '/himpunan';
+
+                if (!File::exists($uploadPath)) {
+                    File::makeDirectory($uploadPath, 0777, true);
+                }
+
+                $logo->move($uploadPath, $logoName);
+                $himpunan->logo = 'himpunan/' . $logoName;
+            }
+
+            $himpunan->name = $request->name;
+            $himpunan->description = $request->description;
+            $himpunan->yt_link = $request->yt_link;
+            $himpunan->save();
+
+            return redirect()->back()->with('success', 'Himpunan updated successfully');
+        } catch (\Exception $e) {
+            Log::error('Himpunan update error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to update himpunan');
         }
     }
 }

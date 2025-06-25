@@ -198,7 +198,6 @@ class ArticleController extends Controller
         return redirect()->back();
     }
 
-    // Update route binding to use slug
     public function show(Article $article)
     {
         return Inertia::render('Articles/Show', [
