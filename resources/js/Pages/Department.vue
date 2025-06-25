@@ -134,12 +134,40 @@ useIntersectionObserver();
                         ></div>
                     </button>
                 </div>
+
+                <!-- Department Logo Section -->
+                <div
+                    v-for="department in departments"
+                    :key="department.id"
+                    v-show="activeDepartment === department.id"
+                    class="mt-16 max-w-[200px] mx-auto float-in-section delay-300"
+                >
+                    <div class="relative aspect-square overflow-hidden">
+                        <img
+                            v-if="department.image"
+                            :src="department.image"
+                            :alt="department.dept_name"
+                            class="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
+                        />
+                        <div
+                            v-else
+                            class="w-full h-full flex items-center justify-center"
+                        >
+                            <span
+                                class="text-4xl font-bold"
+                                :style="{ color: 'var(--color-primary)' }"
+                            >
+                                {{ department.dept_name[0] }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
         <!-- Members Section -->
         <section
-            class="py-24 relative overflow-hidden"
+            class="py-8 relative overflow-hidden"
             :style="{
                 background: `linear-gradient(to bottom, white 0%, var(--color-background) 100%)`,
             }"
