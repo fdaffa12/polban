@@ -865,10 +865,6 @@ const submitHimpunan = () => {
                                         <option value="caption">Caption</option>
                                         <option value="image">Image</option>
                                     </select>
-                                    <InputError
-                                        :message="visionForm.errors.type"
-                                        class="mt-2"
-                                    />
                                 </div>
 
                                 <!-- Caption Input -->
@@ -882,10 +878,6 @@ const submitHimpunan = () => {
                                         theme="snow"
                                         class="mt-1"
                                         style="min-height: 200px"
-                                    />
-                                    <InputError
-                                        :message="visionForm.errors.vision"
-                                        class="mt-2"
                                     />
                                 </div>
 
@@ -906,29 +898,12 @@ const submitHimpunan = () => {
                                                 $event.target.files[0]
                                         "
                                         accept="image/*"
-                                        class="mt-1 block w-full"
+                                        class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                                         :required="
                                             !editingVision ||
                                             visionForm.type === 'image'
                                         "
                                     />
-                                    <InputError
-                                        :message="visionForm.errors.image"
-                                        class="mt-2"
-                                    />
-
-                                    <!-- Preview Image jika ada -->
-                                    <div v-if="visionForm.image" class="mt-2">
-                                        <img
-                                            :src="
-                                                URL.createObjectURL(
-                                                    visionForm.image
-                                                )
-                                            "
-                                            class="w-full h-48 object-cover rounded-lg"
-                                            alt="Preview"
-                                        />
-                                    </div>
                                 </div>
 
                                 <div class="mt-6 flex justify-end gap-4">
@@ -982,10 +957,6 @@ const submitHimpunan = () => {
                                         class="mt-1"
                                         style="min-height: 200px"
                                     />
-                                    <InputError
-                                        :message="missionForm.errors.mission"
-                                        class="mt-2"
-                                    />
                                 </div>
 
                                 <!-- Image Input -->
@@ -1005,50 +976,12 @@ const submitHimpunan = () => {
                                                 $event.target.files[0]
                                         "
                                         accept="image/*"
-                                        class="mt-1 block w-full"
+                                        class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                                         :required="
                                             !editingMission ||
                                             missionForm.type === 'image'
                                         "
                                     />
-                                    <InputError
-                                        :message="missionForm.errors.image"
-                                        class="mt-2"
-                                    />
-
-                                    <!-- Preview gambar yang sudah ada -->
-                                    <div
-                                        v-if="
-                                            editingMission &&
-                                            editingMission.image
-                                        "
-                                        class="mt-2"
-                                    >
-                                        <p class="text-sm text-gray-600 mb-2">
-                                            Current Image:
-                                        </p>
-                                        <img
-                                            :src="`/storage/${editingMission.image}`"
-                                            class="w-full h-48 object-cover rounded-lg"
-                                            alt="Current Mission Image"
-                                        />
-                                    </div>
-
-                                    <!-- Preview gambar baru -->
-                                    <div v-if="missionForm.image" class="mt-2">
-                                        <p class="text-sm text-gray-600 mb-2">
-                                            New Image Preview:
-                                        </p>
-                                        <img
-                                            :src="
-                                                URL.createObjectURL(
-                                                    missionForm.image
-                                                )
-                                            "
-                                            class="w-full h-48 object-cover rounded-lg"
-                                            alt="New Mission Image Preview"
-                                        />
-                                    </div>
                                 </div>
 
                                 <div class="mt-6 flex justify-end gap-4">
@@ -1090,10 +1023,6 @@ const submitHimpunan = () => {
                                         class="mt-1 block w-full"
                                         required
                                     />
-                                    <InputError
-                                        :message="coreValueForm.errors.title"
-                                        class="mt-2"
-                                    />
                                 </div>
 
                                 <!-- Tipe Core Value -->
@@ -1126,12 +1055,6 @@ const submitHimpunan = () => {
                                         class="mt-1"
                                         style="min-height: 200px"
                                     />
-                                    <InputError
-                                        :message="
-                                            coreValueForm.errors.description
-                                        "
-                                        class="mt-2"
-                                    />
                                 </div>
 
                                 <!-- Image Input -->
@@ -1151,53 +1074,12 @@ const submitHimpunan = () => {
                                                 $event.target.files[0]
                                         "
                                         accept="image/*"
-                                        class="mt-1 block w-full"
+                                        class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                                         :required="
                                             !editingCoreValue ||
                                             coreValueForm.type === 'image'
                                         "
                                     />
-                                    <InputError
-                                        :message="coreValueForm.errors.image"
-                                        class="mt-2"
-                                    />
-
-                                    <!-- Preview gambar yang sudah ada -->
-                                    <div
-                                        v-if="
-                                            editingCoreValue &&
-                                            editingCoreValue.image
-                                        "
-                                        class="mt-2"
-                                    >
-                                        <p class="text-sm text-gray-600 mb-2">
-                                            Current Image:
-                                        </p>
-                                        <img
-                                            :src="`/storage/${editingCoreValue.image}`"
-                                            class="w-full h-48 object-cover rounded-lg"
-                                            alt="Current Core Value Image"
-                                        />
-                                    </div>
-
-                                    <!-- Preview gambar baru -->
-                                    <div
-                                        v-if="coreValueForm.image"
-                                        class="mt-2"
-                                    >
-                                        <p class="text-sm text-gray-600 mb-2">
-                                            New Image Preview:
-                                        </p>
-                                        <img
-                                            :src="
-                                                URL.createObjectURL(
-                                                    coreValueForm.image
-                                                )
-                                            "
-                                            class="w-full h-48 object-cover rounded-lg"
-                                            alt="New Core Value Image Preview"
-                                        />
-                                    </div>
                                 </div>
 
                                 <div class="mt-6 flex justify-end gap-4">
