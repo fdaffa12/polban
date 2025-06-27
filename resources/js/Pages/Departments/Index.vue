@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, watch } from "vue";
-import { useForm } from "@inertiajs/vue3";
+import { useForm, Head } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Modal from "@/Components/Modal.vue";
 import InputLabel from "@/Components/InputLabel.vue";
@@ -319,6 +319,10 @@ watch(searchQuery, () => {
 
 <template>
     <AuthenticatedLayout title="Department Management">
+        <Head>
+            <title>Department Management</title>
+            <meta name="description" content="Manage your departments" />
+        </Head>
         <div class="py-6 sm:py-12">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
                 <div

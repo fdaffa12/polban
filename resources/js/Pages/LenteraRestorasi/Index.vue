@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue";
-import { useForm } from "@inertiajs/vue3";
+import { useForm, Head } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Modal from "@/Components/Modal.vue";
 import InputLabel from "@/Components/InputLabel.vue";
@@ -483,7 +483,11 @@ const submitHimpunan = () => {
 </script>
 
 <template>
-    <AuthenticatedLayout title="Lentera Restorasi">
+    <AuthenticatedLayout title="Himpunan Management">
+        <Head>
+            <title>Himpunan Management</title>
+            <meta name="description" content="Manage your himpunan" />
+        </Head>
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
                 <!-- Himpunan Section -->

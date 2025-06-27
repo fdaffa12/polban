@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue";
-import { useForm } from "@inertiajs/vue3";
+import { useForm, Head } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import TextInput from "@/Components/TextInput.vue";
@@ -50,6 +50,10 @@ const submit = () => {
 
 <template>
     <AuthenticatedLayout title="Pengaturan Website">
+        <Head>
+            <title>Pengaturan Website</title>
+            <meta name="description" content="Manage your website settings" />
+        </Head>
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div

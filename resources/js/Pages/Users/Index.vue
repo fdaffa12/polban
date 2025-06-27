@@ -1,8 +1,7 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { Link, router } from "@inertiajs/vue3";
+import { Link, router, Head, useForm } from "@inertiajs/vue3";
 import { ref } from "vue";
-import { useForm } from "@inertiajs/vue3";
 import Modal from "@/Components/Modal.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import TextInput from "@/Components/TextInput.vue";
@@ -83,6 +82,10 @@ const deleteUser = (user) => {
 
 <template>
     <AuthenticatedLayout title="User Management">
+        <Head>
+            <title>User Management</title>
+            <meta name="description" content="Manage your users" />
+        </Head>
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
                 <div class="flex justify-between items-center mb-6">

@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, watch } from "vue";
-import { useForm } from "@inertiajs/vue3";
+import { useForm, Head } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Modal from "@/Components/Modal.vue";
 import InputLabel from "@/Components/InputLabel.vue";
@@ -300,6 +300,10 @@ const getEventsForDay = (day) => {
 
 <template>
     <AuthenticatedLayout title="Event Management">
+        <Head>
+            <title>Event Management</title>
+            <meta name="description" content="Manage your events" />
+        </Head>
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
                 <div

@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed } from "vue";
-import { router, useForm } from "@inertiajs/vue3";
+import { router, useForm, Head } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { useToast } from "vue-toastification";
 import { Eye, FileText, Trash2, Edit } from "lucide-vue-next";
@@ -153,6 +153,10 @@ const removeFile = (fieldName) => {
 
 <template>
     <AuthenticatedLayout title="SPJ Proposal">
+        <Head>
+            <title>SPJ Proposal</title>
+            <meta name="description" content="Manage your SPJ proposals" />
+        </Head>
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <!-- Statistik Cards -->

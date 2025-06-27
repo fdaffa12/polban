@@ -338,7 +338,7 @@ const closeArticleModal = () => {
 <template>
     <AuthenticatedLayout title="Articles Management">
         <Head>
-            <title>Articles Management - Laravel</title>
+            <title>Articles Management</title>
             <meta
                 name="description"
                 content="Manage your articles and categories"

@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue";
-import { router } from "@inertiajs/vue3";
+import { router, Head } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import { Edit, Trash2, Eye, FileText } from "lucide-vue-next";
@@ -142,7 +142,21 @@ const getProgressColor = (progress) => {
 </script>
 
 <template>
-    <AuthenticatedLayout title="Manajemen Proposal Kegiatan">
+    <AuthenticatedLayout title="Proposal Management">
+        <Head>
+            <title>Proposal Management</title>
+            <meta
+                name="description"
+                content="Manage your proposals and categories"
+            />
+        </Head>
+
+        <template #header>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                Proposal Management
+            </h2>
+        </template>
+
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
                 <div
@@ -390,10 +404,3 @@ const getProgressColor = (progress) => {
         </div>
     </AuthenticatedLayout>
 </template>
-
-<style>
-/* Tambahkan animasi untuk progress bar */
-.h-2.5 {
-    transition: width 0.5s ease-in-out;
-}
-</style>

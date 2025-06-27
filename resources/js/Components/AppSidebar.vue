@@ -115,35 +115,6 @@ defineProps<{
         class="flex-1 bg-white transition-all duration-300 overflow-y-auto"
         :collapsible="isCollapsed ? 'icon' : 'none'"
     >
-        <SidebarHeader>
-            <SidebarMenu>
-                <!-- Only show dropdown when sidebar is expanded -->
-                <SidebarMenuItem v-if="!isCollapsed">
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <SidebarMenuButton class="w-full">
-                                <div
-                                    class="flex items-center justify-between w-full px-2"
-                                >
-                                    <span class="truncate"
-                                        >Select Workspace</span
-                                    >
-                                    <ChevronDown class="w-4 h-4" />
-                                </div>
-                            </SidebarMenuButton>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent class="w-56">
-                            <DropdownMenuItem class="cursor-pointer">
-                                <span>Acme Inc</span>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem class="cursor-pointer">
-                                <span>Acme Corp.</span>
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                </SidebarMenuItem>
-            </SidebarMenu>
-        </SidebarHeader>
         <SidebarContent>
             <SidebarGroup>
                 <SidebarGroupLabel
