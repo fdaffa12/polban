@@ -25,6 +25,7 @@ class DepartmentController extends Controller
         $request->validate([
             'dept_name' => 'required|string|max:255',
             'image' => 'required|image|max:10248',
+            'desc' => 'nullable|string|max:1000',
         ]);
 
         $path = $request->file('image')->store('departments', 'public');
@@ -32,6 +33,7 @@ class DepartmentController extends Controller
         Department::create([
             'dept_name' => $request->dept_name,
             'image' => $path,
+            'desc' => $request->desc,
         ]);
 
         return redirect()->back()->with('success', 'Department added successfully');
@@ -42,6 +44,7 @@ class DepartmentController extends Controller
         $request->validate([
             'dept_name' => 'required|string|max:255',
             'image' => 'nullable|image|max:10248',
+            'desc' => 'nullable|string|max:1000',
         ]);
 
         if ($request->hasFile('image')) {
@@ -53,6 +56,7 @@ class DepartmentController extends Controller
         }
 
         $department->dept_name = $request->dept_name;
+        $department->desc = $request->desc;
         $department->save();
 
         return redirect()->back()->with('success', 'Department updated successfully');

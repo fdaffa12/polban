@@ -25,6 +25,7 @@ const showDepartmentModal = ref(false);
 const editingDepartment = ref(null);
 const departmentForm = useForm({
     dept_name: "",
+    desc: "",
     image: null,
 });
 
@@ -32,6 +33,7 @@ const openDepartmentModal = (department = null) => {
     editingDepartment.value = department;
     if (department) {
         departmentForm.dept_name = department.dept_name;
+        departmentForm.desc = department.desc;
         departmentForm.image = null;
     } else {
         departmentForm.reset();
@@ -572,6 +574,21 @@ watch(searchQuery, () => {
                             />
                             <InputError
                                 :message="departmentForm.errors.dept_name"
+                                class="mt-2"
+                            />
+                        </div>
+
+                        <div>
+                            <InputLabel for="desc" value="Description" />
+                            <textarea
+                                id="desc"
+                                v-model="departmentForm.desc"
+                                rows="4"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                placeholder="Enter department description..."
+                            ></textarea>
+                            <InputError
+                                :message="departmentForm.errors.desc"
                                 class="mt-2"
                             />
                         </div>
