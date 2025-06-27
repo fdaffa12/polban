@@ -342,6 +342,7 @@ class HomeController extends Controller
                 return [
                     'id' => $department->id,
                     'dept_name' => $department->dept_name,
+                    'desc' => $department->desc,
                     'image' => $department->image ? "/storage/{$department->image}" : null,
                     // Board of Department Members
                     'board_members' => $department->members
