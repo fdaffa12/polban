@@ -61,7 +61,7 @@ useIntersectionObserver();
 </script>
 
 <template>
-    <GuestLayout title="Portal Berita">
+    <GuestLayout title="News & Updates">
         <!-- Main Container -->
         <section class="relative py-12" :style="{ backgroundColor: 'white' }">
             <div class="container-custom">
@@ -74,7 +74,7 @@ useIntersectionObserver();
                                 class="text-3xl lg:text-4xl xl:text-5xl font-bold mb-4"
                                 :style="{ color: 'var(--text-color)' }"
                             >
-                                Portal Berita
+                                News & Updates
                             </h1>
                             <p
                                 class="text-base lg:text-lg mb-6"

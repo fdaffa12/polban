@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { router } from "@inertiajs/vue3";
 import GuestLayout from "@/Layouts/GuestLayout.vue";
 import { useIntersectionObserver } from "@/composables/useIntersectionObserver";
@@ -20,6 +20,7 @@ const props = defineProps({
 });
 
 const currentMonth = ref(new Date());
+const isVisible = ref(true);
 
 const calendarDays = computed(() => {
     const start = startOfMonth(currentMonth.value);
@@ -34,10 +35,14 @@ const getEventsForDay = (day) => {
 };
 
 const navigateMonth = (direction) => {
-    currentMonth.value =
-        direction === "next"
-            ? addMonths(currentMonth.value, 1)
-            : subMonths(currentMonth.value, 1);
+    isVisible.value = false;
+    setTimeout(() => {
+        currentMonth.value =
+            direction === "next"
+                ? addMonths(currentMonth.value, 1)
+                : subMonths(currentMonth.value, 1);
+        isVisible.value = true;
+    }, 100);
 };
 
 const goToEventDetail = (eventId) => {
@@ -135,6 +140,11 @@ const getStatusText = (status) => {
     }
 };
 
+// Tambahkan onMounted untuk memastikan elemen terlihat saat pertama kali dimuat
+onMounted(() => {
+    isVisible.value = true;
+});
+
 useIntersectionObserver();
 </script>
 
@@ -146,7 +156,7 @@ useIntersectionObserver();
                 <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
                     <!-- Header Calendar -->
                     <div
-                        class="bg-gradient-to-r from-[var(--color-primary-dark)] to-[var(--color-primary)] p-4 sm:p-6 float-in-section delay-100"
+                        class="bg-gradient-to-r from-[var(--color-primary-dark)] to-[var(--color-primary)] p-4 sm:p-6"
                     >
                         <div
                             class="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
@@ -179,9 +189,13 @@ useIntersectionObserver();
                     </div>
 
                     <!-- Calendar Grid -->
-                    <div class="p-2 sm:p-6 float-in-section delay-200">
+                    <div class="p-0 sm:p-6">
                         <div
-                            class="grid grid-cols-7 gap-[1px] bg-[var(--color-primary-dark)] rounded-xl overflow-hidden"
+                            :class="{
+                                'opacity-0': !isVisible,
+                                'opacity-100': isVisible,
+                            }"
+                            class="grid grid-cols-7 bg-[var(--color-primary-dark)] rounded-xl overflow-hidden transition-opacity duration-200"
                         >
                             <!-- Day headers -->
                             <div
@@ -195,7 +209,7 @@ useIntersectionObserver();
                                     'Sat',
                                 ]"
                                 :key="day"
-                                class="bg-[var(--color-primary-dark)] text-white py-2 sm:py-3 text-center text-xs sm:text-sm font-medium float-in-section"
+                                class="bg-[var(--color-primary-dark)] text-white py-1 sm:py-3 text-center text-[10px] sm:text-sm font-medium float-in-section"
                                 :class="`delay-${(index + 3) * 100}`"
                             >
                                 <!-- Responsive day display -->
@@ -217,10 +231,10 @@ useIntersectionObserver();
                             >
                                 <!-- Date number -->
                                 <div
-                                    class="flex items-center justify-between mb-1 sm:mb-2 p-1 sm:p-3"
+                                    class="flex items-center justify-between mb-0 sm:mb-2 p-1 sm:p-3"
                                 >
                                     <span
-                                        class="text-xs sm:text-sm font-medium inline-flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 rounded-full transition-all duration-200"
+                                        class="text-[10px] sm:text-sm font-medium inline-flex items-center justify-center w-4 h-4 sm:w-8 sm:h-8 rounded-full transition-all duration-200"
                                         :class="{
                                             'bg-[var(--color-primary)] text-white shadow-md':
                                                 isToday(day),
@@ -234,7 +248,7 @@ useIntersectionObserver();
 
                                 <!-- Events untuk hari ini -->
                                 <div
-                                    class="px-1 sm:px-3 pb-1 sm:pb-3 flex flex-col gap-1 sm:gap-2"
+                                    class="px-1 sm:px-3 pb-1 sm:pb-3 flex flex-col gap-0.5 sm:gap-2"
                                 >
                                     <template
                                         v-if="getEventsForDay(day).length > 0"
@@ -253,18 +267,18 @@ useIntersectionObserver();
                                                 showEventPopup($event, event)
                                             "
                                             @mouseleave="hideEventPopup"
-                                            class="group relative p-1.5 sm:p-2 rounded-lg cursor-pointer transition-all duration-300 hover:transform hover:scale-[1.02] hover:-translate-y-0.5"
+                                            class="group relative p-0.5 sm:p-2 rounded-lg cursor-pointer transition-all duration-300 hover:transform hover:scale-[1.02] hover:-translate-y-0.5"
                                             :style="{
                                                 backgroundColor: `${getStatusBackgroundColor(
                                                     event.status
                                                 )}20`,
-                                                borderLeft: `3px solid ${getStatusColor(
+                                                borderLeft: `2px solid ${getStatusColor(
                                                     event.status
                                                 )}`,
                                             }"
                                         >
                                             <div
-                                                class="font-medium text-[10px] sm:text-xs truncate group-hover:font-bold"
+                                                class="font-medium text-[8px] sm:text-xs truncate group-hover:font-bold"
                                                 :style="{
                                                     color: getStatusColor(
                                                         event.status
@@ -274,7 +288,7 @@ useIntersectionObserver();
                                                 {{ event.event_name }}
                                             </div>
                                             <div
-                                                class="text-[8px] sm:text-[10px] truncate"
+                                                class="text-[6px] sm:text-[10px] truncate"
                                                 :style="{
                                                     color: `${getStatusColor(
                                                         event.status
@@ -305,7 +319,7 @@ useIntersectionObserver();
                                             v-if="
                                                 getEventsForDay(day).length > 3
                                             "
-                                            class="text-[10px] sm:text-xs text-[var(--color-primary)] font-medium px-2"
+                                            class="text-[8px] sm:text-xs text-[var(--color-primary)] font-medium px-1 sm:px-2"
                                         >
                                             +{{
                                                 getEventsForDay(day).length - 3
@@ -463,6 +477,24 @@ useIntersectionObserver();
 }
 
 /* Responsive grid adjustments */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0 !important;
+}
+
+.calendar-cell {
+    min-height: 100px; /* Default minimum height for mobile */
+    height: 100%;
+    border-bottom: 1px solid var(--color-primary-dark);
+    border-right: 1px solid var(--color-primary-dark);
+}
+
+.calendar-cell:nth-child(7n) {
+    border-right: none;
+}
+
+/* Adjust cell height based on screen size */
 @media (min-width: 640px) {
     .calendar-cell {
         min-height: 120px;
@@ -472,6 +504,22 @@ useIntersectionObserver();
 @media (min-width: 768px) {
     .calendar-cell {
         min-height: 140px;
+    }
+}
+
+/* Adjust event text size and spacing for mobile */
+@media (max-width: 639px) {
+    .calendar-cell > div:first-child {
+        padding: 0.25rem !important;
+    }
+
+    .calendar-cell > div:last-child {
+        padding: 0.25rem !important;
+    }
+
+    .group {
+        padding: 0.25rem !important;
+        margin-bottom: 0.125rem;
     }
 }
 
@@ -493,12 +541,12 @@ useIntersectionObserver();
 }
 
 .float-in-section {
-    opacity: 0;
-    transform: translateY(50px);
+    opacity: 1;
+    transform: none;
 }
 
 .float-in-section.visible {
-    animation: floatIn 0.8s ease-out forwards;
+    animation: none;
 }
 
 .delay-100 {
@@ -537,5 +585,14 @@ useIntersectionObserver();
 * {
     backface-visibility: hidden;
     -webkit-font-smoothing: antialiased;
+}
+
+/* Tambahkan transisi yang lebih smooth */
+.grid {
+    transition: all 0.3s ease-in-out;
+}
+
+.calendar-cell {
+    transition: all 0.3s ease-in-out;
 }
 </style>

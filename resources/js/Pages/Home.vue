@@ -92,38 +92,55 @@ const getYoutubeEmbedUrl = (url) => {
         </div>
 
         <!-- About Us Section (now Himpunan Section) -->
-        <section class="py-20 bg-white relative overflow-hidden">
-            <!-- Decorative Elements -->
-            <div class="absolute inset-0 pointer-events-none float-in-section">
-                <div
-                    class="absolute top-0 left-0 w-64 h-64 bg-blue-50 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"
-                ></div>
-                <div
-                    class="absolute top-0 right-0 w-64 h-64 bg-purple-50 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"
-                ></div>
-                <div
-                    class="absolute -bottom-8 left-20 w-64 h-64 bg-pink-50 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"
-                ></div>
+        <section class="py-24 bg-white relative">
+            <!-- Separator Section -->
+            <div class="h-10 bg-white relative">
+                <div class="absolute -top-5 left-0 right-0">
+                    <div class="container-custom">
+                        <div class="flex items-center justify-center">
+                            <div
+                                class="flex-1 h-[1px] bg-gradient-to-r from-transparent via-[var(--color-primary)] to-transparent"
+                            ></div>
+                            <div
+                                class="mx-4 w-8 h-8 rounded-full bg-[var(--color-primary)] flex items-center justify-center shadow-lg transform hover:scale-110 transition-transform duration-300"
+                            >
+                                <svg
+                                    class="w-4 h-4 text-white"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
+                                    />
+                                </svg>
+                            </div>
+                            <div
+                                class="flex-1 h-[1px] bg-gradient-to-r from-transparent via-[var(--color-primary)] to-transparent"
+                            ></div>
+                        </div>
+                    </div>
+                </div>
             </div>
-
-            <div class="container-custom relative z-10 float-in-section">
+            <div class="container-custom relative z-10">
                 <div
                     class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
                 >
                     <!-- Image Column -->
-                    <div class="relative float-in-section">
-                        <!-- Decorative Border -->
-                        <div class="about-image-glow"></div>
-                        <div class="relative h-[400px]">
+                    <div class="relative">
+                        <div class="h-[400px] flex items-center justify-center">
                             <img
                                 v-if="himpunan?.logo"
                                 :src="himpunan.logo"
                                 :alt="himpunan.name"
-                                class="w-full h-full object-contain rounded-xl shadow-lg transform transition-transform duration-500 hover:scale-105"
+                                class="w-full h-full object-contain transform transition-transform duration-500 hover:scale-105"
                             />
                             <div
                                 v-else
-                                class="w-full h-full bg-gray-100 rounded-xl flex items-center justify-center"
+                                class="w-full h-full flex items-center justify-center"
                             >
                                 <span class="text-gray-400"
                                     >No image available</span
@@ -133,11 +150,8 @@ const getYoutubeEmbedUrl = (url) => {
                     </div>
 
                     <!-- Content Column -->
-                    <div class="space-y-8 float-in-section">
+                    <div class="space-y-8">
                         <div class="relative">
-                            <!-- Decorative Line -->
-                            <div class="about-content-line"></div>
-
                             <h2
                                 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6"
                             >
@@ -152,7 +166,10 @@ const getYoutubeEmbedUrl = (url) => {
                             ></div>
                         </div>
 
-                        <Link href="/ruang-optima" class="about-button">
+                        <Link
+                            href="/himpunan"
+                            class="inline-flex items-center px-6 py-3 text-base font-medium rounded-lg text-white bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] transition-colors duration-300"
+                        >
                             Baca Selengkapnya
                             <svg
                                 class="w-5 h-5 ml-2"
@@ -919,7 +936,7 @@ const getYoutubeEmbedUrl = (url) => {
                         </span>
                     </h3>
                     <p class="text-lg text-gray-600">
-                        Get to know the departments that make up HMJTK Polban
+                        Let’s get closer with HMJTK Polban Teams
                     </p>
                 </div>
 

@@ -18,7 +18,7 @@ const mobileMenuItems = [
         text: "About",
         dropdown: true,
         items: [
-            { text: navTitle, href: "/ruang-optima" },
+            { text: navTitle, href: "/himpunan" },
             { text: "History", href: "/about" },
         ],
     },
@@ -77,7 +77,7 @@ const isActiveParentRoute = (paths) => {
 
 // Add computed properties for each section
 const isAboutActive = computed(() => {
-    return isActiveParentRoute(["/ruang-optima", "/about"]);
+    return isActiveParentRoute(["/himpunan", "/about"]);
 });
 
 const isActivitiesActive = computed(() => {
@@ -110,6 +110,30 @@ const auth = computed(() => usePage().props.auth);
                             :src="`/storage/${settings.logo}`"
                             :alt="settings?.nama || 'Logo'"
                         />
+                        <!-- Tambahkan tulisan HMJTK -->
+                        <div class="ml-3 hidden md:block">
+                            <h1
+                                class="text-2xl font-bold"
+                                style="color: var(--color-background)"
+                            >
+                                HMJTK
+                            </h1>
+                            <p
+                                class="text-xs opacity-80"
+                                style="color: var(--color-background)"
+                            >
+                                HIMPUNAN MAHASISWA JURUSAN TEKNIK KIMIA
+                            </p>
+                        </div>
+                        <!-- Tampilan mobile -->
+                        <div class="ml-3 md:hidden">
+                            <h1
+                                class="text-lg font-bold"
+                                style="color: var(--color-background)"
+                            >
+                                HMJTK
+                            </h1>
+                        </div>
                     </Link>
                 </div>
 
@@ -151,11 +175,11 @@ const auth = computed(() => usePage().props.auth);
                         <div v-show="aboutDropdownOpen" class="dropdown-menu">
                             <div class="py-1">
                                 <Link
-                                    href="/ruang-optima"
+                                    href="/himpunan"
                                     class="dropdown-item"
                                     :class="{
                                         'dropdown-item-active':
-                                            isActiveRoute('/ruang-optima'),
+                                            isActiveRoute('/himpunan'),
                                     }"
                                 >
                                     {{ navTitle }}

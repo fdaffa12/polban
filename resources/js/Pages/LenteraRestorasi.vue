@@ -83,7 +83,7 @@ useIntersectionObserver();
                     <h2
                         class="text-4xl md:text-5xl font-bold text-[var(--text-color)] leading-tight"
                     >
-                        {{ himpunan?.name || "HMJTK Polban" }} Logo
+                        Cabinet Logo
                     </h2>
                     <div
                         class="w-20 h-1 bg-[var(--color-primary)] mx-auto mt-6 rounded-full"
@@ -144,7 +144,7 @@ useIntersectionObserver();
                             class="px-3"
                         >
                             <div
-                                class="relative aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer"
+                                class="relative aspect-[4/3] cursor-pointer"
                                 @click="setActiveImage(index)"
                             >
                                 <img
@@ -178,9 +178,6 @@ useIntersectionObserver();
                             class="text-[var(--light-text)] italic leading-relaxed"
                         >
                             {{ content.images[activeImage].description }}
-                        </p>
-                        <p v-else class="text-gray-500 italic">
-                            Tidak ada deskripsi untuk gambar ini
                         </p>
                     </div>
                 </div>
@@ -394,7 +391,6 @@ useIntersectionObserver();
 }
 
 .gallery-carousel :deep(.carousel__slide--active) {
-    @apply shadow-2xl;
     opacity: 1;
     scale: 1;
 }
@@ -563,13 +559,11 @@ useIntersectionObserver();
 .gallery-carousel :deep(.carousel__slide) {
     @apply transform transition-all duration-500 px-2 md:px-3;
     opacity: 0.4;
-    filter: blur(1px);
     scale: 0.9;
 }
 
 .gallery-carousel :deep(.carousel__slide--active) {
     opacity: 1;
-    filter: blur(0);
     scale: 1;
 }
 
@@ -585,7 +579,6 @@ useIntersectionObserver();
 @media (max-width: 768px) {
     .gallery-carousel :deep(.carousel__slide) {
         opacity: 0.8;
-        filter: none;
         scale: 0.95;
     }
 

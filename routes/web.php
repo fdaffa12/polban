@@ -66,8 +66,8 @@ Route::middleware('auth')->group(function () {
         ->name('lentera-restorasi.core-value.destroy');
 
     // Image routes last
-    Route::get('/lentera-restorasi', [LenteraRestorasiImageController::class, 'index'])
-        ->name('lentera-restorasi');
+    Route::get('/himpunan-management', [LenteraRestorasiImageController::class, 'index'])
+        ->name('himpunan-management');
     Route::post('/lentera-restorasi', [LenteraRestorasiImageController::class, 'store'])
         ->name('lentera-restorasi.store');
     Route::post('/lentera-restorasi/{image}', [LenteraRestorasiImageController::class, 'update'])
@@ -138,7 +138,7 @@ Route::middleware('auth')->group(function () {
 
 // New about route
 Route::get('/about', [HomeController::class, 'about'])->name('about');
-Route::get('/ruang-optima', [HomeController::class, 'lenteraRestorasi'])->name('ruang-optima');
+Route::get('/himpunan', [HomeController::class, 'lenteraRestorasi'])->name('himpunan');
 Route::get('/department', [HomeController::class, 'department'])->name('department');
 
 require __DIR__ . '/auth.php';

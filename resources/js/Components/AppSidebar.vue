@@ -43,6 +43,8 @@ interface MenuItem {
     children?: MenuItem[];
 }
 
+const navTitle = computed(() => page.props.navTitle);
+
 // Menu items with nested structure
 const items: MenuItem[] = [
     {
@@ -66,9 +68,9 @@ const items: MenuItem[] = [
         icon: Info, // Icon informasi untuk About Us
     },
     {
-        title: "Lentera Restorasi",
-        url: route("lentera-restorasi"),
-        icon: Mail, // Icon surat untuk Lentera Restorasi
+        title: "Himpunan Management",
+        url: route("himpunan-management"),
+        icon: Mail, // Icon surat untuk Himpunan Management
     },
     {
         title: "Departement",
