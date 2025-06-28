@@ -169,6 +169,11 @@ const getFileExtension = (filePath) => {
     if (!filePath) return "";
     return filePath.split(".").pop().toLowerCase();
 };
+
+const getDownloadFilename = (item) => {
+    const extension = getFileExtension(item.file_path);
+    return `${item.title}.${extension}`;
+};
 </script>
 
 <template>
@@ -323,7 +328,11 @@ const getFileExtension = (filePath) => {
                                             <template v-else>
                                                 <a
                                                     :href="`/storage/${item.file_path}`"
-                                                    target="_blank"
+                                                    :download="
+                                                        getDownloadFilename(
+                                                            item
+                                                        )
+                                                    "
                                                     class="text-blue-600 hover:text-blue-800"
                                                 >
                                                     Download
@@ -536,6 +545,28 @@ const getFileExtension = (filePath) => {
                     <h2 class="text-lg font-medium text-gray-900">
                         Preview File: {{ previewFile?.title }}
                     </h2>
+                    <div class="flex items-center space-x-2">
+                        <a
+                            :href="`/storage/${previewFile.file_path}`"
+                            :download="getDownloadFilename(previewFile)"
+                            class="text-gray-400 hover:text-gray-500"
+                        >
+                            <span class="sr-only">Download</span>
+                            <svg
+                                class="h-6 w-6"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                                />
+                            </svg>
+                        </a>
+                    </div>
                     <button
                         @click="showPreviewModal = false"
                         class="text-gray-400 hover:text-gray-500"

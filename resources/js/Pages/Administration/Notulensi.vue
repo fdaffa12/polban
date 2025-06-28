@@ -169,6 +169,13 @@ const getFileExtension = (filePath) => {
     if (!filePath) return "";
     return filePath.split(".").pop().toLowerCase();
 };
+
+// Add new method to get download filename
+const getDownloadFilename = (file) => {
+    if (!file) return "";
+    const extension = getFileExtension(file.file_path);
+    return `${file.title}.${extension}`;
+};
 </script>
 
 <template>
@@ -323,7 +330,11 @@ const getFileExtension = (filePath) => {
                                             <template v-else>
                                                 <a
                                                     :href="`/storage/${item.file_path}`"
-                                                    target="_blank"
+                                                    :download="
+                                                        getDownloadFilename(
+                                                            item
+                                                        )
+                                                    "
                                                     class="text-blue-600 hover:text-blue-800"
                                                 >
                                                     Download
@@ -536,25 +547,51 @@ const getFileExtension = (filePath) => {
                     <h2 class="text-lg font-medium text-gray-900">
                         Preview File: {{ previewFile?.title }}
                     </h2>
-                    <button
-                        @click="showPreviewModal = false"
-                        class="text-gray-400 hover:text-gray-500"
-                    >
-                        <span class="sr-only">Close</span>
-                        <svg
-                            class="h-6 w-6"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
+                    <div class="flex items-center space-x-2">
+                        <!-- Download button -->
+                        <a
+                            v-if="previewFile"
+                            :href="`/storage/${previewFile.file_path}`"
+                            :download="getDownloadFilename(previewFile)"
+                            class="text-gray-400 hover:text-gray-500"
+                            title="Download file"
                         >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M6 18L18 6M6 6l12 12"
-                            />
-                        </svg>
-                    </button>
+                            <span class="sr-only">Download</span>
+                            <svg
+                                class="h-6 w-6"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                                />
+                            </svg>
+                        </a>
+                        <!-- Close button -->
+                        <button
+                            @click="showPreviewModal = false"
+                            class="text-gray-400 hover:text-gray-500"
+                        >
+                            <span class="sr-only">Close</span>
+                            <svg
+                                class="h-6 w-6"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12"
+                                />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
 
                 <div v-if="previewFile" class="mt-4">
