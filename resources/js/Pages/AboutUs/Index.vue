@@ -7,11 +7,14 @@ import TextInput from "@/Components/TextInput.vue";
 import InputError from "@/Components/InputError.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import { QuillEditor } from "@vueup/vue-quill";
+import { useToast } from "vue-toastification";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
 
 const props = defineProps({
     aboutUs: Object,
 });
+
+const toast = useToast();
 
 const form = useForm({
     au_title: props.aboutUs?.au_title ?? "",
@@ -49,7 +52,10 @@ const submit = () => {
     form.post(route("about-us.update"), {
         preserveScroll: true,
         onSuccess: () => {
-            // Show success message
+            toast.success("About Us berhasil diperbarui");
+        },
+        onError: () => {
+            toast.error("Gagal memperbarui About Us");
         },
     });
 };
@@ -64,15 +70,11 @@ const removeImage = (index) => {
                 if (response?.props?.flash?.success) {
                     props.aboutUs.au_multiple_image =
                         response?.props?.flash?.images || [];
-                    if (window.$toast) {
-                        window.$toast.success("Image removed successfully");
-                    }
+                    toast.success("Image removed successfully");
                 }
             },
             onError: () => {
-                if (window.$toast) {
-                    window.$toast.error("Failed to remove image");
-                }
+                toast.error("Failed to remove image");
             },
         }
     );

@@ -79,10 +79,16 @@ useIntersectionObserver();
                     </div>
 
                     <!-- Responsive Carousel -->
-                    <div class="float-in-section delay-200">
+                    <div
+                        class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 float-in-section delay-200"
+                    >
                         <Carousel
                             v-if="about.au_multiple_image?.length"
                             :items-to-show="4"
+                            :wrap-around="true"
+                            :transition="500"
+                            :snap-align="'center'"
+                            :autoplay="3000"
                             :breakpoints="{
                                 320: {
                                     itemsToShow: 1,
@@ -101,35 +107,73 @@ useIntersectionObserver();
                                     snapAlign: 'center',
                                 },
                             }"
-                            :wrap-around="true"
-                            :transition="500"
-                            :autoplay="3000"
-                            class="gallery-carousel"
+                            class="-mx-2"
                         >
+                            <template #addons>
+                                <Navigation v-slot="{ next, prev }">
+                                    <button
+                                        @click="next"
+                                        class="absolute top-1/2 -right-4 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full bg-white shadow-md hover:bg-[var(--color-background)] disabled:opacity-50 disabled:cursor-not-allowed z-10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:ring-offset-2"
+                                    >
+                                        <svg
+                                            class="w-6 h-6 text-[var(--color-primary-dark)]"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M9 5l7 7-7 7"
+                                            />
+                                        </svg>
+                                    </button>
+                                    <button
+                                        @click="prev"
+                                        class="absolute top-1/2 -left-4 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full bg-white shadow-md hover:bg-[var(--color-background)] disabled:opacity-50 disabled:cursor-not-allowed z-10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:ring-offset-2"
+                                    >
+                                        <svg
+                                            class="w-6 h-6 text-[var(--color-primary-dark)]"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M15 19l-7-7 7-7"
+                                            />
+                                        </svg>
+                                    </button>
+                                </Navigation>
+                            </template>
+
                             <Slide
                                 v-for="(
                                     image, index
                                 ) in about.au_multiple_image"
                                 :key="index"
-                                class="px-3"
+                                class="px-2 py-3"
                             >
                                 <div
-                                    class="relative aspect-[4/5] rounded-2xl overflow-hidden group"
+                                    class="group h-full flex flex-col items-center"
                                 >
-                                    <img
-                                        :src="image"
-                                        :alt="`Gallery Image ${index + 1}`"
-                                        class="w-full h-full object-cover transform transition duration-700 group-hover:scale-110"
-                                    />
                                     <div
-                                        class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"
-                                    ></div>
+                                        class="relative w-full aspect-[4/3] overflow-hidden rounded-2xl flex items-center justify-center"
+                                    >
+                                        <img
+                                            :src="image"
+                                            :alt="`Gallery Image ${index + 1}`"
+                                            class="max-w-full max-h-full object-contain transition-transform duration-300 group-hover:scale-105"
+                                        />
+                                        <div
+                                            class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"
+                                        ></div>
+                                    </div>
                                 </div>
                             </Slide>
-
-                            <template #addons>
-                                <Navigation />
-                            </template>
                         </Carousel>
                     </div>
                 </div>
