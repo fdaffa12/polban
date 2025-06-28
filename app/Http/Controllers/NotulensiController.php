@@ -9,10 +9,25 @@ use Illuminate\Support\Facades\Storage;
 
 class NotulensiController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $query = Notulensi::query();
+
+        // Pencarian
+        if ($request->has('search')) {
+            $searchTerm = $request->search;
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('title', 'like', "%{$searchTerm}%")
+                    ->orWhere('description', 'like', "%{$searchTerm}%");
+            });
+        }
+
+        // Paginasi
+        $perPage = $request->input('per_page', 10);
+        $notulensi = $query->latest()->paginate($perPage);
+
         return Inertia::render('Notulensi/Index', [
-            'notulensi' => Notulensi::latest()->get()
+            'notulensi' => $notulensi
         ]);
     }
 

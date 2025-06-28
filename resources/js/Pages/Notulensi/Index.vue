@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useForm, router } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head } from "@inertiajs/vue3";
@@ -13,7 +13,7 @@ import Swal from "sweetalert2";
 
 const toast = useToast();
 const props = defineProps({
-    notulensi: Array,
+    notulensi: Object,
 });
 
 const showCreateModal = ref(false);
@@ -21,6 +21,21 @@ const showEditModal = ref(false);
 const showPreviewModal = ref(false);
 const editingNotulensi = ref(null);
 const previewFile = ref(null);
+const search = ref("");
+const perPage = ref(10);
+
+// Computed property untuk filter data
+const filteredNotulensi = computed(() => {
+    if (!props.notulensi?.data) return [];
+    if (!search.value) return props.notulensi.data;
+
+    const searchTerm = search.value.toLowerCase();
+    return props.notulensi.data.filter(
+        (item) =>
+            (item.title?.toLowerCase() || "").includes(searchTerm) ||
+            (item.description?.toLowerCase() || "").includes(searchTerm)
+    );
+});
 
 const form = useForm({
     title: "",
@@ -33,6 +48,42 @@ const editForm = useForm({
     file: null,
     description: "",
 });
+
+const getFileTypeLabel = (filePath) => {
+    const type = getFileType(filePath);
+    switch (type) {
+        case "image":
+            return "Gambar";
+        case "video":
+            return "Video";
+        case "pdf":
+            return "PDF";
+        default:
+            return "Dokumen";
+    }
+};
+
+const getFileTypeIcon = (filePath) => {
+    const type = getFileType(filePath);
+    switch (type) {
+        case "image":
+            return "🖼️";
+        case "video":
+            return "🎥";
+        case "pdf":
+            return "📄";
+        default:
+            return "📎";
+    }
+};
+
+const handlePerPageChange = () => {
+    router.get(
+        route("notulensi.index"),
+        { search: search.value, per_page: perPage.value },
+        { preserveState: true }
+    );
+};
 
 const openCreateModal = () => {
     form.reset();
@@ -101,7 +152,7 @@ const getFileType = (filePath) => {
     if (!filePath) return "other";
     const extension = filePath.split(".").pop().toLowerCase();
     const imageTypes = ["jpg", "jpeg", "png", "gif", "webp"];
-    const videoTypes = ["mp4", "webm", "ogg"];
+    const videoTypes = ["mp4", "webm", "ogg", "mkv"];
 
     if (imageTypes.includes(extension)) return "image";
     if (videoTypes.includes(extension)) return "video";
@@ -112,6 +163,11 @@ const getFileType = (filePath) => {
 const openPreview = (file) => {
     previewFile.value = file;
     showPreviewModal.value = true;
+};
+
+const getFileExtension = (filePath) => {
+    if (!filePath) return "";
+    return filePath.split(".").pop().toLowerCase();
 };
 </script>
 
@@ -125,14 +181,24 @@ const openPreview = (file) => {
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6">
-                        <!-- Header Section -->
-                        <div class="flex justify-between items-center mb-6">
+                        <!-- Header Section with Search -->
+                        <div
+                            class="flex flex-col sm:flex-row justify-between items-center mb-6 space-y-4 sm:space-y-0"
+                        >
                             <h2 class="text-2xl font-semibold text-gray-800">
                                 Daftar Notulensi
                             </h2>
-                            <PrimaryButton @click="openCreateModal"
-                                >Tambah Notulensi</PrimaryButton
-                            >
+                            <div class="flex items-center space-x-4">
+                                <TextInput
+                                    v-model="search"
+                                    type="search"
+                                    placeholder="Cari notulensi..."
+                                    class="w-64"
+                                />
+                                <PrimaryButton @click="openCreateModal">
+                                    Tambah Notulensi
+                                </PrimaryButton>
+                            </div>
                         </div>
 
                         <!-- Table -->
@@ -153,6 +219,11 @@ const openPreview = (file) => {
                                         <th
                                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                                         >
+                                            Ekstensi File
+                                        </th>
+                                        <th
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                        >
                                             File
                                         </th>
                                         <th
@@ -166,7 +237,7 @@ const openPreview = (file) => {
                                     class="bg-white divide-y divide-gray-200"
                                 >
                                     <tr
-                                        v-for="item in notulensi"
+                                        v-for="item in filteredNotulensi"
                                         :key="item.id"
                                     >
                                         <td class="px-6 py-4 whitespace-nowrap">
@@ -174,6 +245,59 @@ const openPreview = (file) => {
                                         </td>
                                         <td class="px-6 py-4">
                                             {{ item.description }}
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span
+                                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize"
+                                                :class="{
+                                                    'bg-blue-100 text-blue-800':
+                                                        [
+                                                            'jpg',
+                                                            'jpeg',
+                                                            'png',
+                                                            'gif',
+                                                        ].includes(
+                                                            getFileExtension(
+                                                                item.file_path
+                                                            )
+                                                        ),
+                                                    'bg-green-100 text-green-800':
+                                                        [
+                                                            'mp4',
+                                                            'mkv',
+                                                            'webm',
+                                                        ].includes(
+                                                            getFileExtension(
+                                                                item.file_path
+                                                            )
+                                                        ),
+                                                    'bg-red-100 text-red-800':
+                                                        getFileExtension(
+                                                            item.file_path
+                                                        ) === 'pdf',
+                                                    'bg-gray-100 text-gray-800':
+                                                        ![
+                                                            'jpg',
+                                                            'jpeg',
+                                                            'png',
+                                                            'gif',
+                                                            'mp4',
+                                                            'mkv',
+                                                            'webm',
+                                                            'pdf',
+                                                        ].includes(
+                                                            getFileExtension(
+                                                                item.file_path
+                                                            )
+                                                        ),
+                                                }"
+                                            >
+                                                {{
+                                                    getFileExtension(
+                                                        item.file_path
+                                                    )
+                                                }}
+                                            </span>
                                         </td>
                                         <td class="px-6 py-4">
                                             <template
@@ -223,8 +347,55 @@ const openPreview = (file) => {
                                             </button>
                                         </td>
                                     </tr>
+                                    <tr v-if="filteredNotulensi.length === 0">
+                                        <td
+                                            colspan="5"
+                                            class="px-6 py-4 text-center text-gray-500"
+                                        >
+                                            Tidak ada data yang ditemukan
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
+                        </div>
+
+                        <!-- Pagination -->
+                        <div class="mt-4 flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-sm text-gray-700"
+                                    >Tampilkan</span
+                                >
+                                <select
+                                    v-model="perPage"
+                                    class="border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                    @change="handlePerPageChange"
+                                >
+                                    <option value="10">10</option>
+                                    <option value="25">25</option>
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
+                                </select>
+                                <span class="text-sm text-gray-700"
+                                    >per halaman</span
+                                >
+                            </div>
+
+                            <div class="flex items-center space-x-2">
+                                <button
+                                    v-for="link in notulensi.links"
+                                    :key="link.label"
+                                    class="px-3 py-1 rounded"
+                                    :class="{
+                                        'bg-indigo-500 text-white': link.active,
+                                        'text-gray-700 hover:bg-gray-100':
+                                            !link.active,
+                                        'opacity-50 cursor-not-allowed':
+                                            !link.url,
+                                    }"
+                                    @click="link.url && router.get(link.url)"
+                                    v-html="link.label"
+                                ></button>
+                            </div>
                         </div>
                     </div>
                 </div>
