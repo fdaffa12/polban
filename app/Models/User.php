@@ -50,7 +50,9 @@ class User extends Authenticatable
         'SEKERTARIS_KABINET' => 'Sekertaris Kabinet',
         'SEKERTARIS_UMUM_MPH' => 'Sekertaris Umum MPH',
         'MEDKOM' => 'Medkom',
-        'FUNGSIONARIS' => 'Fungsionaris'
+        'FUNGSIONARIS' => 'Fungsionaris',
+        'STAFF' => 'Staff',
+        'MSDK/BIRIN' => 'MSDK/BIRIN',
     ];
 
     /**
