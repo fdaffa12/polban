@@ -15,6 +15,7 @@ const toast = useToast();
 const props = defineProps({
     rapotHmjt: Object,
     users: Array,
+    canManageAll: Boolean,
 });
 
 const showCreateModal = ref(false);
@@ -170,9 +171,16 @@ const getFileExtension = (filePath) => {
                         >
                             <h2 class="text-2xl font-semibold text-gray-800">
                                 Daftar Rapot HMJTK
+                                <span
+                                    v-if="!canManageAll"
+                                    class="text-sm font-normal text-gray-600"
+                                >
+                                    (Data Pribadi)
+                                </span>
                             </h2>
                             <div class="flex items-center space-x-4">
                                 <TextInput
+                                    v-if="canManageAll"
                                     v-model="search"
                                     type="search"
                                     placeholder="Cari rapot..."
@@ -358,6 +366,7 @@ const getFileExtension = (filePath) => {
                             v-model="form.user_id"
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                             required
+                            :disabled="!canManageAll && users.length === 1"
                         >
                             <option value="">Pilih Nama</option>
                             <option
@@ -479,6 +488,7 @@ const getFileExtension = (filePath) => {
                             v-model="editForm.user_id"
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                             required
+                            :disabled="!canManageAll && users.length === 1"
                         >
                             <option value="">Pilih Nama</option>
                             <option

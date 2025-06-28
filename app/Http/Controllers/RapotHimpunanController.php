@@ -8,12 +8,25 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
 
 class RapotHimpunanController extends Controller
 {
+    private function canManageAll($user)
+    {
+        return in_array($user->role, ['BPH', 'SEKERTARIS_KABINET']);
+    }
+
     public function rapotHmjtIndex(Request $request)
     {
         $query = RapotHimpunan::with('user')->select('rapot_himpunans.*');
+
+        // Filter berdasarkan role
+        $user = Auth::user();
+        if (!$this->canManageAll($user)) {
+            // Jika bukan BPH atau Sekretaris Kabinet, hanya tampilkan data milik sendiri
+            $query->where('user_id', $user->id);
+        }
 
         // Pencarian
         if ($request->has('search')) {
@@ -32,16 +45,33 @@ class RapotHimpunanController extends Controller
         $rapotHmjt = $query->latest()->paginate($perPage);
 
         // Get users for dropdown
-        $users = User::select('id', 'name')->get();
+        // Jika BPH atau Sekretaris Kabinet, tampilkan semua user
+        // Jika tidak, hanya tampilkan user yang sedang login
+        $usersQuery = User::select('id', 'name');
+        if (!$this->canManageAll($user)) {
+            $usersQuery->where('id', $user->id);
+        }
+        $users = $usersQuery->get();
 
         return Inertia::render('Rapot/Index', [
             'rapotHmjt' => $rapotHmjt,
-            'users' => $users
+            'users' => $users,
+            'canManageAll' => $this->canManageAll($user),
         ]);
     }
 
     public function rapotHmjtStore(Request $request)
     {
+        $user = Auth::user();
+
+        // Validasi akses
+        if (!$this->canManageAll($user)) {
+            // Jika bukan BPH atau Sekretaris Kabinet, hanya bisa input data sendiri
+            if ($request->user_id != $user->id) {
+                abort(403, 'Anda hanya dapat menambahkan data untuk diri sendiri.');
+            }
+        }
+
         $request->validate([
             'user_id' => 'required|exists:users,id',
             'jabatan' => 'required|string|max:255',
@@ -77,6 +107,16 @@ class RapotHimpunanController extends Controller
 
     public function rapotHmjtUpdate(Request $request, RapotHimpunan $rapotHmjt)
     {
+        $user = Auth::user();
+
+        // Validasi akses
+        if (!$this->canManageAll($user)) {
+            // Jika bukan BPH atau Sekretaris Kabinet, hanya bisa edit data sendiri
+            if ($rapotHmjt->user_id != $user->id || $request->user_id != $user->id) {
+                abort(403, 'Anda hanya dapat mengubah data milik sendiri.');
+            }
+        }
+
         $request->validate([
             'user_id' => 'required|exists:users,id',
             'jabatan' => 'required|string|max:255',
@@ -120,6 +160,16 @@ class RapotHimpunanController extends Controller
 
     public function rapotHmjtDestroy(RapotHimpunan $rapotHmjt)
     {
+        $user = Auth::user();
+
+        // Validasi akses
+        if (!$this->canManageAll($user)) {
+            // Jika bukan BPH atau Sekretaris Kabinet, hanya bisa hapus data sendiri
+            if ($rapotHmjt->user_id != $user->id) {
+                abort(403, 'Anda hanya dapat menghapus data milik sendiri.');
+            }
+        }
+
         // Hapus file
         Storage::disk('public')->delete($rapotHmjt->file_path);
 
