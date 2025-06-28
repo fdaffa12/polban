@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import { router } from "@inertiajs/vue3";
 import GuestLayout from "@/Layouts/GuestLayout.vue";
 import { useIntersectionObserver } from "@/composables/useIntersectionObserver";
@@ -13,28 +13,68 @@ const props = defineProps({
 });
 
 const activeDepartment = ref(props.activeDepartment || null);
-const displayedCount = ref(5);
 const loading = ref(false);
+const allEvents = ref(props.events || []);
+const displayCount = ref(5);
+
+// Debug logs for initial data
+console.log("Initial props.events:", props.events);
+console.log("Initial allEvents:", allEvents.value);
+console.log("Initial displayCount:", displayCount.value);
 
 // Computed properties
 const displayedEvents = computed(() => {
-    return props.events.slice(0, displayedCount.value);
+    const events = allEvents.value.slice(0, displayCount.value);
+    console.log("displayedEvents computed - count:", displayCount.value);
+    console.log("displayedEvents computed - events:", events);
+    return events;
 });
 
 const canLoadMore = computed(() => {
-    return displayedCount.value < props.events.length;
+    const can = displayCount.value < allEvents.value.length;
+    console.log("canLoadMore computed:", {
+        displayCount: displayCount.value,
+        totalEvents: allEvents.value.length,
+        canLoadMore: can,
+    });
+    return can;
 });
 
 const popularEvents = computed(() => props.popularEvents);
 
 // Methods
 const filterByDepartment = (departmentId) => {
+    console.log("filterByDepartment called:", departmentId);
     activeDepartment.value = departmentId;
-    displayedCount.value = 5; // Reset to initial count
+    displayCount.value = 5; // Reset to initial count
     if (departmentId) {
-        router.get(`/our-event/department/${departmentId}`);
+        router.get(
+            `/our-event/department/${departmentId}`,
+            {},
+            {
+                onSuccess: () => {
+                    console.log(
+                        "Department filter success - new events:",
+                        props.events
+                    );
+                    allEvents.value = props.events;
+                },
+            }
+        );
     } else {
-        router.get("/our-event");
+        router.get(
+            "/our-event",
+            {},
+            {
+                onSuccess: () => {
+                    console.log(
+                        "All events filter success - new events:",
+                        props.events
+                    );
+                    allEvents.value = props.events;
+                },
+            }
+        );
     }
 };
 
@@ -43,11 +83,29 @@ const goToEvent = (eventId) => {
 };
 
 const loadMore = () => {
+    console.log("loadMore called - current state:", {
+        loading: loading.value,
+        canLoadMore: canLoadMore.value,
+        currentCount: displayCount.value,
+        totalEvents: allEvents.value.length,
+    });
+
+    if (loading.value || !canLoadMore.value) return;
+
     loading.value = true;
     setTimeout(() => {
-        displayedCount.value += 5;
+        const newCount = Math.min(
+            displayCount.value + 5,
+            allEvents.value.length
+        );
+        console.log("Updating displayCount:", {
+            old: displayCount.value,
+            new: newCount,
+            totalEvents: allEvents.value.length,
+        });
+        displayCount.value = newCount;
         loading.value = false;
-    }, 500); // Simulate loading delay
+    }, 300);
 };
 
 const formatDate = (dateString) => {
@@ -86,9 +144,26 @@ const getStatusText = (status) => {
     }
 };
 
-// Reset displayed count when events change
+// Watch for props.events changes
+watch(
+    () => props.events,
+    (newEvents) => {
+        console.log("props.events changed:", {
+            oldEvents: allEvents.value,
+            newEvents: newEvents,
+        });
+        allEvents.value = newEvents;
+        displayCount.value = 5; // Reset display count when events change
+    },
+    { immediate: true }
+);
+
 onMounted(() => {
-    displayedCount.value = 5;
+    console.log("Component mounted - current state:", {
+        events: allEvents.value,
+        displayCount: displayCount.value,
+        displayedEvents: displayedEvents.value,
+    });
 });
 
 useIntersectionObserver();
@@ -197,9 +272,8 @@ useIntersectionObserver();
                         <div class="space-y-4 lg:space-y-6 mb-8">
                             <article
                                 v-for="(event, index) in displayedEvents"
-                                :key="event.id"
-                                class="group bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer float-in-section"
-                                :class="`delay-${(index + 3) * 100}`"
+                                :key="event.id + '-' + index"
+                                class="group bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer"
                                 @click="goToEvent(event.id)"
                             >
                                 <div class="flex flex-col md:flex-row">
@@ -353,10 +427,7 @@ useIntersectionObserver();
                         </div>
 
                         <!-- Load More Button -->
-                        <div
-                            v-if="canLoadMore"
-                            class="text-center float-in-section delay-200"
-                        >
+                        <div v-if="canLoadMore" class="text-center">
                             <button
                                 @click="loadMore"
                                 :disabled="loading"
@@ -421,7 +492,24 @@ useIntersectionObserver();
     }
 }
 
-/* Tambahkan style untuk float-in animation */
+/* Animation styles */
+.event-list-move,
+.event-list-enter-active,
+.event-list-leave-active {
+    transition: all 0.5s ease;
+}
+
+.event-list-enter-from,
+.event-list-leave-to {
+    opacity: 0;
+    transform: translateY(30px);
+}
+
+.event-list-leave-active {
+    position: absolute;
+}
+
+/* Float in animation */
 :deep(.float-in-section) {
     will-change: transform, opacity;
 }
@@ -474,7 +562,7 @@ useIntersectionObserver();
     animation-delay: 0.6s;
 }
 
-/* Pastikan animasi berjalan smooth */
+/* Ensure smooth animations */
 * {
     backface-visibility: hidden;
     -webkit-font-smoothing: antialiased;

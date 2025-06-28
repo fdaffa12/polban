@@ -662,16 +662,14 @@ watch(searchQuery, () => {
                                 class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
                                 required
                             >
-                                <option value="board_of_dept">
-                                    Ketua Departemen
-                                </option>
+                                <option value="board_of_dept">Ketua</option>
                                 <option value="vice_board_of_dept">
-                                    Wakil Ketua Departemen
+                                    Wakil
                                 </option>
                                 <option value="section_head_dept">
-                                    Kepala Divisi
+                                    Sekertaris/Bendahara
                                 </option>
-                                <option value="staff">Staff</option>
+                                <option value="staff">Kadiv</option>
                             </select>
                             <InputError
                                 :message="memberForm.errors.job_type"

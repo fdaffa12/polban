@@ -82,7 +82,7 @@ const getYoutubeEmbedUrl = (url) => {
                     <h1
                         class="text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-tight"
                     >
-                        Himpunan Mahasiswa Teknik Kimia
+                        Himpunan Mahasiswa Jurusan Teknik Kimia
                         <span
                             style="font-size: 30px"
                             class="text-[var(--color-primary)] block mt-2"

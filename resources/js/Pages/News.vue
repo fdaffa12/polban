@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import { router } from "@inertiajs/vue3";
 import GuestLayout from "@/Layouts/GuestLayout.vue";
 import { useIntersectionObserver } from "@/composables/useIntersectionObserver";
@@ -9,20 +9,21 @@ const props = defineProps({
     articles: Array,
     activeCategory: Number,
     pagination: Object,
-    popularPosts: Array, // Add this line
+    popularPosts: Array,
 });
 
 const activeCategory = ref(props.activeCategory || null);
-const displayedCount = ref(5);
 const loading = ref(false);
+const allArticles = ref(props.articles || []);
+const displayCount = ref(5);
 
 // Computed properties
 const displayedArticles = computed(() => {
-    return props.articles.slice(0, displayedCount.value);
+    return allArticles.value.slice(0, displayCount.value);
 });
 
 const canLoadMore = computed(() => {
-    return displayedCount.value < props.articles.length;
+    return displayCount.value < allArticles.value.length;
 });
 
 const popularPosts = computed(() => props.popularPosts);
@@ -30,11 +31,27 @@ const popularPosts = computed(() => props.popularPosts);
 // Methods
 const filterByCategory = (categoryId) => {
     activeCategory.value = categoryId;
-    displayedCount.value = 5; // Reset to initial count
+    displayCount.value = 5; // Reset to initial count
     if (categoryId) {
-        router.get(route("news.category", { categoryId }));
+        router.get(
+            route("news.category", { categoryId }),
+            {},
+            {
+                onSuccess: () => {
+                    allArticles.value = props.articles;
+                },
+            }
+        );
     } else {
-        router.get(route("news"));
+        router.get(
+            route("news"),
+            {},
+            {
+                onSuccess: () => {
+                    allArticles.value = props.articles;
+                },
+            }
+        );
     }
 };
 
@@ -45,17 +62,27 @@ const goToArticle = (slug) => {
 };
 
 const loadMore = () => {
+    if (loading.value || !canLoadMore.value) return;
+
     loading.value = true;
     setTimeout(() => {
-        displayedCount.value += 5;
+        displayCount.value = Math.min(
+            displayCount.value + 5,
+            allArticles.value.length
+        );
         loading.value = false;
-    }, 500); // Simulate loading delay
+    }, 300);
 };
 
-// Reset displayed count when articles change
-onMounted(() => {
-    displayedCount.value = 5;
-});
+// Watch for props.articles changes
+watch(
+    () => props.articles,
+    (newArticles) => {
+        allArticles.value = newArticles;
+        displayCount.value = 5; // Reset display count when articles change
+    },
+    { immediate: true }
+);
 
 useIntersectionObserver();
 </script>
@@ -69,7 +96,7 @@ useIntersectionObserver();
                     <!-- Left Column (Main Content) -->
                     <div>
                         <!-- Title and Description -->
-                        <div class="mb-8 float-in-section delay-100">
+                        <div class="mb-8">
                             <h1
                                 class="text-3xl lg:text-4xl xl:text-5xl font-bold mb-4"
                                 :style="{ color: 'var(--text-color)' }"
@@ -86,7 +113,7 @@ useIntersectionObserver();
                         </div>
 
                         <!-- Category Navigation -->
-                        <div class="mb-8 float-in-section delay-200">
+                        <div class="mb-8">
                             <div class="flex flex-wrap gap-2 lg:gap-3">
                                 <button
                                     @click="filterByCategory(null)"
@@ -108,15 +135,6 @@ useIntersectionObserver();
                                     <span class="relative z-10"
                                         >Semua Berita</span
                                     >
-                                    <div
-                                        v-if="activeCategory"
-                                        class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                                        :style="{
-                                            backgroundColor:
-                                                'var(--color-secondary)',
-                                            opacity: '0.1',
-                                        }"
-                                    ></div>
                                 </button>
                                 <button
                                     v-for="category in categories"
@@ -143,18 +161,6 @@ useIntersectionObserver();
                                             category.articles_count
                                         }})
                                     </span>
-                                    <div
-                                        v-if="
-                                            Number(activeCategory) !==
-                                            Number(category.id)
-                                        "
-                                        class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                                        :style="{
-                                            backgroundColor:
-                                                'var(--color-secondary)',
-                                            opacity: '0.1',
-                                        }"
-                                    ></div>
                                 </button>
                             </div>
                         </div>
@@ -163,9 +169,8 @@ useIntersectionObserver();
                         <div class="space-y-4 lg:space-y-6 mb-8">
                             <article
                                 v-for="(article, index) in displayedArticles"
-                                :key="article.id"
-                                class="group bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer float-in-section"
-                                :class="`delay-${(index + 3) * 100}`"
+                                :key="article.id + '-' + index"
+                                class="group bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer"
                                 @click="goToArticle(article.slug)"
                             >
                                 <div class="flex flex-col md:flex-row">
@@ -243,10 +248,7 @@ useIntersectionObserver();
                         </div>
 
                         <!-- Load More Button -->
-                        <div
-                            v-if="canLoadMore"
-                            class="text-center float-in-section delay-200"
-                        >
+                        <div v-if="canLoadMore" class="text-center">
                             <button
                                 @click="loadMore"
                                 :disabled="loading"
@@ -262,7 +264,7 @@ useIntersectionObserver();
                     </div>
 
                     <!-- Right Column (Sidebar) -->
-                    <div class="float-in-section delay-300">
+                    <div>
                         <div
                             class="bg-white rounded-2xl shadow-lg p-4 lg:p-6 lg:sticky lg:top-8"
                         >
@@ -274,10 +276,9 @@ useIntersectionObserver();
                             </h2>
                             <div class="space-y-3 lg:space-y-4">
                                 <article
-                                    v-for="(post, index) in popularPosts"
+                                    v-for="post in popularPosts"
                                     :key="post.id"
-                                    class="group cursor-pointer border-b border-gray-100 pb-3 lg:pb-4 last:border-b-0 last:pb-0 float-in-section"
-                                    :class="`delay-${(index + 4) * 100}`"
+                                    class="group cursor-pointer border-b border-gray-100 pb-3 lg:pb-4 last:border-b-0 last:pb-0"
                                     @click="goToArticle(post.slug)"
                                 >
                                     <div class="flex gap-3 lg:gap-4">
@@ -380,78 +381,21 @@ useIntersectionObserver();
     }
 }
 
-/* Memastikan grid 2 kolom di desktop */
 @media (min-width: 1024px) {
     .container-custom {
         padding: 0 3rem;
     }
 }
 
-/* Tambahkan style untuk float-in animation */
-:deep(.float-in-section) {
-    will-change: transform, opacity;
+.grid-cols-layout {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: 1fr;
 }
 
-:deep(.float-in-section.visible) {
-    will-change: auto;
-}
-
-@keyframes floatIn {
-    0% {
-        opacity: 0;
-        transform: translateY(50px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.float-in-section {
-    opacity: 0;
-    transform: translateY(50px);
-}
-
-.float-in-section.visible {
-    animation: floatIn 0.8s ease-out forwards;
-}
-
-.delay-100 {
-    animation-delay: 0.1s;
-}
-
-.delay-200 {
-    animation-delay: 0.2s;
-}
-
-.delay-300 {
-    animation-delay: 0.3s;
-}
-
-.delay-400 {
-    animation-delay: 0.4s;
-}
-
-.delay-500 {
-    animation-delay: 0.5s;
-}
-
-.delay-600 {
-    animation-delay: 0.6s;
-}
-
-/* Pastikan animasi berjalan smooth */
-* {
-    backface-visibility: hidden;
-    -webkit-font-smoothing: antialiased;
-}
-
-/* Grid layout untuk desktop */
 @media (min-width: 1024px) {
     .grid-cols-layout {
-        display: grid;
         grid-template-columns: 2fr 1fr;
-        gap: 2rem;
     }
 }
 </style>

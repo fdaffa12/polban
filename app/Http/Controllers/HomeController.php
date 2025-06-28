@@ -336,7 +336,7 @@ class HomeController extends Controller
                 $query->orderBy('position');
             }
         ])
-            ->orderByRaw("CASE WHEN dept_name = 'TRIMITRA' THEN 0 ELSE 1 END")
+            ->orderByRaw("CASE WHEN dept_name = 'BPH' THEN 0 ELSE 1 END")
             ->get()
             ->map(function ($department) {
                 return [
@@ -578,7 +578,9 @@ class HomeController extends Controller
 
     public function events()
     {
-        $departments = Department::withCount(['events'])->get();
+        $departments = Department::withCount(['events'])
+            ->where('dept_name', '!=', 'BPH')
+            ->get();
 
         $events = Event::with(['department', 'dates'])
             ->latest()
@@ -652,7 +654,9 @@ class HomeController extends Controller
 
     public function eventsByDepartment($departmentId)
     {
-        $departments = Department::withCount(['events'])->get();
+        $departments = Department::withCount(['events'])
+            ->where('dept_name', '!=', 'BPH')
+            ->get();
 
         $events = Event::with(['department', 'dates'])
             ->where('department_id', $departmentId)
