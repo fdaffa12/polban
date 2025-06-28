@@ -16,7 +16,7 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\ProposalSpjController;
 use App\Http\Controllers\SettingController;
-use App\Http\Controllers\NotulensiController;
+use App\Http\Controllers\AdministrationController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -135,11 +135,16 @@ Route::middleware('auth')->group(function () {
     Route::post('/dept-logos/{deptLogo}', [DepartmentController::class, 'updateDeptLogo'])->name('dept-logos.update');
     Route::delete('/dept-logos/{deptLogo}', [DepartmentController::class, 'destroyDeptLogo'])->name('dept-logos.destroy');
 
-    // Notulensi routes
-    Route::get('/notulensi', [NotulensiController::class, 'index'])->name('notulensi.index');
-    Route::post('/notulensi', [NotulensiController::class, 'store'])->name('notulensi.store');
-    Route::post('/notulensi/{notulensi}', [NotulensiController::class, 'update'])->name('notulensi.update');
-    Route::delete('/notulensi/{notulensi}', [NotulensiController::class, 'destroy'])->name('notulensi.destroy');
+    // Administration routes
+    Route::get('/notulensi', [AdministrationController::class, 'notulensiIndex'])->name('notulensi.index');
+    Route::post('/notulensi', [AdministrationController::class, 'notulensiStore'])->name('notulensi.store');
+    Route::post('/notulensi/{notulensi}', [AdministrationController::class, 'notulensiUpdate'])->name('notulensi.update');
+    Route::delete('/notulensi/{notulensi}', [AdministrationController::class, 'notulensiDestroy'])->name('notulensi.destroy');
+    Route::get('/format-administrasi', [AdministrationController::class, 'formatAdministrasiIndex'])->name('format-administrasi.index');
+    Route::post('/format-administrasi', [AdministrationController::class, 'formatAdministrasiStore'])->name('format-administrasi.store');
+    Route::post('/format-administrasi/{formatAdministrasi}', [AdministrationController::class, 'formatAdministrasiUpdate'])->name('format-administrasi.update');
+    Route::delete('/format-administrasi/{formatAdministrasi}', [AdministrationController::class, 'formatAdministrasiDestroy'])->name('format-administrasi.destroy');
+
 
 });
 

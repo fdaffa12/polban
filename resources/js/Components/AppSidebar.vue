@@ -71,7 +71,7 @@ const items: MenuItem[] = [
             },
             {
                 title: "Format Administrasi",
-                url: "#",
+                url: route("format-administrasi.index"),
                 icon: FileText,
             },
             {
