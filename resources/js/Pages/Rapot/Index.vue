@@ -186,7 +186,10 @@ const getFileExtension = (filePath) => {
                                     placeholder="Cari rapot..."
                                     class="w-64"
                                 />
-                                <PrimaryButton @click="openCreateModal">
+                                <PrimaryButton
+                                    v-if="canManageAll"
+                                    @click="openCreateModal"
+                                >
                                     Tambah Rapot
                                 </PrimaryButton>
                             </div>
@@ -223,6 +226,7 @@ const getFileExtension = (filePath) => {
                                             File
                                         </th>
                                         <th
+                                            v-if="canManageAll"
                                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                                         >
                                             Aksi
@@ -281,6 +285,7 @@ const getFileExtension = (filePath) => {
                                             </template>
                                         </td>
                                         <td
+                                            v-if="canManageAll"
                                             class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"
                                         >
                                             <button
