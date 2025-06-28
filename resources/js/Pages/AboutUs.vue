@@ -113,39 +113,47 @@ useIntersectionObserver();
                                 <Navigation v-slot="{ next, prev }">
                                     <button
                                         @click="next"
-                                        class="absolute top-1/2 -right-4 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full bg-white shadow-md hover:bg-[var(--color-background)] disabled:opacity-50 disabled:cursor-not-allowed z-10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:ring-offset-2"
+                                        class="absolute top-1/2 -right-4 -translate-y-1/2 w-12 h-12 flex items-center justify-center rounded-full bg-white/80 backdrop-blur-sm shadow-lg hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed z-10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:ring-offset-2"
                                     >
-                                        <svg
-                                            class="w-6 h-6 text-[var(--color-primary-dark)]"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor"
+                                        <div
+                                            class="bg-[var(--color-primary)]/10 rounded-full p-2"
                                         >
-                                            <path
-                                                stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                                stroke-width="2"
-                                                d="M9 5l7 7-7 7"
-                                            />
-                                        </svg>
+                                            <svg
+                                                class="w-6 h-6 text-[var(--color-primary-dark)]"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke="currentColor"
+                                            >
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    stroke-width="2"
+                                                    d="M9 5l7 7-7 7"
+                                                />
+                                            </svg>
+                                        </div>
                                     </button>
                                     <button
                                         @click="prev"
-                                        class="absolute top-1/2 -left-4 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full bg-white shadow-md hover:bg-[var(--color-background)] disabled:opacity-50 disabled:cursor-not-allowed z-10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:ring-offset-2"
+                                        class="absolute top-1/2 -left-4 -translate-y-1/2 w-12 h-12 flex items-center justify-center rounded-full bg-white/80 backdrop-blur-sm shadow-lg hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed z-10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:ring-offset-2"
                                     >
-                                        <svg
-                                            class="w-6 h-6 text-[var(--color-primary-dark)]"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor"
+                                        <div
+                                            class="bg-[var(--color-primary)]/10 rounded-full p-2"
                                         >
-                                            <path
-                                                stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                                stroke-width="2"
-                                                d="M15 19l-7-7 7-7"
-                                            />
-                                        </svg>
+                                            <svg
+                                                class="w-6 h-6 text-[var(--color-primary-dark)]"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke="currentColor"
+                                            >
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    stroke-width="2"
+                                                    d="M15 19l-7-7 7-7"
+                                                />
+                                            </svg>
+                                        </div>
                                     </button>
                                 </Navigation>
                             </template>
@@ -155,13 +163,20 @@ useIntersectionObserver();
                                     image, index
                                 ) in about.au_multiple_image"
                                 :key="index"
+                                v-slot="{ isActive }"
                                 class="px-2 py-3"
                             >
                                 <div
                                     class="group h-full flex flex-col items-center"
                                 >
                                     <div
-                                        class="relative w-full aspect-[4/3] overflow-hidden rounded-2xl flex items-center justify-center"
+                                        class="relative w-full aspect-[4/3] overflow-hidden rounded-2xl flex items-center justify-center transition-all duration-300"
+                                        :class="{
+                                            'opacity-40 blur-sm scale-90':
+                                                !isActive,
+                                            'opacity-100 blur-0 scale-100':
+                                                isActive,
+                                        }"
                                     >
                                         <img
                                             :src="image"
