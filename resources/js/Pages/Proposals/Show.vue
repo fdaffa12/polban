@@ -122,22 +122,22 @@ const documentTabs = [
     { id: "details", name: "Detail Proposal", icon: FileText },
     {
         id: "doc_proposal",
-        name: "Dokumen Proposal",
+        name: "Proposal/TOR",
         path: props.proposal.doc_proposal,
     },
     {
         id: "doc_berkegiatan_ketuplak",
-        name: "Dokumen Berkegiatan Ketuplak",
+        name: "Surat Pernyataan Berkegiatan",
         path: props.proposal.doc_berkegiatan_ketuplak,
     },
     {
         id: "doc_ormawa",
-        name: "Dokumen Ormawa",
+        name: "Surat Pernyataan Kahim",
         path: props.proposal.doc_ormawa,
     },
     {
         id: "doc_sarana_prasarana",
-        name: "Dokumen Sarana Prasarana",
+        name: "Surat Sarpras",
         path: props.proposal.doc_sarana_prasarana,
     },
 ];

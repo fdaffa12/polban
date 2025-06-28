@@ -721,7 +721,7 @@ const handlePosterUpload = (event) => {
                                 <div>
                                     <InputLabel
                                         for="doc_proposal"
-                                        value="Dokumen Proposal (PDF)"
+                                        value="Proposal/TOR (PDF)"
                                     />
                                     <div class="flex items-center gap-2">
                                         <input
@@ -768,7 +768,7 @@ const handlePosterUpload = (event) => {
                                 <div>
                                     <InputLabel
                                         for="doc_berkegiatan_ketuplak"
-                                        value="Dokumen Berkegiatan Ketuplak (PDF)"
+                                        value="Surat Pernyataan Berkegiatan (PDF)"
                                     />
                                     <div class="flex items-center gap-2">
                                         <input
@@ -819,7 +819,7 @@ const handlePosterUpload = (event) => {
                                 <div>
                                     <InputLabel
                                         for="doc_ormawa"
-                                        value="Dokumen Ormawa (PDF)"
+                                        value="Surat Pernyataan Kahim (PDF)"
                                     />
                                     <div class="flex items-center gap-2">
                                         <input
@@ -866,7 +866,7 @@ const handlePosterUpload = (event) => {
                                 <div>
                                     <InputLabel
                                         for="doc_sarana_prasarana"
-                                        value="Dokumen Sarana Prasarana (PDF)"
+                                        value="Surat Sarpras (PDF)"
                                     />
                                     <div class="flex items-center gap-2">
                                         <input
