@@ -1,0 +1,528 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Notulensi;
+use App\Models\FormatAdministrasi;
+use App\Models\BukuPanduan;
+use App\Models\KontentEkslusif;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
+
+class AdministrationController extends Controller
+{
+    public function notulensiIndex(Request $request)
+    {
+        $query = Notulensi::query();
+
+        // Pencarian
+        if ($request->has('search')) {
+            $searchTerm = $request->search;
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('title', 'like', "%{$searchTerm}%")
+                    ->orWhere('description', 'like', "%{$searchTerm}%");
+            });
+        }
+
+        // Paginasi
+        $perPage = $request->input('per_page', 10);
+        $notulensi = $query->latest()->paginate($perPage);
+
+        return Inertia::render('Administration/Notulensi', [
+            'notulensi' => $notulensi
+        ]);
+    }
+
+    public function notulensiStore(Request $request)
+    {
+        try {
+            $request->validate([
+                'title' => 'required|string|max:255',
+                'file' => 'required|file|max:10240', // maksimal 10MB
+                'description' => 'nullable|string'
+            ]);
+
+            $file = $request->file('file');
+            $fileName = time() . '.' . $file->getClientOriginalExtension();
+
+            // Path FISIK untuk server
+            $uploadPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/notulensi';
+
+            // Buat folder jika belum ada
+            if (!File::exists($uploadPath)) {
+                File::makeDirectory($uploadPath, 0777, true);
+            }
+
+            // Simpan file
+            $file->move($uploadPath, $fileName);
+
+            // Path RELATIF untuk database
+            $path = 'notulensi/' . $fileName;
+
+            Notulensi::create([
+                'title' => $request->title,
+                'file_path' => $path,
+                'description' => $request->description
+            ]);
+
+            return redirect()->back()->with('success', 'Notulensi berhasil ditambahkan');
+        } catch (\Exception $e) {
+            Log::error('Notulensi store error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal menambahkan notulensi');
+        }
+    }
+
+    public function notulensiUpdate(Request $request, Notulensi $notulensi)
+    {
+        try {
+            $request->validate([
+                'title' => 'required|string|max:255',
+                'file' => 'nullable|file|max:10240', // maksimal 10MB
+                'description' => 'nullable|string'
+            ]);
+
+            $data = [
+                'title' => $request->title,
+                'description' => $request->description
+            ];
+
+            if ($request->hasFile('file')) {
+                // Hapus file lama
+                $oldPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/' . $notulensi->file_path;
+                if (File::exists($oldPath)) {
+                    File::delete($oldPath);
+                }
+
+                $file = $request->file('file');
+                $fileName = time() . '.' . $file->getClientOriginalExtension();
+
+                // Path FISIK untuk server
+                $uploadPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/notulensi';
+
+                // Buat folder jika belum ada
+                if (!File::exists($uploadPath)) {
+                    File::makeDirectory($uploadPath, 0777, true);
+                }
+
+                // Simpan file
+                $file->move($uploadPath, $fileName);
+
+                // Path RELATIF untuk database
+                $data['file_path'] = 'notulensi/' . $fileName;
+            }
+
+            $notulensi->update($data);
+
+            return redirect()->back()->with('success', 'Notulensi berhasil diperbarui');
+        } catch (\Exception $e) {
+            Log::error('Notulensi update error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal memperbarui notulensi');
+        }
+    }
+
+    public function notulensiDestroy(Notulensi $notulensi)
+    {
+        try {
+            // Hapus file
+            $filePath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/' . $notulensi->file_path;
+            if (File::exists($filePath)) {
+                File::delete($filePath);
+            }
+
+            // Hapus record
+            $notulensi->delete();
+
+            return redirect()->back()->with('success', 'Notulensi berhasil dihapus');
+        } catch (\Exception $e) {
+            Log::error('Notulensi delete error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal menghapus notulensi');
+        }
+    }
+
+    public function formatAdministrasiIndex(Request $request)
+    {
+        $query = FormatAdministrasi::query();
+
+        // Pencarian
+        if ($request->has('search')) {
+            $searchTerm = $request->search;
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('title', 'like', "%{$searchTerm}%")
+                    ->orWhere('description', 'like', "%{$searchTerm}%");
+            });
+        }
+
+        // Paginasi
+        $perPage = $request->input('per_page', 10);
+        $formatAdministrasi = $query->latest()->paginate($perPage);
+
+        return Inertia::render('Administration/FormatAdministrasi', [
+            'formatAdministrasi' => $formatAdministrasi
+        ]);
+    }
+
+    public function formatAdministrasiStore(Request $request)
+    {
+        try {
+            $request->validate([
+                'title' => 'required|string|max:255',
+                'file' => 'required|file|max:10240', // maksimal 10MB
+                'description' => 'nullable|string'
+            ]);
+
+            $file = $request->file('file');
+            $fileName = time() . '.' . $file->getClientOriginalExtension();
+
+            // Path FISIK untuk server
+            $uploadPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/format-administrasi';
+
+            // Buat folder jika belum ada
+            if (!File::exists($uploadPath)) {
+                File::makeDirectory($uploadPath, 0777, true);
+            }
+
+            // Simpan file
+            $file->move($uploadPath, $fileName);
+
+            // Path RELATIF untuk database
+            $path = 'format-administrasi/' . $fileName;
+
+            FormatAdministrasi::create([
+                'title' => $request->title,
+                'file_path' => $path,
+                'description' => $request->description
+            ]);
+
+            return redirect()->back()->with('success', 'Format administrasi berhasil ditambahkan');
+        } catch (\Exception $e) {
+            Log::error('Format administrasi store error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal menambahkan format administrasi');
+        }
+    }
+
+    public function formatAdministrasiUpdate(Request $request, FormatAdministrasi $formatAdministrasi)
+    {
+        try {
+            $request->validate([
+                'title' => 'required|string|max:255',
+                'file' => 'nullable|file|max:10240', // maksimal 10MB
+                'description' => 'nullable|string'
+            ]);
+
+            $data = [
+                'title' => $request->title,
+                'description' => $request->description
+            ];
+
+            if ($request->hasFile('file')) {
+                // Hapus file lama
+                $oldPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/' . $formatAdministrasi->file_path;
+                if (File::exists($oldPath)) {
+                    File::delete($oldPath);
+                }
+
+                $file = $request->file('file');
+                $fileName = time() . '.' . $file->getClientOriginalExtension();
+
+                // Path FISIK untuk server
+                $uploadPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/format-administrasi';
+
+                // Buat folder jika belum ada
+                if (!File::exists($uploadPath)) {
+                    File::makeDirectory($uploadPath, 0777, true);
+                }
+
+                // Simpan file
+                $file->move($uploadPath, $fileName);
+
+                // Path RELATIF untuk database
+                $data['file_path'] = 'format-administrasi/' . $fileName;
+            }
+
+            $formatAdministrasi->update($data);
+
+            return redirect()->back()->with('success', 'Format administrasi berhasil diperbarui');
+        } catch (\Exception $e) {
+            Log::error('Format administrasi update error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal memperbarui format administrasi');
+        }
+    }
+
+    public function formatAdministrasiDestroy(FormatAdministrasi $formatAdministrasi)
+    {
+        try {
+            // Hapus file
+            $filePath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/' . $formatAdministrasi->file_path;
+            if (File::exists($filePath)) {
+                File::delete($filePath);
+            }
+
+            // Hapus record
+            $formatAdministrasi->delete();
+
+            return redirect()->back()->with('success', 'Format administrasi berhasil dihapus');
+        } catch (\Exception $e) {
+            Log::error('Format administrasi delete error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal menghapus format administrasi');
+        }
+    }
+
+    public function bukuPanduanIndex(Request $request)
+    {
+        $query = BukuPanduan::query();
+
+        // Pencarian
+        if ($request->has('search')) {
+            $searchTerm = $request->search;
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('title', 'like', "%{$searchTerm}%")
+                    ->orWhere('description', 'like', "%{$searchTerm}%");
+            });
+        }
+
+        // Paginasi
+        $perPage = $request->input('per_page', 10);
+        $bukuPanduan = $query->latest()->paginate($perPage);
+
+        return Inertia::render('Administration/BukuPanduan', [
+            'bukuPanduan' => $bukuPanduan
+        ]);
+    }
+
+    public function bukuPanduanStore(Request $request)
+    {
+        try {
+            $request->validate([
+                'title' => 'required|string|max:255',
+                'file' => 'required|file|max:10240', // maksimal 10MB
+                'description' => 'nullable|string'
+            ]);
+
+            $file = $request->file('file');
+            $fileName = time() . '.' . $file->getClientOriginalExtension();
+
+            // Path FISIK untuk server
+            $uploadPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/buku-panduan';
+
+            // Buat folder jika belum ada
+            if (!File::exists($uploadPath)) {
+                File::makeDirectory($uploadPath, 0777, true);
+            }
+
+            // Simpan file
+            $file->move($uploadPath, $fileName);
+
+            // Path RELATIF untuk database
+            $path = 'buku-panduan/' . $fileName;
+
+            BukuPanduan::create([
+                'title' => $request->title,
+                'file_path' => $path,
+                'description' => $request->description
+            ]);
+
+            return redirect()->back()->with('success', 'Buku panduan berhasil ditambahkan');
+        } catch (\Exception $e) {
+            Log::error('Buku panduan store error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal menambahkan buku panduan');
+        }
+    }
+
+    public function bukuPanduanUpdate(Request $request, BukuPanduan $bukuPanduan)
+    {
+        try {
+            $request->validate([
+                'title' => 'required|string|max:255',
+                'file' => 'nullable|file|max:10240', // maksimal 10MB
+                'description' => 'nullable|string'
+            ]);
+
+            $data = [
+                'title' => $request->title,
+                'description' => $request->description
+            ];
+
+            if ($request->hasFile('file')) {
+                // Hapus file lama
+                $oldPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/' . $bukuPanduan->file_path;
+                if (File::exists($oldPath)) {
+                    File::delete($oldPath);
+                }
+
+                $file = $request->file('file');
+                $fileName = time() . '.' . $file->getClientOriginalExtension();
+
+                // Path FISIK untuk server
+                $uploadPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/buku-panduan';
+
+                // Buat folder jika belum ada
+                if (!File::exists($uploadPath)) {
+                    File::makeDirectory($uploadPath, 0777, true);
+                }
+
+                // Simpan file
+                $file->move($uploadPath, $fileName);
+
+                // Path RELATIF untuk database
+                $data['file_path'] = 'buku-panduan/' . $fileName;
+            }
+
+            $bukuPanduan->update($data);
+
+            return redirect()->back()->with('success', 'Buku panduan berhasil diperbarui');
+        } catch (\Exception $e) {
+            Log::error('Buku panduan update error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal memperbarui buku panduan');
+        }
+    }
+
+    public function bukuPanduanDestroy(BukuPanduan $bukuPanduan)
+    {
+        try {
+            // Hapus file
+            $filePath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/' . $bukuPanduan->file_path;
+            if (File::exists($filePath)) {
+                File::delete($filePath);
+            }
+
+            // Hapus record
+            $bukuPanduan->delete();
+
+            return redirect()->back()->with('success', 'Buku panduan berhasil dihapus');
+        } catch (\Exception $e) {
+            Log::error('Buku panduan delete error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal menghapus buku panduan');
+        }
+    }
+
+    public function kontenEkslusifIndex(Request $request)
+    {
+        $query = KontentEkslusif::query();
+
+        // Pencarian
+        if ($request->has('search')) {
+            $searchTerm = $request->search;
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('title', 'like', "%{$searchTerm}%")
+                    ->orWhere('description', 'like', "%{$searchTerm}%");
+            });
+        }
+
+        // Paginasi
+        $perPage = $request->input('per_page', 10);
+        $kontenEkslusif = $query->latest()->paginate($perPage);
+
+        return Inertia::render('Administration/KontenEkslusif', [
+            'kontenEkslusif' => $kontenEkslusif
+        ]);
+    }
+
+    public function kontenEkslusifStore(Request $request)
+    {
+        try {
+            $request->validate([
+                'title' => 'required|string|max:255',
+                'file' => 'required|file|max:10240', // maksimal 10MB
+                'description' => 'nullable|string'
+            ]);
+
+            $file = $request->file('file');
+            $fileName = time() . '.' . $file->getClientOriginalExtension();
+
+            // Path FISIK untuk server
+            $uploadPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/konten-ekslusif';
+
+            // Buat folder jika belum ada
+            if (!File::exists($uploadPath)) {
+                File::makeDirectory($uploadPath, 0777, true);
+            }
+
+            // Simpan file
+            $file->move($uploadPath, $fileName);
+
+            // Path RELATIF untuk database
+            $path = 'konten-ekslusif/' . $fileName;
+
+            KontentEkslusif::create([
+                'title' => $request->title,
+                'file_path' => $path,
+                'description' => $request->description
+            ]);
+
+            return redirect()->back()->with('success', 'Konten ekslusif berhasil ditambahkan');
+        } catch (\Exception $e) {
+            Log::error('Konten ekslusif store error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal menambahkan konten ekslusif');
+        }
+    }
+
+    public function kontenEkslusifUpdate(Request $request, KontentEkslusif $kontenEkslusif)
+    {
+        try {
+            $request->validate([
+                'title' => 'required|string|max:255',
+                'file' => 'nullable|file|max:10240', // maksimal 10MB
+                'description' => 'nullable|string'
+            ]);
+
+            $data = [
+                'title' => $request->title,
+                'description' => $request->description
+            ];
+
+            if ($request->hasFile('file')) {
+                // Hapus file lama
+                $oldPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/' . $kontenEkslusif->file_path;
+                if (File::exists($oldPath)) {
+                    File::delete($oldPath);
+                }
+
+                $file = $request->file('file');
+                $fileName = time() . '.' . $file->getClientOriginalExtension();
+
+                // Path FISIK untuk server
+                $uploadPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/konten-ekslusif';
+
+                // Buat folder jika belum ada
+                if (!File::exists($uploadPath)) {
+                    File::makeDirectory($uploadPath, 0777, true);
+                }
+
+                // Simpan file
+                $file->move($uploadPath, $fileName);
+
+                // Path RELATIF untuk database
+                $data['file_path'] = 'konten-ekslusif/' . $fileName;
+            }
+
+            $kontenEkslusif->update($data);
+
+            return redirect()->back()->with('success', 'Konten ekslusif berhasil diperbarui');
+        } catch (\Exception $e) {
+            Log::error('Konten ekslusif update error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal memperbarui konten ekslusif');
+        }
+    }
+
+    public function kontenEkslusifDestroy(KontentEkslusif $kontenEkslusif)
+    {
+        try {
+            // Hapus file
+            $filePath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/' . $kontenEkslusif->file_path;
+            if (File::exists($filePath)) {
+                File::delete($filePath);
+            }
+
+            // Hapus record
+            $kontenEkslusif->delete();
+
+            return redirect()->back()->with('success', 'Konten ekslusif berhasil dihapus');
+        } catch (\Exception $e) {
+            Log::error('Konten ekslusif delete error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal menghapus konten ekslusif');
+        }
+    }
+}
