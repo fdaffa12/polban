@@ -144,6 +144,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/format-administrasi', [AdministrationController::class, 'formatAdministrasiStore'])->name('format-administrasi.store');
     Route::post('/format-administrasi/{formatAdministrasi}', [AdministrationController::class, 'formatAdministrasiUpdate'])->name('format-administrasi.update');
     Route::delete('/format-administrasi/{formatAdministrasi}', [AdministrationController::class, 'formatAdministrasiDestroy'])->name('format-administrasi.destroy');
+    Route::get('/buku-panduan', [AdministrationController::class, 'bukuPanduanIndex'])->name('buku-panduan.index');
+    Route::post('/buku-panduan', [AdministrationController::class, 'bukuPanduanStore'])->name('buku-panduan.store');
+    Route::post('/buku-panduan/{bukuPanduan}', [AdministrationController::class, 'bukuPanduanUpdate'])->name('buku-panduan.update');
+    Route::delete('/buku-panduan/{bukuPanduan}', [AdministrationController::class, 'bukuPanduanDestroy'])->name('buku-panduan.destroy');
 
 
 });

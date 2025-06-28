@@ -76,7 +76,7 @@ const items: MenuItem[] = [
             },
             {
                 title: "Buku Panduan",
-                url: "#",
+                url: route("buku-panduan.index"),
                 icon: BookOpen,
             },
         ],
