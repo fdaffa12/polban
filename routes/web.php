@@ -16,6 +16,7 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\ProposalSpjController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\NotulensiController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -133,6 +134,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/dept-logos', [DepartmentController::class, 'storeDeptLogo'])->name('dept-logos.store');
     Route::post('/dept-logos/{deptLogo}', [DepartmentController::class, 'updateDeptLogo'])->name('dept-logos.update');
     Route::delete('/dept-logos/{deptLogo}', [DepartmentController::class, 'destroyDeptLogo'])->name('dept-logos.destroy');
+
+    // Notulensi routes
+    Route::get('/notulensi', [NotulensiController::class, 'index'])->name('notulensi.index');
+    Route::post('/notulensi', [NotulensiController::class, 'store'])->name('notulensi.store');
+    Route::post('/notulensi/{notulensi}', [NotulensiController::class, 'update'])->name('notulensi.update');
+    Route::delete('/notulensi/{notulensi}', [NotulensiController::class, 'destroy'])->name('notulensi.destroy');
 
 });
 

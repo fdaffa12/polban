@@ -66,7 +66,7 @@ const items: MenuItem[] = [
             },
             {
                 title: "Notulensi",
-                url: "#",
+                url: route("notulensi.index"),
                 icon: FileSpreadsheet,
             },
             {
