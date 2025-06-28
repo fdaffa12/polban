@@ -23,13 +23,12 @@ class AboutUsController extends Controller
             'au_title' => 'required|string|max:255',
             'au_desc' => 'required|string',
             'au_image' => 'nullable|image|max:2048',
-            'au_multiple_image.*' => 'nullable|image|max:2048',
             'au_values' => 'nullable',
             'history' => 'nullable',
         ]);
 
         $aboutUs = AboutUs::first() ?? new AboutUs();
-        $data = $request->except(['au_image', 'au_multiple_image']);
+        $data = $request->except(['au_image']);
 
         // Handle main image
         if ($request->hasFile('au_image')) {
@@ -39,19 +38,76 @@ class AboutUsController extends Controller
             $data['au_image'] = $request->file('au_image')->store('about-us', 'public');
         }
 
-        // Handle multiple images
-        if ($request->hasFile('au_multiple_image')) {
-            $multipleImages = [];
-            foreach ($request->file('au_multiple_image') as $image) {
-                $multipleImages[] = $image->store('about-us/gallery', 'public');
-            }
-            $data['au_multiple_image'] = $multipleImages;
-        }
-
         $aboutUs->fill($data);
         $aboutUs->save();
 
         return redirect()->back()->with('success', 'About Us updated successfully.');
+    }
+
+    public function addImage(Request $request)
+    {
+        $request->validate([
+            'image' => 'required|image|max:2048',
+            'title' => 'required|string|max:255'
+        ]);
+
+        $aboutUs = AboutUs::first();
+        if (!$aboutUs) {
+            return response()->json(['message' => 'About Us not found'], 404);
+        }
+
+        $path = $request->file('image')->store('about-us/gallery', 'public');
+
+        $images = $aboutUs->au_multiple_image ?? [];
+        $images[] = [
+            'path' => $path,
+            'title' => $request->title
+        ];
+
+        $aboutUs->au_multiple_image = $images;
+        $aboutUs->save();
+
+        return redirect()->back()->with([
+            'success' => true,
+            'message' => 'Image added successfully',
+            'images' => $aboutUs->au_multiple_image
+        ]);
+    }
+
+    public function updateImage(Request $request, $index)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'image' => 'nullable|image|max:2048'
+        ]);
+
+        $aboutUs = AboutUs::first();
+        if (!$aboutUs) {
+            return response()->json(['message' => 'About Us not found'], 404);
+        }
+
+        $images = $aboutUs->au_multiple_image;
+        if (!isset($images[$index])) {
+            return response()->json(['message' => 'Image not found'], 404);
+        }
+
+        // Update image if new file is uploaded
+        if ($request->hasFile('image')) {
+            Storage::disk('public')->delete($images[$index]['path']);
+            $images[$index]['path'] = $request->file('image')->store('about-us/gallery', 'public');
+        }
+
+        // Update title
+        $images[$index]['title'] = $request->title;
+
+        $aboutUs->au_multiple_image = $images;
+        $aboutUs->save();
+
+        return redirect()->back()->with([
+            'success' => true,
+            'message' => 'Image updated successfully',
+            'images' => $aboutUs->au_multiple_image
+        ]);
     }
 
     public function removeImage(Request $request)
@@ -71,7 +127,7 @@ class AboutUsController extends Controller
         }
 
         // Remove file from storage
-        Storage::disk('public')->delete($images[$request->index]);
+        Storage::disk('public')->delete($images[$request->index]['path']);
 
         // Remove from array and reindex
         array_splice($images, $request->index, 1);
