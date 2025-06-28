@@ -25,13 +25,12 @@ class AboutUsController extends Controller
                 'au_title' => 'required|string|max:255',
                 'au_desc' => 'required|string',
                 'au_image' => 'nullable|image|max:2048',
-                'au_multiple_image.*' => 'nullable|image|max:2048',
                 'au_values' => 'nullable',
                 'history' => 'nullable',
             ]);
 
             $aboutUs = AboutUs::first() ?? new AboutUs();
-            $data = $request->except(['au_image', 'au_multiple_image']);
+            $data = $request->except(['au_image']);
 
             // Handle main image
             if ($request->hasFile('au_image')) {
@@ -61,35 +60,6 @@ class AboutUsController extends Controller
                 $data['au_image'] = 'about-us/' . $imageName;
             }
 
-            // Handle multiple images
-            if ($request->hasFile('au_multiple_image')) {
-                $multipleImages = [];
-                foreach ($request->file('au_multiple_image') as $image) {
-                    $imageName = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
-
-                    // Path FISIK untuk server
-                    $uploadPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/about-us/gallery';
-
-                    // Buat folder jika belum ada
-                    if (!File::exists($uploadPath)) {
-                        File::makeDirectory($uploadPath, 0777, true);
-                    }
-
-                    // Simpan file
-                    $image->move($uploadPath, $imageName);
-
-                    // Path RELATIF untuk database
-                    $multipleImages[] = 'about-us/gallery/' . $imageName;
-                }
-
-                // Jika sudah ada gambar sebelumnya, gabungkan dengan yang baru
-                if (isset($aboutUs->au_multiple_image) && is_array($aboutUs->au_multiple_image)) {
-                    $data['au_multiple_image'] = array_merge($aboutUs->au_multiple_image, $multipleImages);
-                } else {
-                    $data['au_multiple_image'] = $multipleImages;
-                }
-            }
-
             $aboutUs->fill($data);
             $aboutUs->save();
 
@@ -97,6 +67,117 @@ class AboutUsController extends Controller
         } catch (\Exception $e) {
             Log::error('About Us update error: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Failed to update About Us');
+        }
+    }
+
+    public function addImage(Request $request)
+    {
+        try {
+            $request->validate([
+                'image' => 'required|image|max:2048',
+                'title' => 'required|string|max:255'
+            ]);
+
+            $aboutUs = AboutUs::first();
+            if (!$aboutUs) {
+                return response()->json(['message' => 'About Us not found'], 404);
+            }
+
+            $image = $request->file('image');
+            $imageName = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+
+            // Path FISIK untuk server
+            $uploadPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/about-us/gallery';
+
+            // Buat folder jika belum ada
+            if (!File::exists($uploadPath)) {
+                File::makeDirectory($uploadPath, 0777, true);
+            }
+
+            // Simpan file
+            $image->move($uploadPath, $imageName);
+
+            // Path RELATIF untuk database
+            $path = 'about-us/gallery/' . $imageName;
+            
+            $images = $aboutUs->au_multiple_image ?? [];
+            $images[] = [
+                'path' => $path,
+                'title' => $request->title
+            ];
+            
+            $aboutUs->au_multiple_image = $images;
+            $aboutUs->save();
+
+            return redirect()->back()->with([
+                'success' => true,
+                'message' => 'Image added successfully',
+                'images' => $aboutUs->au_multiple_image
+            ]);
+        } catch (\Exception $e) {
+            Log::error('About Us add image error: ' . $e->getMessage());
+            return response()->json(['message' => 'Failed to add image'], 500);
+        }
+    }
+
+    public function updateImage(Request $request, $index)
+    {
+        try {
+            $request->validate([
+                'title' => 'required|string|max:255',
+                'image' => 'nullable|image|max:2048'
+            ]);
+
+            $aboutUs = AboutUs::first();
+            if (!$aboutUs) {
+                return response()->json(['message' => 'About Us not found'], 404);
+            }
+
+            $images = $aboutUs->au_multiple_image;
+            if (!isset($images[$index])) {
+                return response()->json(['message' => 'Image not found'], 404);
+            }
+
+            // Update image if new file is uploaded
+            if ($request->hasFile('image')) {
+                // Delete old image
+                $oldPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/' . $images[$index]['path'];
+                if (File::exists($oldPath)) {
+                    File::delete($oldPath);
+                }
+
+                $image = $request->file('image');
+                $imageName = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+
+                // Path FISIK untuk server
+                $uploadPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/about-us/gallery';
+
+                // Buat folder jika belum ada
+                if (!File::exists($uploadPath)) {
+                    File::makeDirectory($uploadPath, 0777, true);
+                }
+
+                // Simpan file
+                $image->move($uploadPath, $imageName);
+
+                // Update path
+                $images[$index]['path'] = 'about-us/gallery/' . $imageName;
+            }
+
+            // Update title
+            $images[$index]['title'] = $request->title;
+            
+            $aboutUs->au_multiple_image = $images;
+            $aboutUs->save();
+
+            return redirect()->back()->with([
+                'success' => true,
+                'message' => 'Image updated successfully',
+                'images' => $aboutUs->au_multiple_image
+            ]);
+        } catch (\Exception $e) {
+            Log::error('About Us update image error: ' . $e->getMessage());
+            return response()->json(['message' => 'Failed to update image'], 500);
         }
     }
 
@@ -118,7 +199,7 @@ class AboutUsController extends Controller
             }
 
             // Hapus file dari storage
-            $imagePath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/' . $images[$request->index];
+            $imagePath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/' . $images[$request->index]['path'];
             if (File::exists($imagePath)) {
                 File::delete($imagePath);
             }
