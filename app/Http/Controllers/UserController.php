@@ -10,10 +10,25 @@ use Inertia\Inertia;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $query = User::query();
+
+        // Pencarian
+        if ($request->has('search')) {
+            $searchTerm = $request->search;
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('name', 'like', "%{$searchTerm}%")
+                    ->orWhere('email', 'like', "%{$searchTerm}%");
+            });
+        }
+
+        // Paginasi
+        $perPage = $request->input('per_page', 10);
+        $users = $query->latest()->paginate($perPage);
+
         return Inertia::render('Users/Index', [
-            'users' => User::all()->map(function ($user) {
+            'users' => $users->through(function ($user) {
                 return [
                     'id' => $user->id,
                     'name' => $user->name,

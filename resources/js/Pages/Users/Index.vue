@@ -1,7 +1,7 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Link, router, Head, useForm } from "@inertiajs/vue3";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import Modal from "@/Components/Modal.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import TextInput from "@/Components/TextInput.vue";
@@ -12,13 +12,36 @@ import { useToast } from "vue-toastification";
 import Swal from "sweetalert2";
 
 const props = defineProps({
-    users: Array,
+    users: Object,
     roles: Object,
 });
 
 const toast = useToast();
 const showUserModal = ref(false);
 const editingUser = ref(null);
+const search = ref("");
+const perPage = ref(10);
+
+// Computed property untuk filter data
+const filteredUsers = computed(() => {
+    if (!props.users?.data) return [];
+    if (!search.value) return props.users.data;
+
+    const searchTerm = search.value.toLowerCase();
+    return props.users.data.filter(
+        (user) =>
+            user.name.toLowerCase().includes(searchTerm) ||
+            user.email.toLowerCase().includes(searchTerm)
+    );
+});
+
+const handlePerPageChange = () => {
+    router.get(
+        route("users.index"),
+        { search: search.value, per_page: perPage.value },
+        { preserveState: true }
+    );
+};
 
 const userForm = useForm({
     name: "",
@@ -88,11 +111,22 @@ const deleteUser = (user) => {
         </Head>
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-                <div class="flex justify-between items-center mb-6">
+                <!-- Header Section with Search -->
+                <div
+                    class="flex flex-col sm:flex-row justify-between items-center mb-6 space-y-4 sm:space-y-0"
+                >
                     <h2 class="text-2xl font-semibold">Users</h2>
-                    <PrimaryButton @click="showUserModal = true">
-                        Tambah User
-                    </PrimaryButton>
+                    <div class="flex items-center space-x-4">
+                        <TextInput
+                            v-model="search"
+                            type="search"
+                            placeholder="Cari user..."
+                            class="w-64"
+                        />
+                        <PrimaryButton @click="showUserModal = true">
+                            Tambah User
+                        </PrimaryButton>
+                    </div>
                 </div>
 
                 <div class="overflow-x-auto">
@@ -122,7 +156,7 @@ const deleteUser = (user) => {
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
-                            <tr v-for="user in users" :key="user.id">
+                            <tr v-for="user in filteredUsers" :key="user.id">
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     {{ user.name }}
                                 </td>
@@ -147,8 +181,49 @@ const deleteUser = (user) => {
                                     </button>
                                 </td>
                             </tr>
+                            <tr v-if="filteredUsers.length === 0">
+                                <td
+                                    colspan="4"
+                                    class="px-6 py-4 text-center text-gray-500"
+                                >
+                                    Tidak ada data yang ditemukan
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="mt-4 flex items-center justify-between">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-sm text-gray-700">Tampilkan</span>
+                        <select
+                            v-model="perPage"
+                            class="border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                            @change="handlePerPageChange"
+                        >
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                        <span class="text-sm text-gray-700">per halaman</span>
+                    </div>
+
+                    <div class="flex items-center space-x-2">
+                        <button
+                            v-for="link in users.links"
+                            :key="link.label"
+                            class="px-3 py-1 rounded"
+                            :class="{
+                                'bg-indigo-500 text-white': link.active,
+                                'text-gray-700 hover:bg-gray-100': !link.active,
+                                'opacity-50 cursor-not-allowed': !link.url,
+                            }"
+                            @click="link.url && router.get(link.url)"
+                            v-html="link.label"
+                        ></button>
+                    </div>
                 </div>
             </div>
         </div>
