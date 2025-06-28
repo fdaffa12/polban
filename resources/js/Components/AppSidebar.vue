@@ -87,7 +87,12 @@ const items: MenuItem[] = [
         icon: Newspaper,
     },
     {
-        title: "About Us",
+        title: "Rapot HMJT",
+        url: route("rapot-hmjt.index"),
+        icon: FileText,
+    },
+    {
+        title: "History",
         url: route("about-us.index"),
         icon: Info,
     },

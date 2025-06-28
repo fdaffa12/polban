@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\ProposalSpjController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\AdministrationController;
+use App\Http\Controllers\RapotHimpunanController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -148,6 +149,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/buku-panduan', [AdministrationController::class, 'bukuPanduanStore'])->name('buku-panduan.store');
     Route::post('/buku-panduan/{bukuPanduan}', [AdministrationController::class, 'bukuPanduanUpdate'])->name('buku-panduan.update');
     Route::delete('/buku-panduan/{bukuPanduan}', [AdministrationController::class, 'bukuPanduanDestroy'])->name('buku-panduan.destroy');
+
+    Route::get('/rapot-hmjt', [RapotHimpunanController::class, 'rapotHmjtIndex'])->name('rapot-hmjt.index');
+    Route::post('/rapot-hmjt', [RapotHimpunanController::class, 'rapotHmjtStore'])->name('rapot-hmjt.store');
+    Route::post('/rapot-hmjt/{rapotHmjt}', [RapotHimpunanController::class, 'rapotHmjtUpdate'])->name('rapot-hmjt.update');
+    Route::delete('/rapot-hmjt/{rapotHmjt}', [RapotHimpunanController::class, 'rapotHmjtDestroy'])->name('rapot-hmjt.destroy');
 
 
 });
