@@ -101,7 +101,7 @@ const getFileType = (filePath) => {
     if (!filePath) return "other";
     const extension = filePath.split(".").pop().toLowerCase();
     const imageTypes = ["jpg", "jpeg", "png", "gif", "webp"];
-    const videoTypes = ["mp4", "webm", "ogg", "mkv"];
+    const videoTypes = ["mp4", "webm", "ogg"];
 
     if (imageTypes.includes(extension)) return "image";
     if (videoTypes.includes(extension)) return "video";
