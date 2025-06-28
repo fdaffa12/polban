@@ -82,8 +82,11 @@ const getYoutubeEmbedUrl = (url) => {
                     <h1
                         class="text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-tight"
                     >
-                        Himpunan Mahasiswa Teknik Kimia POLBAN
-                        <span class="text-[var(--color-primary)] block mt-2">
+                        Himpunan Mahasiswa Teknik Kimia
+                        <span
+                            style="font-size: 30px"
+                            class="text-[var(--color-primary)] block mt-2"
+                        >
                             Politeknik Negeri Bandung
                         </span>
                     </h1>
@@ -92,7 +95,7 @@ const getYoutubeEmbedUrl = (url) => {
         </div>
 
         <!-- About Us Section (now Himpunan Section) -->
-        <section class="py-24 bg-white relative">
+        <section class="py-16 bg-white relative">
             <!-- Separator Section -->
             <div class="h-10 bg-white relative">
                 <div class="absolute -top-5 left-0 right-0">
@@ -193,7 +196,7 @@ const getYoutubeEmbedUrl = (url) => {
         <!-- Cabinet Profile Video Section -->
         <section
             v-if="himpunan?.yt_link"
-            class="py-20 bg-gradient-to-b from-white via-[var(--color-background)]/30 to-white"
+            class="py-12 bg-gradient-to-b from-white via-[var(--color-background)]/30 to-white"
         >
             <div class="container-custom">
                 <!-- Header Section dengan animasi -->
@@ -244,7 +247,7 @@ const getYoutubeEmbedUrl = (url) => {
 
         <!-- Update Events Section -->
         <section
-            class="py-20 bg-gradient-to-b from-white via-[var(--color-background)]/30 to-white"
+            class="py-12 bg-gradient-to-b from-white via-[var(--color-background)]/30 to-white"
         >
             <div class="container-custom">
                 <!-- Header Section dengan animasi -->
@@ -609,7 +612,7 @@ const getYoutubeEmbedUrl = (url) => {
 
         <!-- News Articles Section -->
         <section
-            class="py-20 bg-gradient-to-b from-white via-[var(--color-background)]/30 to-white"
+            class="py-12 bg-gradient-to-b from-white via-[var(--color-background)]/30 to-white"
         >
             <div class="container-custom">
                 <!-- Header Section -->
@@ -918,7 +921,7 @@ const getYoutubeEmbedUrl = (url) => {
         </section>
 
         <section
-            class="py-20 bg-gradient-to-b from-white via-blue-50/30 to-white"
+            class="py-12 bg-gradient-to-b from-white via-blue-50/30 to-white"
         >
             <div class="container-custom">
                 <!-- Header Section -->

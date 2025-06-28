@@ -75,7 +75,7 @@ useIntersectionObserver();
         </section>
 
         <!-- Gallery Section -->
-        <section class="py-20 bg-white">
+        <section class="py-12 bg-white">
             <div class="container-custom">
                 <div
                     class="text-center max-w-3xl mx-auto mb-16 space-y-4 float-in-section delay-100"
@@ -186,7 +186,7 @@ useIntersectionObserver();
 
         <!-- Vision & Mission Section -->
         <section
-            class="py-20 bg-gradient-to-b from-white to-[var(--color-background)]/10"
+            class="py-12 bg-gradient-to-b from-white to-[var(--color-background)]/10"
         >
             <div class="container-custom">
                 <div class="max-w-7xl mx-auto">
@@ -304,7 +304,7 @@ useIntersectionObserver();
         </section>
 
         <!-- Core Values Section -->
-        <section class="py-20 bg-[var(--color-background)]/5">
+        <section class="py-12 bg-[var(--color-background)]/5">
             <div class="container-custom">
                 <div
                     class="text-center max-w-3xl mx-auto mb-20 space-y-4 float-in-section delay-100"

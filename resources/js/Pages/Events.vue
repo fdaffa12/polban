@@ -115,7 +115,7 @@ useIntersectionObserver();
                                 :style="{ color: 'var(--light-text)' }"
                             >
                                 Temukan berbagai event menarik dari setiap
-                                departemen
+                                perangkat HMJTK
                             </p>
                         </div>
 
