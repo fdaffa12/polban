@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Notulensi;
 use App\Models\FormatAdministrasi;
 use App\Models\BukuPanduan;
+use App\Models\KontentEkslusif;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
@@ -252,5 +253,86 @@ class AdministrationController extends Controller
         $bukuPanduan->delete();
 
         return redirect()->back()->with('success', 'Buku panduan berhasil dihapus');
+    }
+
+    public function kontenEkslusifIndex(Request $request)
+    {
+        $query = KontentEkslusif::query();
+
+        // Pencarian
+        if ($request->has('search')) {
+            $searchTerm = $request->search;
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('title', 'like', "%{$searchTerm}%")
+                    ->orWhere('description', 'like', "%{$searchTerm}%");
+            });
+        }
+
+        // Paginasi
+        $perPage = $request->input('per_page', 10);
+        $kontenEkslusif = $query->latest()->paginate($perPage);
+
+        return Inertia::render('Administration/KontenEkslusif', [
+            'kontenEkslusif' => $kontenEkslusif
+        ]);
+    }
+
+    public function kontenEkslusifStore(Request $request)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'file' => 'required|file|max:10240', // maksimal 10MB
+            'description' => 'nullable|string'
+        ]);
+
+        $file = $request->file('file');
+        $path = $file->store('konten-ekslusif', 'public');
+
+        KontentEkslusif::create([
+            'title' => $request->title,
+            'file_path' => $path,
+            'description' => $request->description
+        ]);
+
+        return redirect()->back()->with('success', 'Konten ekslusif berhasil ditambahkan');
+    }
+
+    public function kontenEkslusifUpdate(Request $request, KontentEkslusif $kontenEkslusif)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'file' => 'nullable|file|max:10240', // maksimal 10MB
+            'description' => 'nullable|string'
+        ]);
+
+        $data = [
+            'title' => $request->title,
+            'description' => $request->description
+        ];
+
+        if ($request->hasFile('file')) {
+            // Hapus file lama
+            Storage::disk('public')->delete($kontenEkslusif->file_path);
+
+            // Upload file baru
+            $file = $request->file('file');
+            $path = $file->store('konten-ekslusif', 'public');
+            $data['file_path'] = $path;
+        }
+
+        $kontenEkslusif->update($data);
+
+        return redirect()->back()->with('success', 'Konten ekslusif berhasil diperbarui');
+    }
+
+    public function kontenEkslusifDestroy(KontentEkslusif $kontenEkslusif)
+    {
+        // Hapus file
+        Storage::disk('public')->delete($kontenEkslusif->file_path);
+
+        // Hapus record
+        $kontenEkslusif->delete();
+
+        return redirect()->back()->with('success', 'Konten ekslusif berhasil dihapus');
     }
 }

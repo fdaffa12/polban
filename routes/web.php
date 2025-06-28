@@ -148,7 +148,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/buku-panduan', [AdministrationController::class, 'bukuPanduanIndex'])->name('buku-panduan.index');
     Route::post('/buku-panduan', [AdministrationController::class, 'bukuPanduanStore'])->name('buku-panduan.store');
     Route::post('/buku-panduan/{bukuPanduan}', [AdministrationController::class, 'bukuPanduanUpdate'])->name('buku-panduan.update');
-    Route::delete('/buku-panduan/{bukuPanduan}', [AdministrationController::class, 'bukuPanduanDestroy'])->name('buku-panduan.destroy');
+    Route::delete('/buku-panduan/{bukuPanduan}', [AdministrationController::class, 'bukuPanduanDestroy'])->name(name: 'buku-panduan.destroy');
+
+    Route::get('/konten-ekslusif', [AdministrationController::class, 'kontenEkslusifIndex'])->name('konten-ekslusif.index');
+    Route::post('/konten-ekslusif', [AdministrationController::class, 'kontenEkslusifStore'])->name('konten-ekslusif.store');
+    Route::post('/konten-ekslusif/{kontenEkslusif}', [AdministrationController::class, 'kontenEkslusifUpdate'])->name('konten-ekslusif.update');
+    Route::delete('/konten-ekslusif/{kontenEkslusif}', [AdministrationController::class, 'kontenEkslusifDestroy'])->name('konten-ekslusif.destroy');
 
     Route::get('/rapot-hmjt', [RapotHimpunanController::class, 'rapotHmjtIndex'])->name('rapot-hmjt.index');
     Route::post('/rapot-hmjt', [RapotHimpunanController::class, 'rapotHmjtStore'])->name('rapot-hmjt.store');

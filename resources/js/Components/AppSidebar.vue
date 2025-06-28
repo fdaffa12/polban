@@ -81,15 +81,21 @@ const items: MenuItem[] = [
             },
         ],
     },
-    {
-        title: "Articles",
-        url: route("articles.index"),
-        icon: Newspaper,
-    },
+
     {
         title: "Rapot HMJT",
         url: route("rapot-hmjt.index"),
         icon: FileText,
+    },
+    {
+        title: "Konten Ekslusif",
+        url: route("konten-ekslusif.index"),
+        icon: FileText,
+    },
+    {
+        title: "Articles",
+        url: route("articles.index"),
+        icon: Newspaper,
     },
     {
         title: "History",
