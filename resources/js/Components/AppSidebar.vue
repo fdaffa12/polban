@@ -14,6 +14,9 @@ import {
     Newspaper,
     Building2,
     CalendarDays,
+    ClipboardList,
+    BookOpen,
+    FileSpreadsheet,
 } from "lucide-vue-next";
 // ... existing code ...
 import {
@@ -50,37 +53,58 @@ const items: MenuItem[] = [
     {
         title: "Dashboard",
         url: route("dashboard"),
-        icon: Home, // Icon rumah untuk Dashboard
+        icon: Home,
     },
     {
-        title: "Proposals",
-        url: route("proposals.index"),
-        icon: FileText, // Icon dokumen untuk Proposals
+        title: "Administrasi",
+        icon: FileText,
+        children: [
+            {
+                title: "Proposal",
+                url: route("proposals.index"),
+                icon: ClipboardList,
+            },
+            {
+                title: "Notulensi",
+                url: "#",
+                icon: FileSpreadsheet,
+            },
+            {
+                title: "Format Administrasi",
+                url: "#",
+                icon: FileText,
+            },
+            {
+                title: "Buku Panduan",
+                url: "#",
+                icon: BookOpen,
+            },
+        ],
     },
     {
         title: "Articles",
         url: route("articles.index"),
-        icon: Newspaper, // Icon koran untuk Articles
+        icon: Newspaper,
     },
     {
         title: "About Us",
         url: route("about-us.index"),
-        icon: Info, // Icon informasi untuk About Us
+        icon: Info,
     },
     {
         title: "Himpunan Management",
         url: route("himpunan-management"),
-        icon: Mail, // Icon surat untuk Himpunan Management
+        icon: Mail,
     },
     {
         title: "Departement",
         url: route("departments.index"),
-        icon: Building2, // Icon gedung untuk Departement
+        icon: Building2,
     },
     {
         title: "Event",
         url: route("events.index"),
-        icon: CalendarDays, // Icon kalender untuk Event
+        icon: CalendarDays,
     },
     {
         title: "User Management",
@@ -173,10 +197,10 @@ defineProps<{
                                         <DropdownMenuItem
                                             v-for="child in item.children"
                                             :key="child.title"
+                                            @click="router.visit(child.url)"
                                             class="cursor-pointer"
                                         >
-                                            <a
-                                                :href="child.url"
+                                            <div
                                                 class="flex items-center gap-2"
                                             >
                                                 <component
@@ -188,7 +212,7 @@ defineProps<{
                                                 >
                                                     {{ child.title }}
                                                 </span>
-                                            </a>
+                                            </div>
                                         </DropdownMenuItem>
                                     </DropdownMenuContent>
                                 </DropdownMenu>
