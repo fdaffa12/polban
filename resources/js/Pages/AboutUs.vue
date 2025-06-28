@@ -179,13 +179,28 @@ useIntersectionObserver();
                                         }"
                                     >
                                         <img
-                                            :src="image"
+                                            :src="image.path"
                                             :alt="`Gallery Image ${index + 1}`"
                                             class="max-w-full max-h-full object-contain transition-transform duration-300 group-hover:scale-105"
                                         />
                                         <div
                                             class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"
                                         ></div>
+                                    </div>
+                                    <!-- Title for active slide -->
+                                    <div
+                                        v-if="isActive"
+                                        class="mt-3 text-center transition-all duration-300"
+                                        :class="{
+                                            'opacity-0': !isActive,
+                                            'opacity-100': isActive,
+                                        }"
+                                    >
+                                        <h3
+                                            class="text-lg font-semibold text-gray-800"
+                                        >
+                                            {{ image.title }}
+                                        </h3>
                                     </div>
                                 </div>
                             </Slide>

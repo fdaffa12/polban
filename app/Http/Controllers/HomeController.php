@@ -262,7 +262,10 @@ class HomeController extends Controller
                 'image' => $aboutUs->au_image ? asset('storage/' . $aboutUs->au_image) : null,
                 'au_multiple_image' => $aboutUs->au_multiple_image
                     ? array_map(function ($image) {
-                        return asset('storage/' . $image);
+                        return [
+                            'path' => asset('storage/' . $image['path']),
+                            'title' => $image['title']
+                        ];
                     }, $aboutUs->au_multiple_image)
                     : [],
                 'au_values' => $aboutUs->au_values,

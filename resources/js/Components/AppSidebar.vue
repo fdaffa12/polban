@@ -51,6 +51,11 @@ const navTitle = computed(() => page.props.navTitle);
 // Menu items with nested structure
 const items: MenuItem[] = [
     {
+        title: "Halaman Depan",
+        url: route("home"),
+        icon: Home,
+    },
+    {
         title: "Dashboard",
         url: route("dashboard"),
         icon: Home,
