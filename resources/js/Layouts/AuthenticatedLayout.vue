@@ -39,25 +39,26 @@ const toggleMobileMenu = () => {
             @click="toggleMobileMenu"
         ></div>
 
-        <div class="flex">
-            <!-- Sidebar -->
-            <div
+        <!-- Main Layout Container -->
+        <div class="flex min-h-screen">
+            <!-- Sidebar Container - Fixed for all screens -->
+            <aside
                 :class="{
                     'translate-x-0': isMobileMenuOpen,
                     '-translate-x-full': !isMobileMenuOpen,
                     'w-64': !isCollapsed,
                     'w-16': isCollapsed,
                 }"
-                class="fixed inset-y-0 left-0 z-50 bg-white transform transition-all duration-300 lg:relative lg:translate-x-0"
+                class="fixed top-0 left-0 h-full flex flex-col bg-white shadow-lg transform transition-all duration-300 lg:translate-x-0 z-50"
             >
                 <SidebarProvider
                     :class="{
                         'w-64': !isCollapsed,
                         'w-16': isCollapsed,
                     }"
-                    class="flex flex-col h-full transition-all duration-300"
+                    class="h-full flex flex-col transition-all duration-300"
                 >
-                    <!-- Sidebar Header with Logo -->
+                    <!-- Sidebar Header -->
                     <div
                         class="h-16 border-b border-gray-200 bg-white flex items-center justify-between px-4"
                     >
@@ -89,17 +90,27 @@ const toggleMobileMenu = () => {
                             </svg>
                         </button>
                     </div>
-                    <AppSidebar :is-collapsed="isCollapsed" />
-                </SidebarProvider>
-            </div>
 
-            <!-- Main Content Section -->
-            <div class="flex-1 flex flex-col min-w-0">
-                <!-- Top Navbar -->
+                    <!-- Sidebar Content - Scrollable -->
+                    <div class="flex-1 overflow-y-auto">
+                        <AppSidebar :is-collapsed="isCollapsed" />
+                    </div>
+                </SidebarProvider>
+            </aside>
+
+            <!-- Main Content Area - With left margin for sidebar -->
+            <div
+                :class="{
+                    'lg:ml-64': !isCollapsed,
+                    'lg:ml-16': isCollapsed,
+                }"
+                class="flex-1 flex flex-col min-w-0 w-full"
+            >
+                <!-- Top Navbar - Sticky -->
                 <nav
-                    class="h-16 bg-white border-b border-gray-200 sticky top-0 z-40"
+                    class="sticky top-0 z-40 bg-white border-b border-gray-200"
                 >
-                    <div class="h-full px-4 flex items-center justify-between">
+                    <div class="h-16 px-4 flex items-center justify-between">
                         <div class="flex items-center gap-4">
                             <!-- Mobile menu button -->
                             <button
@@ -159,8 +170,8 @@ const toggleMobileMenu = () => {
                     </div>
                 </nav>
 
-                <!-- Page Content -->
-                <main class="flex-1 p-4 overflow-auto">
+                <!-- Main Content -->
+                <main class="flex-1 p-4">
                     <slot />
                 </main>
             </div>
