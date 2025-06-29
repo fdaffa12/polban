@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Department;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
@@ -25,7 +26,7 @@ class UserController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        $query = User::query();
+        $query = User::with('department');
 
         // Pencarian
         if ($request->has('search')) {
@@ -40,6 +41,9 @@ class UserController extends Controller
         $perPage = $request->input('per_page', 10);
         $users = $query->latest()->paginate($perPage);
 
+        // Get departments for the form
+        $departments = Department::all();
+
         return Inertia::render('Users/Index', [
             'users' => $users->through(function ($user) {
                 return [
@@ -47,10 +51,18 @@ class UserController extends Controller
                     'name' => $user->name,
                     'email' => $user->email,
                     'role' => $user->role,
-                    'role_label' => User::ROLES[$user->role]
+                    'role_label' => User::ROLES[$user->role],
+                    'department_id' => $user->department_id,
+                    'department_name' => $user->department ? $user->department->dept_name : null,
                 ];
             }),
-            'roles' => User::ROLES
+            'roles' => User::ROLES,
+            'departments' => $departments->map(function ($department) {
+                return [
+                    'id' => $department->id,
+                    'name' => $department->dept_name,
+                ];
+            }),
         ]);
     }
 
@@ -68,6 +80,7 @@ class UserController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => ['required', Rules\Password::defaults()],
             'role' => 'required|in:' . implode(',', array_keys(User::ROLES)),
+            'department_id' => 'nullable|exists:departments,id',
         ]);
 
         User::create([
@@ -75,6 +88,7 @@ class UserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => $request->role,
+            'department_id' => $request->department_id,
         ]);
 
         return redirect()->route('users.index');
@@ -99,12 +113,14 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'role' => 'required|in:' . implode(',', array_keys(User::ROLES)),
+            'department_id' => 'nullable|exists:departments,id',
         ]);
 
         $user->update([
             'name' => $request->name,
             'email' => $request->email,
             'role' => $request->role,
+            'department_id' => $request->department_id,
         ]);
 
         if ($request->filled('password')) {

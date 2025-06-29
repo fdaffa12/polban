@@ -35,7 +35,7 @@ class ProposalSpjController extends Controller
             'doc_spj' => 'required|mimes:pdf|max:10240',
             'doc_berita_acara' => 'required|mimes:pdf|max:10240',
             'gambar_bukti_spj' => 'required|image|max:2048',
-            'video' => 'required|mimes:mp4,mov,avi|max:102400',
+            'video' => 'required|mimes:mp4,mov,avi|max:10240',
             'caption_video' => 'required|string'
         ]);
 

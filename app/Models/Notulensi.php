@@ -11,6 +11,12 @@ class Notulensi extends Model
     protected $fillable = [
         'title',
         'file_path',
-        'description'
+        'description',
+        'department_id'
     ];
+
+    public function department()
+    {
+        return $this->belongsTo(Department::class);
+    }
 }

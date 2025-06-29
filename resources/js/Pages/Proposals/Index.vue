@@ -15,7 +15,7 @@ const toast = useToast();
 
 const deleteProposal = (proposal) => {
     Swal.fire({
-        title: "Hapus Proposal?",
+        title: "Hapus Pengajuan Kegiatan?",
         text: "Tindakan ini tidak dapat dibatalkan!",
         icon: "warning",
         showCancelButton: true,
@@ -28,9 +28,10 @@ const deleteProposal = (proposal) => {
             router.delete(route("proposals.destroy", proposal.id), {
                 preserveScroll: true,
                 onSuccess: () => {
-                    toast.success("Proposal berhasil dihapus");
+                    toast.success("Pengajuan Kegiatan berhasil dihapus");
                 },
-                onError: () => toast.error("Gagal menghapus proposal"),
+                onError: () =>
+                    toast.error("Gagal menghapus pengajuan kegiatan"),
             });
         }
     });
@@ -142,9 +143,9 @@ const getProgressColor = (progress) => {
 </script>
 
 <template>
-    <AuthenticatedLayout title="Proposal Management">
+    <AuthenticatedLayout title="Administrasi Management">
         <Head>
-            <title>Proposal Management</title>
+            <title>Administrasi Management</title>
             <meta
                 name="description"
                 content="Manage your proposals and categories"
@@ -153,7 +154,7 @@ const getProgressColor = (progress) => {
 
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Proposal Management
+                Administrasi Management
             </h2>
         </template>
 
@@ -164,12 +165,12 @@ const getProgressColor = (progress) => {
                 >
                     <div class="flex justify-between items-center mb-6">
                         <h2 class="text-xl font-semibold">
-                            Daftar Proposal Kegiatan
+                            Daftar Pengajuan Kegiatan
                         </h2>
                         <PrimaryButton
                             @click="router.visit(route('proposals.create'))"
                         >
-                            Buat Proposal
+                            Buat Pengajuan Kegiatan
                         </PrimaryButton>
                     </div>
 
@@ -394,8 +395,9 @@ const getProgressColor = (progress) => {
                             class="col-span-full text-center py-12"
                         >
                             <div class="text-gray-500">
-                                Belum ada proposal kegiatan. Klik tombol "Buat
-                                Proposal" untuk membuat proposal baru.
+                                Belum ada pengajuan kegiatan. Klik tombol "Buat
+                                Pengajuan Kegiatan" untuk membuat pengajuan
+                                baru.
                             </div>
                         </div>
                     </div>

@@ -14,6 +14,7 @@ import Swal from "sweetalert2";
 const props = defineProps({
     users: Object,
     roles: Object,
+    departments: Array,
 });
 
 const toast = useToast();
@@ -48,6 +49,7 @@ const userForm = useForm({
     email: "",
     password: "",
     role: "",
+    department_id: "",
 });
 
 const createUser = () => {
@@ -65,6 +67,7 @@ const editUser = (user) => {
     userForm.name = user.name;
     userForm.email = user.email;
     userForm.role = user.role;
+    userForm.department_id = user.department_id;
     userForm.password = ""; // Reset password field
     showUserModal.value = true;
 };
@@ -151,6 +154,11 @@ const deleteUser = (user) => {
                                 <th
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                                 >
+                                    Department
+                                </th>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                >
                                     Actions
                                 </th>
                             </tr>
@@ -165,6 +173,9 @@ const deleteUser = (user) => {
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     {{ user.role_label }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    {{ user.department_name || "-" }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <button
@@ -311,6 +322,28 @@ const deleteUser = (user) => {
                             </select>
                             <InputError
                                 :message="userForm.errors.role"
+                                class="mt-2"
+                            />
+                        </div>
+
+                        <div>
+                            <InputLabel for="department" value="Department" />
+                            <select
+                                id="department"
+                                v-model="userForm.department_id"
+                                class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                            >
+                                <option value="">Pilih Department</option>
+                                <option
+                                    v-for="department in departments"
+                                    :key="department.id"
+                                    :value="department.id"
+                                >
+                                    {{ department.name }}
+                                </option>
+                            </select>
+                            <InputError
+                                :message="userForm.errors.department_id"
                                 class="mt-2"
                             />
                         </div>

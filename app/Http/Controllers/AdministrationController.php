@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Department;
 
 class AdministrationController extends Controller
 {
@@ -31,7 +32,17 @@ class AdministrationController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        $query = Notulensi::query();
+        $query = Notulensi::with('department');
+
+        // If user is not BPH, only show notulensi from their department
+        if ($user->role !== 'BPH') {
+            $query->where('department_id', $user->department_id);
+        }
+
+        // Filter by department if selected (only for BPH)
+        if ($user->role === 'BPH' && $request->has('department_id') && $request->department_id) {
+            $query->where('department_id', $request->department_id);
+        }
 
         // Pencarian
         if ($request->has('search')) {
@@ -46,8 +57,46 @@ class AdministrationController extends Controller
         $perPage = $request->input('per_page', 10);
         $notulensi = $query->latest()->paginate($perPage);
 
+        // Get departments for filter based on user role
+        if ($user->role === 'BPH') {
+            // For BPH, get only departments that have notulensi records for filter
+            $departmentIds = Notulensi::distinct('department_id')
+                ->whereNotNull('department_id')
+                ->pluck('department_id');
+
+            $filterDepartments = Department::whereIn('id', $departmentIds)
+                ->orderByRaw("
+                    CASE 
+                        WHEN dept_name = 'BPH (BEH)' THEN 1
+                        WHEN dept_name = 'Biro Medkominfo' THEN 2
+                        WHEN dept_name = 'Biro Bisnis' THEN 3
+                        ELSE 4 
+                    END
+                ")
+                ->get();
+        } else {
+            // For non-BPH, only get their department
+            $filterDepartments = Department::where('id', $user->department_id)->get();
+        }
+
+        // Get all departments for input modal
+        $allDepartments = Department::orderByRaw("
+            CASE 
+                WHEN dept_name = 'BPH (BEH)' THEN 1
+                WHEN dept_name = 'Biro Medkominfo' THEN 2
+                WHEN dept_name = 'Biro Bisnis' THEN 3
+                ELSE 4 
+            END
+        ")->get();
+
         return Inertia::render('Administration/Notulensi', [
-            'notulensi' => $notulensi
+            'notulensi' => $notulensi,
+            'departments' => $filterDepartments,
+            'allDepartments' => $allDepartments,
+            'filters' => [
+                'department_id' => $request->department_id,
+            ],
+            'userRole' => $user->role,
         ]);
     }
 
@@ -56,7 +105,8 @@ class AdministrationController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'file' => 'required|file|max:10240', // maksimal 10MB
-            'description' => 'nullable|string'
+            'description' => 'nullable|string',
+            'department_id' => 'nullable|exists:departments,id'
         ]);
 
         $file = $request->file('file');
@@ -65,7 +115,8 @@ class AdministrationController extends Controller
         Notulensi::create([
             'title' => $request->title,
             'file_path' => $path,
-            'description' => $request->description
+            'description' => $request->description,
+            'department_id' => $request->department_id
         ]);
 
         return redirect()->back()->with('success', 'Notulensi berhasil ditambahkan');
@@ -76,12 +127,14 @@ class AdministrationController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'file' => 'nullable|file|max:10240', // maksimal 10MB
-            'description' => 'nullable|string'
+            'description' => 'nullable|string',
+            'department_id' => 'nullable|exists:departments,id'
         ]);
 
         $data = [
             'title' => $request->title,
-            'description' => $request->description
+            'description' => $request->description,
+            'department_id' => $request->department_id
         ];
 
         if ($request->hasFile('file')) {

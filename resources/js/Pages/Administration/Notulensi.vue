@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { useForm, router } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head } from "@inertiajs/vue3";
@@ -14,6 +14,10 @@ import Swal from "sweetalert2";
 const toast = useToast();
 const props = defineProps({
     notulensi: Object,
+    departments: Array,
+    allDepartments: Array,
+    filters: Object,
+    userRole: String,
 });
 
 const showCreateModal = ref(false);
@@ -23,6 +27,25 @@ const editingNotulensi = ref(null);
 const previewFile = ref(null);
 const search = ref("");
 const perPage = ref(10);
+const selectedDepartment = ref(props.filters?.department_id || "");
+
+// Watch for filter changes (only for BPH)
+watch(selectedDepartment, (newValue) => {
+    if (props.userRole === "BPH") {
+        router.get(
+            route("notulensi.index"),
+            {
+                department_id: newValue,
+                search: search.value,
+                per_page: perPage.value,
+            },
+            {
+                preserveState: true,
+                preserveScroll: true,
+            }
+        );
+    }
+});
 
 // Computed property untuk filter data
 const filteredNotulensi = computed(() => {
@@ -41,12 +64,14 @@ const form = useForm({
     title: "",
     file: null,
     description: "",
+    department_id: "",
 });
 
 const editForm = useForm({
     title: "",
     file: null,
     description: "",
+    department_id: "",
 });
 
 const getFileTypeLabel = (filePath) => {
@@ -80,7 +105,11 @@ const getFileTypeIcon = (filePath) => {
 const handlePerPageChange = () => {
     router.get(
         route("notulensi.index"),
-        { search: search.value, per_page: perPage.value },
+        {
+            department_id: selectedDepartment.value,
+            search: search.value,
+            per_page: perPage.value,
+        },
         { preserveState: true }
     );
 };
@@ -94,6 +123,7 @@ const openEditModal = (notulensi) => {
     editingNotulensi.value = notulensi;
     editForm.title = notulensi.title;
     editForm.description = notulensi.description;
+    editForm.department_id = notulensi.department_id;
     showEditModal.value = true;
 };
 
@@ -202,6 +232,20 @@ const getDownloadFilename = (file) => {
                                     placeholder="Cari notulensi..."
                                     class="w-64"
                                 />
+                                <select
+                                    v-if="userRole === 'BPH'"
+                                    v-model="selectedDepartment"
+                                    class="border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                >
+                                    <option value="">Semua Departemen</option>
+                                    <option
+                                        v-for="department in departments"
+                                        :key="department.id"
+                                        :value="department.id"
+                                    >
+                                        {{ department.dept_name }}
+                                    </option>
+                                </select>
                                 <PrimaryButton @click="openCreateModal">
                                     Tambah Notulensi
                                 </PrimaryButton>
@@ -232,6 +276,11 @@ const getDownloadFilename = (file) => {
                                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                                         >
                                             File
+                                        </th>
+                                        <th
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                        >
+                                            Departemen
                                         </th>
                                         <th
                                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
@@ -340,6 +389,12 @@ const getDownloadFilename = (file) => {
                                                     Download
                                                 </a>
                                             </template>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            {{
+                                                item.department?.dept_name ||
+                                                "-"
+                                            }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <button
@@ -461,6 +516,28 @@ const getDownloadFilename = (file) => {
                         />
                     </div>
 
+                    <div>
+                        <InputLabel for="department_id" value="Departemen" />
+                        <select
+                            id="department_id"
+                            v-model="form.department_id"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                        >
+                            <option value="">Pilih Departemen</option>
+                            <option
+                                v-for="department in allDepartments"
+                                :key="department.id"
+                                :value="department.id"
+                            >
+                                {{ department.dept_name }}
+                            </option>
+                        </select>
+                        <InputError
+                            :message="form.errors.department_id"
+                            class="mt-2"
+                        />
+                    </div>
+
                     <div class="flex justify-end mt-6">
                         <PrimaryButton :disabled="form.processing"
                             >Simpan</PrimaryButton
@@ -519,6 +596,31 @@ const getDownloadFilename = (file) => {
                         ></textarea>
                         <InputError
                             :message="editForm.errors.description"
+                            class="mt-2"
+                        />
+                    </div>
+
+                    <div>
+                        <InputLabel
+                            for="edit_department_id"
+                            value="Departemen"
+                        />
+                        <select
+                            id="edit_department_id"
+                            v-model="editForm.department_id"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                        >
+                            <option value="">Pilih Departemen</option>
+                            <option
+                                v-for="department in allDepartments"
+                                :key="department.id"
+                                :value="department.id"
+                            >
+                                {{ department.dept_name }}
+                            </option>
+                        </select>
+                        <InputError
+                            :message="editForm.errors.department_id"
                             class="mt-2"
                         />
                     </div>

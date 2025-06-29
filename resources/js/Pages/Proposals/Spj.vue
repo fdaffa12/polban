@@ -475,7 +475,7 @@ const removeFile = (fieldName) => {
                         <div class="space-y-2">
                             <label
                                 class="block text-sm font-medium text-gray-700"
-                                >Dokumen SPTP</label
+                                >Dokumen SPTB</label
                             >
                             <div class="flex items-center gap-2">
                                 <div class="flex-1">
@@ -501,10 +501,10 @@ const removeFile = (fieldName) => {
                                             <p
                                                 class="mb-1 sm:mb-2 text-xs sm:text-sm text-gray-500"
                                             >
-                                                Klik untuk upload SPTP
+                                                Klik untuk upload SPTB
                                             </p>
                                             <p class="text-xs text-gray-500">
-                                                PDF (MAX. 10MB)
+                                                PDF (MAX. 2MB)
                                             </p>
                                         </div>
                                         <input
@@ -604,7 +604,7 @@ const removeFile = (fieldName) => {
                                                 Klik untuk upload SPJ
                                             </p>
                                             <p class="text-xs text-gray-500">
-                                                PDF (MAX. 10MB)
+                                                PDF (MAX. 2MB)
                                             </p>
                                         </div>
                                         <input
@@ -704,7 +704,7 @@ const removeFile = (fieldName) => {
                                                 Klik untuk upload Berita Acara
                                             </p>
                                             <p class="text-xs text-gray-500">
-                                                PDF (MAX. 10MB)
+                                                PDF (MAX. 2MB)
                                             </p>
                                         </div>
                                         <input
@@ -917,7 +917,7 @@ const removeFile = (fieldName) => {
                                                 Klik untuk upload Video
                                             </p>
                                             <p class="text-xs text-gray-500">
-                                                MP4, MOV, AVI (MAX. 100MB)
+                                                MP4, MOV, AVI (MAX. 10MB)
                                             </p>
                                         </div>
                                         <input

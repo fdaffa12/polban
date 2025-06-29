@@ -306,10 +306,10 @@ const handlePosterUpload = (event) => {
                             <h3
                                 class="text-lg font-semibold text-gray-900 mb-2"
                             >
-                                Pengajuan Umum
+                                Pengajuan Himpunan
                             </h3>
                             <p class="text-sm text-gray-600 text-center">
-                                Proposal untuk kegiatan umum lainnya
+                                Proposal untuk kegiatan himpunan lainnya
                             </p>
                         </button>
                     </div>
@@ -347,7 +347,7 @@ const handlePosterUpload = (event) => {
                         {{
                             selectedProposalType === "pengajuan_pusat"
                                 ? "Pengajuan Pusat"
-                                : "Pengajuan Umum"
+                                : "Pengajuan Himpunan"
                         }}
                     </h2>
 
