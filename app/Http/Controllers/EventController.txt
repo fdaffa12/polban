@@ -8,11 +8,24 @@ use App\Models\Department;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Auth;
 
 class EventController extends Controller
 {
+    private function hasContentManagementAccess($user)
+    {
+        return in_array($user->role, ["BPH", "MEDKOM"]);
+    }
+
     public function index()
     {
+        $user = Auth::user();
+
+        // Check if user has access to events
+        if (!$this->hasContentManagementAccess($user)) {
+            abort(403, 'Unauthorized action.');
+        }
+        
         return Inertia::render('Events/Index', [
             'events' => Event::with(['department', 'dates'])->latest()->get(),
             'departments' => Department::all()

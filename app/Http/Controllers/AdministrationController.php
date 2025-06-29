@@ -9,11 +9,28 @@ use App\Models\KontentEkslusif;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class AdministrationController extends Controller
 {
+    private function hasAdministrationAccess($user)
+    {
+        return in_array($user->role, [
+            'BPH',
+            'SEKERTARIS_BENDAHARA',
+            'SEKERTARIS_KABINET',
+            'SEKERTARIS_UMUM_MPH'
+        ]);
+    }
     public function notulensiIndex(Request $request)
     {
+        $user = Auth::user();
+
+        // Check if user has access to notulensi
+        if (!$this->hasAdministrationAccess($user)) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $query = Notulensi::query();
 
         // Pencarian
@@ -95,6 +112,13 @@ class AdministrationController extends Controller
 
     public function formatAdministrasiIndex(Request $request)
     {
+        $user = Auth::user();
+
+        // Check if user has access to format administrasi
+        if (!$this->hasAdministrationAccess($user)) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $query = FormatAdministrasi::query();
 
         // Pencarian
@@ -176,6 +200,13 @@ class AdministrationController extends Controller
 
     public function bukuPanduanIndex(Request $request)
     {
+        $user = Auth::user();
+
+        // Check if user has access to buku panduan
+        if (!$this->hasAdministrationAccess($user)) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $query = BukuPanduan::query();
 
         // Pencarian

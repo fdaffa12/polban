@@ -11,6 +11,7 @@ use App\Services\GoogleDriveService;
 use App\Mail\ProposalRevision;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class ProposalController extends Controller
 {
@@ -21,8 +22,25 @@ class ProposalController extends Controller
         $this->googleDrive = $googleDrive;
     }
 
+    private function hasProposalAccess($user)
+    {
+        return in_array($user->role, [
+            'BPH',
+            'SEKERTARIS_BENDAHARA',
+            'SEKERTARIS_KABINET',
+            'SEKERTARIS_UMUM_MPH'
+        ]);
+    }
+
     public function index()
     {
+        $user = Auth::user();
+
+        // Check if user has access to proposals
+        if (!$this->hasProposalAccess($user)) {
+            abort(403, 'Unauthorized action.');
+        }
+
         return Inertia::render('Proposals/Index', [
             'proposals' => Proposal::with('department')->latest()->get(),
         ]);

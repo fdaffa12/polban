@@ -6,11 +6,24 @@ use App\Models\Setting;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class SettingController extends Controller
 {
+    private function hasContentManagementAccess($user)
+    {
+        return in_array($user->role, ["BPH", "MEDKOM"]);
+    }
+
     public function index()
     {
+        $user = Auth::user();
+
+        // Check if user has access to settings
+        if (!$this->hasContentManagementAccess($user)) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $setting = Setting::first() ?? new Setting();
         return Inertia::render('Settings/Index', [
             'setting' => $setting

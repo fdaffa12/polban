@@ -17,6 +17,7 @@ import {
     ClipboardList,
     BookOpen,
     FileSpreadsheet,
+    FileSpreadsheetIcon,
 } from "lucide-vue-next";
 // ... existing code ...
 import {
@@ -39,6 +40,16 @@ import {
 import { computed } from "vue";
 import { usePage, router } from "@inertiajs/vue3";
 
+// Add window type declaration
+declare const window: Window & typeof globalThis;
+
+interface User {
+    id: number;
+    name: string;
+    email: string;
+    role: string;
+}
+
 interface MenuItem {
     title: string;
     url?: string;
@@ -46,95 +57,160 @@ interface MenuItem {
     children?: MenuItem[];
 }
 
+const page = usePage();
 const navTitle = computed(() => page.props.navTitle);
+const user = computed(() => page.props.auth.user as User);
+
+// Function to handle external links
+const openExternalLink = (url: string | undefined) => {
+    if (url) {
+        const newWindow = window.open(url, "_blank", "noopener,noreferrer");
+        if (newWindow) newWindow.opener = null;
+    }
+};
+
+// Function to check if user has access to administration
+const hasAdministrationAccess = (userRole: string) => {
+    const allowedRoles = [
+        "BPH",
+        "SEKERTARIS_BENDAHARA",
+        "SEKERTARIS_KABINET",
+        "SEKERTARIS_UMUM_MPH",
+    ];
+    return allowedRoles.includes(userRole);
+};
+
+// Function to check if user has access to content management
+const hasContentManagementAccess = (userRole: string) => {
+    const allowedRoles = ["BPH", "MEDKOM"];
+    return allowedRoles.includes(userRole);
+};
+
+// Function to check if user has access to SharePoint
+const hasSharePointAccess = (userRole: string) => {
+    const allowedRoles = ["BPH", "FUNGSIONARIS"];
+    return allowedRoles.includes(userRole);
+};
+
+const hasUserManagementAccess = (userRole: string) => {
+    const allowedRoles = ["BPH"];
+    return allowedRoles.includes(userRole);
+};
 
 // Menu items with nested structure
-const items: MenuItem[] = [
-    {
-        title: "Halaman Depan",
-        url: route("home"),
-        icon: Home,
-    },
-    {
-        title: "Dashboard",
-        url: route("dashboard"),
-        icon: Home,
-    },
-    {
-        title: "Administrasi",
-        icon: FileText,
-        children: [
-            {
-                title: "Proposal",
-                url: route("proposals.index"),
-                icon: ClipboardList,
-            },
-            {
-                title: "Notulensi",
-                url: route("notulensi.index"),
-                icon: FileSpreadsheet,
-            },
-            {
-                title: "Format Administrasi",
-                url: route("format-administrasi.index"),
-                icon: FileText,
-            },
-            {
-                title: "Buku Panduan",
-                url: route("buku-panduan.index"),
-                icon: BookOpen,
-            },
-        ],
-    },
+const items = computed(() => {
+    const menuItems: MenuItem[] = [
+        {
+            title: "Halaman Depan",
+            url: route("home"),
+            icon: Home,
+        },
+        {
+            title: "Dashboard",
+            url: route("dashboard"),
+            icon: Home,
+        },
+    ];
 
-    {
-        title: "Rapot HMJT",
-        url: route("rapot-hmjt.index"),
-        icon: FileText,
-    },
-    {
-        title: "Konten Ekslusif",
-        url: route("konten-ekslusif.index"),
-        icon: FileText,
-    },
-    {
-        title: "Articles",
-        url: route("articles.index"),
-        icon: Newspaper,
-    },
-    {
-        title: "History",
-        url: route("about-us.index"),
-        icon: Info,
-    },
-    {
-        title: "Himpunan Management",
-        url: route("himpunan-management"),
-        icon: Mail,
-    },
-    {
-        title: "Departement",
-        url: route("departments.index"),
-        icon: Building2,
-    },
-    {
-        title: "Event",
-        url: route("events.index"),
-        icon: CalendarDays,
-    },
-    {
-        title: "User Management",
-        url: route("users.index"),
-        icon: Users,
-    },
-    {
-        title: "Settings",
-        url: route("settings.index"),
-        icon: Settings,
-    },
-];
+    // Only add Administrasi menu if user has access
+    if (hasAdministrationAccess(user.value?.role)) {
+        menuItems.push({
+            title: "Administrasi",
+            icon: FileText,
+            children: [
+                {
+                    title: "Proposal",
+                    url: route("proposals.index"),
+                    icon: ClipboardList,
+                },
+                {
+                    title: "Notulensi",
+                    url: route("notulensi.index"),
+                    icon: FileSpreadsheet,
+                },
+                {
+                    title: "Format Administrasi",
+                    url: route("format-administrasi.index"),
+                    icon: FileText,
+                },
+                {
+                    title: "Buku Panduan",
+                    url: route("buku-panduan.index"),
+                    icon: BookOpen,
+                },
+            ],
+        });
+    }
 
-const page = usePage();
+    menuItems.push(
+        {
+            title: "Rapot HMJT",
+            url: route("rapot-hmjt.index"),
+            icon: FileText,
+        },
+        {
+            title: "Konten Ekslusif",
+            url: route("konten-ekslusif.index"),
+            icon: FileText,
+        }
+    );
+
+    // Only add content management menus if user has access
+    if (hasContentManagementAccess(user.value?.role)) {
+        menuItems.push(
+            {
+                title: "Articles",
+                url: route("articles.index"),
+                icon: Newspaper,
+            },
+            {
+                title: "History",
+                url: route("about-us.index"),
+                icon: Info,
+            },
+            {
+                title: "Himpunan Management",
+                url: route("himpunan-management"),
+                icon: Mail,
+            },
+            {
+                title: "Departement",
+                url: route("departments.index"),
+                icon: Building2,
+            },
+            {
+                title: "Event",
+                url: route("events.index"),
+                icon: CalendarDays,
+            },
+            {
+                title: "Settings",
+                url: route("settings.index"),
+                icon: Settings,
+            }
+        );
+    }
+
+    // Add SharePoint link if user has access
+    if (hasSharePointAccess(user.value?.role)) {
+        menuItems.push({
+            title: "OKR",
+            url: "https://polbanacid-my.sharepoint.com/:x:/g/personal/niken_anastasya_tkpb23_polban_ac_id/Ec_geVRT759Pr7Y9ZKaSC7EBsNoAhz0bgP3nIaZjNbY-eA?rtime=YFoJMbu23Ug",
+            icon: FileSpreadsheetIcon,
+        });
+    }
+
+    if (hasUserManagementAccess(user.value?.role)) {
+        menuItems.push({
+            title: "User Management",
+            url: route("users.index"),
+            icon: Users,
+        });
+    }
+
+    return menuItems;
+}).value;
+
 const currentRoute = computed(() => page.url);
 
 const isActive = (url: string) => {
@@ -237,6 +313,24 @@ defineProps<{
                             <!-- For regular menu items -->
                             <SidebarMenuButton v-else>
                                 <button
+                                    v-if="item.title === 'OKR'"
+                                    @click="openExternalLink(item.url)"
+                                    class="flex items-center gap-2 py-2 w-full text-left"
+                                    :title="isCollapsed ? item.title : ''"
+                                >
+                                    <component
+                                        :is="item.icon"
+                                        class="w-5 h-5 text-gray-500"
+                                    />
+                                    <span
+                                        v-if="!isCollapsed"
+                                        class="text-sm text-gray-700"
+                                    >
+                                        {{ item.title }}
+                                    </span>
+                                </button>
+                                <button
+                                    v-else
                                     @click="router.visit(item.url)"
                                     class="flex items-center gap-2 py-2 w-full text-left"
                                     :title="isCollapsed ? item.title : ''"

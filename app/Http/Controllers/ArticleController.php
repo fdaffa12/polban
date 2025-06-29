@@ -9,6 +9,8 @@ use Inertia\Inertia;
 use App\Models\Tag;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
+
 
 class ArticleController extends Controller
 {
@@ -34,8 +36,20 @@ class ArticleController extends Controller
         return $slug;
     }
 
+    private function hasContentManagementAccess($user)
+    {
+        return in_array($user->role, ["BPH", "MEDKOM"]);
+    }
+
     public function index()
     {
+        $user = Auth::user();
+
+        // Check if user has access to articles
+        if (!$this->hasContentManagementAccess($user)) {
+            abort(403, 'Unauthorized action.');
+        }
+
         return Inertia::render('Articles/Index', [
             'articles' => Article::with(['category', 'tags'])->latest()->get(),
             'categories' => Category::all(),

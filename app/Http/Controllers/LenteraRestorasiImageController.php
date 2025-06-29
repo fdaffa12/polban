@@ -11,11 +11,24 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class LenteraRestorasiImageController extends Controller
 {
+    private function hasContentManagementAccess($user)
+    {
+        return in_array($user->role, ["BPH", "MEDKOM"]);
+    }
+
     public function index()
     {
+        $user = Auth::user();
+
+        // Check if user has access to lentera restorasi
+        if (!$this->hasContentManagementAccess($user)) {
+            abort(403, 'Unauthorized action.');
+        }
+
         return Inertia::render('LenteraRestorasi/Index', [
             'images' => LenteraRestorasiImage::latest()->get(),
             'visions' => LenteraRestorasiVision::latest()->get(),

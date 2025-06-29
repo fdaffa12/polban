@@ -7,11 +7,24 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
+    private function hasUserManagementAccess($user)
+    {
+        return in_array($user->role, ["BPH"]);
+    }
+
     public function index(Request $request)
     {
+        $user = Auth::user();
+
+        // Check if user has access to user management
+        if (!$this->hasUserManagementAccess($user)) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $query = User::query();
 
         // Pencarian

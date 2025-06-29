@@ -14,7 +14,7 @@ class RapotHimpunanController extends Controller
 {
     private function canManageAll($user)
     {
-        return in_array($user->role, ['BPH', 'SEKERTARIS_KABINET']);
+        return in_array($user->role, ['BPH', 'MSDK/BIRIN']);
     }
 
     public function rapotHmjtIndex(Request $request)

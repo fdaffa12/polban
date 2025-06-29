@@ -6,11 +6,24 @@ use App\Models\AboutUs;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class AboutUsController extends Controller
 {
+    private function hasContentManagementAccess($user)
+    {
+        return in_array($user->role, ["BPH", "MEDKOM"]);
+    }
+
     public function index()
     {
+        $user = Auth::user();
+
+        // Check if user has access to about us
+        if (!$this->hasContentManagementAccess($user)) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $aboutUs = AboutUs::first() ?? new AboutUs();
         return Inertia::render('AboutUs/Index', [
             'aboutUs' => $aboutUs
