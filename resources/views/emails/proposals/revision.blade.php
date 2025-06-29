@@ -3,8 +3,7 @@
 @section('content')
     <!-- Logo Header -->
     <div style="text-align: center; margin-bottom: 30px;">
-        <img src="https://drive.google.com/uc?export=view&id=1Igz0xjMxCIhZWahkwBD5wA64Rpcre3h6" alt="Logo"
-            style="max-width: 200px; height: auto;">
+        <img src="{{ asset('storage/' . $setting->logo) }}" alt="Logo" style="max-width: 200px; height: auto;">
     </div>
 
     <!-- Judul -->
@@ -67,37 +66,5 @@
                 <strong style="color: #2d3748;">{{ config('app.name') }}</strong>
             </p>
         </div>
-    </div>
-
-    <!-- Instruksi -->
-    <div
-        style="background-color: #ffffff; border-radius: 10px; padding: 25px; margin: 25px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-        <p style="color: #4a5568; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
-            Silakan login ke sistem untuk melihat detail revisi dan melakukan perbaikan yang diperlukan.
-        </p>
-
-        <!-- Tombol -->
-        <div style="text-align: center; margin: 30px 0;">
-            <a href="{{ route('proposals.show', $proposal->id) }}"
-                style="display: inline-block; 
-                      background-color: #4299e1; 
-                      color: #ffffff; 
-                      text-decoration: none; 
-                      padding: 15px 30px; 
-                      border-radius: 8px; 
-                      font-size: 16px; 
-                      font-weight: bold; 
-                      transition: background-color 0.3s ease;">
-                Lihat Detail Proposal
-            </a>
-        </div>
-    </div>
-
-    <!-- Footer -->
-    <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
-        <p style="color: #4a5568; font-size: 16px; line-height: 1.6; margin: 0;">
-            Terima kasih,<br>
-            <strong style="color: #2d3748;">{{ config('app.name') }}</strong>
-        </p>
     </div>
 @endsection

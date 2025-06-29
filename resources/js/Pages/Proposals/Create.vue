@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, watch, computed } from "vue";
-import { useForm } from "@inertiajs/vue3";
+import { useForm, Head, router } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import TextInput from "@/Components/TextInput.vue";
@@ -229,8 +229,37 @@ const handlePosterUpload = (event) => {
 
 <template>
     <AuthenticatedLayout title="Buat Proposal Kegiatan">
+        <Head>
+            <title>Buat Proposal Kegiatan</title>
+            <meta name="description" content="Buat proposal kegiatan" />
+        </Head>
+        <template #header>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                Buat Proposal Kegiatan
+            </h2>
+        </template>
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+                <div class="flex items-center justify-between">
+                    <button
+                        @click="router.visit(route('proposals.index'))"
+                        class="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-5 w-5 mr-2"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                        >
+                            <path
+                                fill-rule="evenodd"
+                                d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+                                clip-rule="evenodd"
+                            />
+                        </svg>
+                        Kembali
+                    </button>
+                </div>
                 <!-- Tampilan Pemilihan Jenis Proposal -->
                 <div
                     v-if="showProposalTypeSelection"

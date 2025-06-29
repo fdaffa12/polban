@@ -34,6 +34,14 @@ const currentUploadData = ref(null);
 // Inisialisasi toast
 const toast = useToast();
 
+// Set initial active tab
+onMounted(() => {
+    // Find first available document tab or default to 'details'
+    const firstAvailableTab =
+        documentTabs.find((tab) => tab.id !== "details")?.id || "details";
+    activeTab.value = firstAvailableTab;
+});
+
 const approveForm = useForm({
     approved_at: new Date().toISOString(),
 });
@@ -120,26 +128,28 @@ const formatRupiah = (amount) => {
 // Daftar tab dokumen
 const documentTabs = [
     { id: "details", name: "Detail Proposal", icon: FileText },
-    {
-        id: "doc_proposal",
-        name: "Proposal/TOR",
-        path: props.proposal.doc_proposal,
-    },
-    {
-        id: "doc_berkegiatan_ketuplak",
-        name: "Surat Pernyataan Berkegiatan",
-        path: props.proposal.doc_berkegiatan_ketuplak,
-    },
-    {
-        id: "doc_ormawa",
-        name: "Surat Pernyataan Kahim",
-        path: props.proposal.doc_ormawa,
-    },
-    {
-        id: "doc_sarana_prasarana",
-        name: "Surat Sarpras",
-        path: props.proposal.doc_sarana_prasarana,
-    },
+    ...[
+        {
+            id: "doc_proposal",
+            name: "Proposal/TOR",
+            path: props.proposal.doc_proposal,
+        },
+        {
+            id: "doc_berkegiatan_ketuplak",
+            name: "Surat Pernyataan Berkegiatan",
+            path: props.proposal.doc_berkegiatan_ketuplak,
+        },
+        {
+            id: "doc_ormawa",
+            name: "Surat Pernyataan Kahim",
+            path: props.proposal.doc_ormawa,
+        },
+        {
+            id: "doc_sarana_prasarana",
+            name: "Surat Sarpras",
+            path: props.proposal.doc_sarana_prasarana,
+        },
+    ].filter((tab) => tab.path), // Only include tabs where path exists
 ];
 
 // Status badge class
@@ -262,12 +272,18 @@ const confirmUpload = () => {
 </script>
 
 <template>
-    <AuthenticatedLayout :title="'Proposal'">
+    <AuthenticatedLayout
+        :title="'Detail Pengajuan - ' + proposal.nama_kegiatan"
+    >
         <Head>
-            <title>Proposal Management</title>
-            <meta name="description" content="Manage your proposal" />
+            <title>Detail Pengajuan - {{ proposal.nama_kegiatan }}</title>
+            <meta name="description" content="Detail Pengajuan" />
         </Head>
-
+        <template #header>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                Detail Pengajuan - {{ proposal.nama_kegiatan }}
+            </h2>
+        </template>
         <!-- Tampilan Restricted Message -->
         <div v-if="isRestricted" class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -351,7 +367,7 @@ const confirmUpload = () => {
                 <!-- Detail Proposal Section -->
                 <div class="bg-white shadow-sm rounded-lg p-4 sm:p-6 lg:p-8">
                     <h2 class="text-2xl font-bold mb-6 text-gray-900">
-                        Detail Proposal
+                        Detail Pengajuan - {{ proposal.nama_kegiatan }}
                     </h2>
 
                     <!-- Status Badge -->

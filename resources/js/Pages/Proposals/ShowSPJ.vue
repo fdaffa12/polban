@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue";
-import { router, useForm } from "@inertiajs/vue3";
+import { router, useForm, Head } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Modal from "@/Components/Modal.vue";
 import { ArrowLeft, FileText, XCircle } from "lucide-vue-next";
@@ -34,7 +34,7 @@ const reviseForm = useForm({
 const documentTabs = [
     {
         id: "doc_sptp",
-        name: "Dokumen SPTP",
+        name: "Dokumen SPTB",
         path: props.spj.doc_sptp,
     },
     {
@@ -184,6 +184,15 @@ const confirmUpload = () => {
 
 <template>
     <AuthenticatedLayout :title="`SPJ Detail - ${proposal.nama_kegiatan}`">
+        <Head>
+            <title>SPJ Detail - {{ proposal.nama_kegiatan }}</title>
+            <meta name="description" content="SPJ detail" />
+        </Head>
+        <template #header>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                SPJ Detail - {{ proposal.nama_kegiatan }}
+            </h2>
+        </template>
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
                 <!-- Back Button -->
