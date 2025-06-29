@@ -156,9 +156,9 @@ const getFileExtension = (filePath) => {
 </script>
 
 <template>
-    <AuthenticatedLayout title="Rapot HMJTK Management">
+    <AuthenticatedLayout title="Rapor HMJTK Management">
         <Head>
-            <title>Rapot HMJTK Management</title>
+            <title>Rapor HMJTK Management</title>
         </Head>
 
         <div class="py-12">
@@ -170,7 +170,7 @@ const getFileExtension = (filePath) => {
                             class="flex flex-col sm:flex-row justify-between items-center mb-6 space-y-4 sm:space-y-0"
                         >
                             <h2 class="text-2xl font-semibold text-gray-800">
-                                Daftar Rapot HMJTK
+                                Daftar Rapor HMJTK
                                 <span
                                     v-if="!canManageAll"
                                     class="text-sm font-normal text-gray-600"
@@ -183,14 +183,14 @@ const getFileExtension = (filePath) => {
                                     v-if="canManageAll"
                                     v-model="search"
                                     type="search"
-                                    placeholder="Cari rapot..."
+                                    placeholder="Cari rapor..."
                                     class="w-64"
                                 />
                                 <PrimaryButton
                                     v-if="canManageAll"
                                     @click="openCreateModal"
                                 >
-                                    Tambah Rapot
+                                    Tambah Rapor
                                 </PrimaryButton>
                             </div>
                         </div>
@@ -240,17 +240,19 @@ const getFileExtension = (filePath) => {
                                         v-for="item in filteredRapot"
                                         :key="item.id"
                                     >
-                                        <td class="px-6 py-4 whitespace-nowrap">
+                                        <td class="px-6 py-4">
                                             {{ item.user?.name }}
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
+                                        <td class="px-6 py-4">
                                             {{ item.jabatan }}
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
+                                        <td class="px-6 py-4">
                                             {{ item.periode_awal }} -
                                             {{ item.periode_akhir }}
                                         </td>
-                                        <td class="px-6 py-4">
+                                        <td
+                                            class="px-6 py-4 whitespace-pre-wrap break-words max-w-xs"
+                                        >
                                             {{ item.description }}
                                         </td>
                                         <td class="px-6 py-4">
@@ -361,7 +363,7 @@ const getFileExtension = (filePath) => {
         <Modal :show="showCreateModal" @close="showCreateModal = false">
             <div class="p-6">
                 <h2 class="text-lg font-medium text-gray-900 mb-4">
-                    Tambah Rapot HMJTK
+                    Tambah Rapor HMJTK
                 </h2>
                 <form @submit.prevent="submitCreate" class="space-y-4">
                     <div>
@@ -483,7 +485,7 @@ const getFileExtension = (filePath) => {
         <Modal :show="showEditModal" @close="showEditModal = false">
             <div class="p-6">
                 <h2 class="text-lg font-medium text-gray-900 mb-4">
-                    Edit Rapot HMJTK
+                    Edit Rapor HMJTK
                 </h2>
                 <form @submit.prevent="submitEdit" class="space-y-4">
                     <div>

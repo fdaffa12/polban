@@ -144,7 +144,7 @@ const items = computed(() => {
 
     menuItems.push(
         {
-            title: "Rapot HMJT",
+            title: "Rapor HMJTK",
             url: route("rapot-hmjt.index"),
             icon: FileText,
         },

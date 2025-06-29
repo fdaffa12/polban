@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, computed } from "vue";
 import { useForm } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import InputLabel from "@/Components/InputLabel.vue";
@@ -17,6 +17,11 @@ const toast = useToast();
 // Tambahkan state untuk mengontrol tampilan
 const showProposalTypeSelection = ref(true);
 const selectedProposalType = ref(null);
+
+// Computed property untuk mengecek apakah dokumen wajib
+const isDocumentRequired = computed(() => {
+    return selectedProposalType.value === "pengajuan_pusat";
+});
 
 // Fungsi untuk menangani pemilihan jenis proposal
 const handleProposalTypeSelection = (type) => {
@@ -56,14 +61,69 @@ const form = useForm({
 });
 
 const submit = () => {
-    form.post(route("proposals.store"), {
-        preserveScroll: true,
-        forceFormData: true,
-        onSuccess: () => {
-            toast.success("Proposal berhasil dibuat");
-        },
-        onError: () => toast.error("Gagal membuat proposal"),
-    });
+    // Jika bukan pengajuan pusat, hanya kirim file yang diupload
+    if (selectedProposalType.value !== "pengajuan_pusat") {
+        // Buat form data baru yang hanya berisi file yang diupload
+        const formData = new FormData();
+
+        // Tambahkan semua field non-file
+        Object.keys(form).forEach((key) => {
+            if (
+                ![
+                    "doc_proposal",
+                    "doc_berkegiatan_ketuplak",
+                    "doc_ormawa",
+                    "doc_sarana_prasarana",
+                    "poster",
+                ].includes(key)
+            ) {
+                formData.append(key, form[key]);
+            }
+        });
+
+        // Tambahkan file yang wajib
+        if (form.doc_proposal) {
+            formData.append("doc_proposal", form.doc_proposal);
+        }
+
+        // Tambahkan file opsional jika ada
+        if (form.doc_berkegiatan_ketuplak) {
+            formData.append(
+                "doc_berkegiatan_ketuplak",
+                form.doc_berkegiatan_ketuplak
+            );
+        }
+        if (form.doc_ormawa) {
+            formData.append("doc_ormawa", form.doc_ormawa);
+        }
+        if (form.doc_sarana_prasarana) {
+            formData.append("doc_sarana_prasarana", form.doc_sarana_prasarana);
+        }
+        if (form.poster) {
+            formData.append("poster", form.poster);
+        }
+
+        // Kirim form dengan data yang sudah difilter
+        form.post(route("proposals.store"), {
+            preserveScroll: true,
+            forceFormData: true,
+            data: formData,
+            onSuccess: () => {
+                toast.success("Proposal berhasil dibuat");
+            },
+            onError: () => toast.error("Gagal membuat proposal"),
+        });
+    } else {
+        // Jika pengajuan pusat, kirim semua data seperti biasa
+        form.post(route("proposals.store"), {
+            preserveScroll: true,
+            forceFormData: true,
+            onSuccess: () => {
+                toast.success("Proposal berhasil dibuat");
+            },
+            onError: () => toast.error("Gagal membuat proposal"),
+        });
+    }
 };
 
 const formatRupiah = (amount) => {
@@ -716,6 +776,12 @@ const handlePosterUpload = (event) => {
                         <div class="border-b pb-6">
                             <h3 class="text-lg font-medium mb-4">
                                 Dokumen Pendukung
+                                <span
+                                    v-if="!isDocumentRequired"
+                                    class="text-sm text-gray-500 font-normal"
+                                >
+                                    (Hanya Proposal/TOR yang wajib)
+                                </span>
                             </h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
@@ -780,7 +846,7 @@ const handlePosterUpload = (event) => {
                                             "
                                             class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
                                             accept=".pdf"
-                                            required
+                                            :required="isDocumentRequired"
                                         />
                                         <button
                                             v-if="form.doc_berkegiatan_ketuplak"
@@ -831,7 +897,7 @@ const handlePosterUpload = (event) => {
                                             "
                                             class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
                                             accept=".pdf"
-                                            required
+                                            :required="isDocumentRequired"
                                         />
                                         <button
                                             v-if="form.doc_ormawa"
@@ -878,7 +944,7 @@ const handlePosterUpload = (event) => {
                                             "
                                             class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
                                             accept=".pdf"
-                                            required
+                                            :required="isDocumentRequired"
                                         />
                                         <button
                                             v-if="form.doc_sarana_prasarana"
@@ -924,7 +990,6 @@ const handlePosterUpload = (event) => {
                                         v-model="form.link_surat_izin_ortu"
                                         type="text"
                                         class="mt-1 block w-full"
-                                        required
                                     />
                                     <InputError
                                         :message="
@@ -954,7 +1019,6 @@ const handlePosterUpload = (event) => {
                                             @input="handlePosterUpload"
                                             class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
                                             accept="image/*"
-                                            required
                                         />
                                         <button
                                             v-if="form.poster"
@@ -1005,7 +1069,6 @@ const handlePosterUpload = (event) => {
                                         v-model="form.caption_poster"
                                         class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                                         rows="4"
-                                        required
                                     ></textarea>
                                     <InputError
                                         :message="form.errors.caption_poster"

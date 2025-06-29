@@ -77,21 +77,56 @@ class ProposalController extends Controller
             'sponsorship' => 'nullable|string|max:255',
             'media_partner' => 'nullable|string|max:255',
             'doc_proposal' => 'required|mimes:pdf|max:10240',
-            'doc_berkegiatan_ketuplak' => 'required|mimes:pdf|max:10240',
-            'doc_ormawa' => 'required|mimes:pdf|max:10240',
-            'doc_sarana_prasarana' => 'required|mimes:pdf|max:10240',
-            'link_surat_izin_ortu' => 'required|string|max:255',
-            'poster' => 'required|image|max:2048',
-            'caption_poster' => 'required|string',
+            'doc_berkegiatan_ketuplak' => $request->jenis_proposal === 'pengajuan_pusat' ? 'required|mimes:pdf|max:10240' : 'nullable|mimes:pdf|max:10240',
+            'doc_ormawa' => $request->jenis_proposal === 'pengajuan_pusat' ? 'required|mimes:pdf|max:10240' : 'nullable|mimes:pdf|max:10240',
+            'doc_sarana_prasarana' => $request->jenis_proposal === 'pengajuan_pusat' ? 'required|mimes:pdf|max:10240' : 'nullable|mimes:pdf|max:10240',
+            'link_surat_izin_ortu' => 'nullable|string|max:255',
+            'poster' => 'nullable|image|max:2048',
+            'caption_poster' => 'nullable|string',
         ]);
 
         try {
-            // Upload files ke Google Drive
-            $docProposal = $this->googleDrive->uploadFile($request->file('doc_proposal'), 'proposal');
-            $docBerkegiatan = $this->googleDrive->uploadFile($request->file('doc_berkegiatan_ketuplak'), 'berkegiatan');
-            $docOrmawa = $this->googleDrive->uploadFile($request->file('doc_ormawa'), 'ormawa');
-            $docSaranaPrasarana = $this->googleDrive->uploadFile($request->file('doc_sarana_prasarana'), 'sarana');
-            $poster = $this->googleDrive->uploadFile($request->file('poster'), 'poster');
+            // Initialize file URLs as null
+            $docProposal = null;
+            $docBerkegiatan = null;
+            $docOrmawa = null;
+            $docSaranaPrasarana = null;
+            $poster = null;
+
+            // Upload required doc_proposal
+            if ($request->hasFile('doc_proposal')) {
+                $docProposal = $this->googleDrive->uploadFile($request->file('doc_proposal'), 'proposal');
+            }
+
+            // Upload other documents based on proposal type
+            if ($request->jenis_proposal === 'pengajuan_pusat') {
+                // For pengajuan_pusat, all documents are required
+                if ($request->hasFile('doc_berkegiatan_ketuplak')) {
+                    $docBerkegiatan = $this->googleDrive->uploadFile($request->file('doc_berkegiatan_ketuplak'), 'berkegiatan');
+                }
+                if ($request->hasFile('doc_ormawa')) {
+                    $docOrmawa = $this->googleDrive->uploadFile($request->file('doc_ormawa'), 'ormawa');
+                }
+                if ($request->hasFile('doc_sarana_prasarana')) {
+                    $docSaranaPrasarana = $this->googleDrive->uploadFile($request->file('doc_sarana_prasarana'), 'sarana');
+                }
+            } else {
+                // For other types, upload if files are provided
+                if ($request->hasFile('doc_berkegiatan_ketuplak')) {
+                    $docBerkegiatan = $this->googleDrive->uploadFile($request->file('doc_berkegiatan_ketuplak'), 'berkegiatan');
+                }
+                if ($request->hasFile('doc_ormawa')) {
+                    $docOrmawa = $this->googleDrive->uploadFile($request->file('doc_ormawa'), 'ormawa');
+                }
+                if ($request->hasFile('doc_sarana_prasarana')) {
+                    $docSaranaPrasarana = $this->googleDrive->uploadFile($request->file('doc_sarana_prasarana'), 'sarana');
+                }
+            }
+
+            // Upload poster if provided
+            if ($request->hasFile('poster')) {
+                $poster = $this->googleDrive->uploadFile($request->file('poster'), 'poster');
+            }
 
             Proposal::create([
                 'pic_name' => $request->pic_name,

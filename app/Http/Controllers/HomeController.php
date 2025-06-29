@@ -339,7 +339,14 @@ class HomeController extends Controller
                 $query->orderBy('position');
             }
         ])
-            ->orderByRaw("CASE WHEN dept_name = 'BPH (MPH)' THEN 0 ELSE 1 END")
+            ->orderByRaw("
+                CASE 
+                    WHEN dept_name = 'BPH (BEH)' THEN 1
+                    WHEN dept_name = 'Biro Medkominfo' THEN 2
+                    WHEN dept_name = 'Biro Bisnis' THEN 3
+                    ELSE 4 
+                END
+            ")
             ->get()
             ->map(function ($department) {
                 return [
@@ -583,6 +590,7 @@ class HomeController extends Controller
     {
         $departments = Department::withCount(['events'])
             ->where('dept_name', 'not like', '%BPH%')
+            ->having('events_count', '>', 0)  // Only get departments with events
             ->get();
 
         $events = Event::with(['department', 'dates'])
@@ -659,6 +667,7 @@ class HomeController extends Controller
     {
         $departments = Department::withCount(['events'])
             ->where('dept_name', 'not like', '%BPH%')
+            ->having('events_count', '>', 0)  // Only get departments with events
             ->get();
 
         $events = Event::with(['department', 'dates'])
