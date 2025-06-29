@@ -80,6 +80,19 @@ const hasAdministrationAccess = (userRole: string) => {
     return allowedRoles.includes(userRole);
 };
 
+const hasRapotHmjtAccess = (userRole: string) => {
+    const allowedRoles = [
+        "BPH",
+        "SEKERTARIS_BENDAHARA",
+        "SEKERTARIS_UMUM_MPH",
+        "MEDKOM",
+        "FUNGSIONARIS",
+        "STAFF",
+        "MSDK/BIRIN",
+    ];
+    return allowedRoles.includes(userRole);
+};
+
 // Function to check if user has access to content management
 const hasContentManagementAccess = (userRole: string) => {
     const allowedRoles = ["BPH", "MEDKOM"];
@@ -119,7 +132,7 @@ const items = computed(() => {
             icon: FileText,
             children: [
                 {
-                    title: "Proposal",
+                    title: "Pengajuan",
                     url: route("proposals.index"),
                     icon: ClipboardList,
                 },
@@ -142,18 +155,19 @@ const items = computed(() => {
         });
     }
 
-    menuItems.push(
-        {
+    if (hasRapotHmjtAccess(user.value?.role)) {
+        menuItems.push({
             title: "Rapor HMJTK",
             url: route("rapot-hmjt.index"),
             icon: FileText,
-        },
-        {
-            title: "Konten Ekslusif",
-            url: route("konten-ekslusif.index"),
-            icon: FileText,
-        }
-    );
+        });
+    }
+
+    menuItems.push({
+        title: "Konten Ekslusif",
+        url: route("konten-ekslusif.index"),
+        icon: FileText,
+    });
 
     // Only add content management menus if user has access
     if (hasContentManagementAccess(user.value?.role)) {

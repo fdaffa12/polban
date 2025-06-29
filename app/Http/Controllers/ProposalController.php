@@ -32,7 +32,7 @@ class ProposalController extends Controller
         ]);
     }
 
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
 
@@ -41,8 +41,61 @@ class ProposalController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
+        $query = Proposal::with('department');
+
+        // If user is not BPH, only show proposals from their department
+        if ($user->role !== 'BPH' && $user->role !== 'SEKERTARIS_KABINET') {
+            $query->where('department_id', $user->department_id);
+        }
+
+        // Filter by department if selected (only for BPH)
+        if (($user->role === 'BPH' || $user->role === 'SEKERTARIS_KABINET') && $request->has('department_id') && $request->department_id) {
+            $query->where('department_id', $request->department_id);
+        }
+
+        // Pencarian
+        if ($request->has('search')) {
+            $searchTerm = $request->search;
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('nama_kegiatan', 'like', "%{$searchTerm}%")
+                    ->orWhere('tempat_kegiatan', 'like', "%{$searchTerm}%")
+                    ->orWhere('pic_name', 'like', "%{$searchTerm}%");
+            });
+        }
+
+        // Paginasi
+        $perPage = $request->input('per_page', 10);
+        $proposals = $query->latest()->paginate($perPage);
+
+        // Get departments for filter based on user role
+        if ($user->role === 'BPH' || $user->role === 'SEKERTARIS_KABINET') {
+            // For BPH, get only departments that have proposal records for filter
+            $departmentIds = Proposal::distinct('department_id')
+                ->whereNotNull('department_id')
+                ->pluck('department_id');
+
+            $filterDepartments = Department::whereIn('id', $departmentIds)
+                ->orderByRaw("
+                    CASE 
+                        WHEN dept_name = 'BPH (BEH)' THEN 1
+                        WHEN dept_name = 'Biro Medkominfo' THEN 2
+                        WHEN dept_name = 'Biro Bisnis' THEN 3
+                        ELSE 4 
+                    END
+                ")
+                ->get();
+        } else {
+            // For non-BPH, only get their department
+            $filterDepartments = Department::where('id', $user->department_id)->get();
+        }
+
         return Inertia::render('Proposals/Index', [
-            'proposals' => Proposal::with('department')->latest()->get(),
+            'proposals' => $proposals,
+            'departments' => $filterDepartments,
+            'filters' => [
+                'department_id' => $request->department_id,
+            ],
+            'userRole' => $user->role,
         ]);
     }
 

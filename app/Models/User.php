@@ -49,7 +49,7 @@ class User extends Authenticatable
     const ROLES = [
         'BPH' => 'BPH',
         'SEKERTARIS_BENDAHARA' => 'Sekertaris & Bendahara',
-        'SEKERTARIS_KABINET' => 'Sekertaris Kabinet',
+        'SEKERTARIS_KABINET' => 'Sekertaris & Bendahara Kabinet',
         'SEKERTARIS_UMUM_MPH' => 'Sekertaris Umum MPH',
         'MEDKOM' => 'Medkom',
         'FUNGSIONARIS' => 'Fungsionaris',

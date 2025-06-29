@@ -31,7 +31,7 @@ const selectedDepartment = ref(props.filters?.department_id || "");
 
 // Watch for filter changes (only for BPH)
 watch(selectedDepartment, (newValue) => {
-    if (props.userRole === "BPH") {
+    if (props.userRole === "BPH" || props.userRole === "SEKERTARIS_KABINET") {
         router.get(
             route("notulensi.index"),
             {
@@ -233,7 +233,10 @@ const getDownloadFilename = (file) => {
                                     class="w-64"
                                 />
                                 <select
-                                    v-if="userRole === 'BPH'"
+                                    v-if="
+                                        userRole === 'BPH' ||
+                                        userRole === 'SEKERTARIS_KABINET'
+                                    "
                                     v-model="selectedDepartment"
                                     class="border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                                 >

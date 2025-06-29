@@ -1,17 +1,67 @@
 <script setup>
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { router, Head } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import { Edit, Trash2, Eye, FileText } from "lucide-vue-next";
 import { useToast } from "vue-toastification";
 import Swal from "sweetalert2";
+import TextInput from "@/Components/TextInput.vue";
 
 const props = defineProps({
-    proposals: Array,
+    proposals: Object,
+    departments: Array,
+    filters: Object,
+    userRole: String,
 });
 
 const toast = useToast();
+const search = ref("");
+const perPage = ref(10);
+const selectedDepartment = ref(props.filters?.department_id || "");
+
+// Watch for search changes
+watch(search, (value) => {
+    router.get(
+        route("proposals.index"),
+        {
+            department_id: selectedDepartment.value,
+            search: value,
+            per_page: perPage.value,
+        },
+        { preserveState: true, preserveScroll: true }
+    );
+});
+
+// Watch for department filter changes
+watch(selectedDepartment, (newValue) => {
+    if (props.userRole === "BPH") {
+        router.get(
+            route("proposals.index"),
+            {
+                department_id: newValue,
+                search: search.value,
+                per_page: perPage.value,
+            },
+            {
+                preserveState: true,
+                preserveScroll: true,
+            }
+        );
+    }
+});
+
+const handlePerPageChange = () => {
+    router.get(
+        route("proposals.index"),
+        {
+            department_id: selectedDepartment.value,
+            search: search.value,
+            per_page: perPage.value,
+        },
+        { preserveState: true }
+    );
+};
 
 const deleteProposal = (proposal) => {
     Swal.fire({
@@ -167,11 +217,33 @@ const getProgressColor = (progress) => {
                         <h2 class="text-xl font-semibold">
                             Daftar Pengajuan Kegiatan
                         </h2>
-                        <PrimaryButton
-                            @click="router.visit(route('proposals.create'))"
-                        >
-                            Buat Pengajuan Kegiatan
-                        </PrimaryButton>
+                        <div class="flex items-center space-x-4">
+                            <TextInput
+                                v-model="search"
+                                type="search"
+                                placeholder="Cari pengajuan..."
+                                class="w-64"
+                            />
+                            <select
+                                v-if="userRole === 'BPH'"
+                                v-model="selectedDepartment"
+                                class="border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                            >
+                                <option value="">Semua Departemen</option>
+                                <option
+                                    v-for="department in departments"
+                                    :key="department.id"
+                                    :value="department.id"
+                                >
+                                    {{ department.dept_name }}
+                                </option>
+                            </select>
+                            <PrimaryButton
+                                @click="router.visit(route('proposals.create'))"
+                            >
+                                Buat Pengajuan Kegiatan
+                            </PrimaryButton>
+                        </div>
                     </div>
 
                     <!-- Grid Card Layout -->
@@ -179,7 +251,7 @@ const getProgressColor = (progress) => {
                         class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
                     >
                         <div
-                            v-for="proposal in proposals"
+                            v-for="proposal in proposals.data"
                             :key="proposal.id"
                             class="bg-white border rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200"
                         >
@@ -391,7 +463,7 @@ const getProgressColor = (progress) => {
 
                         <!-- Empty State -->
                         <div
-                            v-if="proposals.length === 0"
+                            v-if="proposals.data.length === 0"
                             class="col-span-full text-center py-12"
                         >
                             <div class="text-gray-500">
@@ -399,6 +471,42 @@ const getProgressColor = (progress) => {
                                 Pengajuan Kegiatan" untuk membuat pengajuan
                                 baru.
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="mt-4 flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-sm text-gray-700">Tampilkan</span>
+                            <select
+                                v-model="perPage"
+                                class="border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                @change="handlePerPageChange"
+                            >
+                                <option value="10">10</option>
+                                <option value="25">25</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                            <span class="text-sm text-gray-700"
+                                >per halaman</span
+                            >
+                        </div>
+
+                        <div class="flex items-center space-x-2">
+                            <button
+                                v-for="link in proposals.links"
+                                :key="link.label"
+                                class="px-3 py-1 rounded"
+                                :class="{
+                                    'bg-indigo-500 text-white': link.active,
+                                    'text-gray-700 hover:bg-gray-100':
+                                        !link.active,
+                                    'opacity-50 cursor-not-allowed': !link.url,
+                                }"
+                                @click="link.url && router.get(link.url)"
+                                v-html="link.label"
+                            ></button>
                         </div>
                     </div>
                 </div>

@@ -35,12 +35,12 @@ class AdministrationController extends Controller
         $query = Notulensi::with('department');
 
         // If user is not BPH, only show notulensi from their department
-        if ($user->role !== 'BPH') {
+        if ($user->role !== 'BPH' && $user->role !== 'SEKERTARIS_KABINET') {
             $query->where('department_id', $user->department_id);
         }
 
         // Filter by department if selected (only for BPH)
-        if ($user->role === 'BPH' && $request->has('department_id') && $request->department_id) {
+        if (($user->role === 'BPH' || $user->role === 'SEKERTARIS_KABINET') && $request->has('department_id') && $request->department_id) {
             $query->where('department_id', $request->department_id);
         }
 
@@ -58,7 +58,7 @@ class AdministrationController extends Controller
         $notulensi = $query->latest()->paginate($perPage);
 
         // Get departments for filter based on user role
-        if ($user->role === 'BPH') {
+        if ($user->role === 'BPH' || $user->role === 'SEKERTARIS_KABINET') {
             // For BPH, get only departments that have notulensi records for filter
             $departmentIds = Notulensi::distinct('department_id')
                 ->whereNotNull('department_id')
