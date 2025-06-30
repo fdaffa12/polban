@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 class SettingController extends Controller
 {
-    private $basePath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage';
+    private $basePath = '/home/u928398125/domains/hmjtk-polban.com/public_html/storage/';
 
     private function hasContentManagementAccess($user)
     {

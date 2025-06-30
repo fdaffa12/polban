@@ -49,7 +49,7 @@ class AboutUsController extends Controller
             if ($request->hasFile('au_image')) {
                 // Hapus file lama jika ada
                 if ($aboutUs->au_image) {
-                    $oldPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/' . $aboutUs->au_image;
+                    $oldPath = '/home/u928398125/domains/hmjtk-polban.com/public_html/storage/' . $aboutUs->au_image;
                     if (File::exists($oldPath)) {
                         File::delete($oldPath);
                     }
@@ -59,7 +59,7 @@ class AboutUsController extends Controller
                 $imageName = time() . '.' . $image->getClientOriginalExtension();
 
                 // Path FISIK untuk server
-                $uploadPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/about-us';
+                $uploadPath = '/home/u928398125/domains/hmjtk-polban.com/public_html/storage/about-us';
 
                 // Buat folder jika belum ada
                 if (!File::exists($uploadPath)) {
@@ -100,7 +100,7 @@ class AboutUsController extends Controller
             $imageName = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
 
             // Path FISIK untuk server
-            $uploadPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/about-us/gallery';
+            $uploadPath = '/home/u928398125/domains/hmjtk-polban.com/public_html/storage/about-us/gallery';
 
             // Buat folder jika belum ada
             if (!File::exists($uploadPath)) {
@@ -154,7 +154,7 @@ class AboutUsController extends Controller
             // Update image if new file is uploaded
             if ($request->hasFile('image')) {
                 // Delete old image
-                $oldPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/' . $images[$index]['path'];
+                $oldPath = '/home/u928398125/domains/hmjtk-polban.com/public_html/storage/' . $images[$index]['path'];
                 if (File::exists($oldPath)) {
                     File::delete($oldPath);
                 }
@@ -163,7 +163,7 @@ class AboutUsController extends Controller
                 $imageName = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
 
                 // Path FISIK untuk server
-                $uploadPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/about-us/gallery';
+                $uploadPath = '/home/u928398125/domains/hmjtk-polban.com/public_html/storage/about-us/gallery';
 
                 // Buat folder jika belum ada
                 if (!File::exists($uploadPath)) {
@@ -212,7 +212,7 @@ class AboutUsController extends Controller
             }
 
             // Hapus file dari storage
-            $imagePath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/' . $images[$request->index]['path'];
+            $imagePath = '/home/u928398125/domains/hmjtk-polban.com/public_html/storage/' . $images[$request->index]['path'];
             if (File::exists($imagePath)) {
                 File::delete($imagePath);
             }

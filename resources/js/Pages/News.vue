@@ -91,7 +91,9 @@ useIntersectionObserver();
     <GuestLayout title="News & Updates">
         <!-- Main Container -->
         <section class="relative py-12" :style="{ backgroundColor: 'white' }">
-            <div class="container-custom">
+            <div
+                class="container-custom relative z-10 float-in-section delay-100"
+            >
                 <div class="grid-cols-layout">
                     <!-- Left Column (Main Content) -->
                     <div>

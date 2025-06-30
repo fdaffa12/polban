@@ -250,7 +250,7 @@ const getFileExtension = (filePath) => {
                                     class="rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                                     @change="handleDepartmentChange"
                                 >
-                                    <option value="">Semua Departemen</option>
+                                    <option value="">Semua Perangkat</option>
                                     <option
                                         v-for="department in departments"
                                         :key="department.id"
@@ -281,7 +281,7 @@ const getFileExtension = (filePath) => {
                                         <th
                                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                                         >
-                                            Departemen
+                                            Perangkat
                                         </th>
                                         <th
                                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
@@ -478,14 +478,14 @@ const getFileExtension = (filePath) => {
                     </div>
 
                     <div>
-                        <InputLabel for="department_id" value="Departemen" />
+                        <InputLabel for="department_id" value="Perangkat" />
                         <select
                             id="department_id"
                             v-model="form.department_id"
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                             required
                         >
-                            <option value="">Pilih Departemen</option>
+                            <option value="">Pilih Perangkat</option>
                             <option
                                 v-for="department in departments"
                                 :key="department.id"

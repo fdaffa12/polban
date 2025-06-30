@@ -117,7 +117,7 @@ class AdministrationController extends Controller
             $fileName = time() . '.' . $file->getClientOriginalExtension();
 
             // Path FISIK untuk server
-            $uploadPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/notulensi';
+            $uploadPath = '/home/u928398125/domains/hmjtk-polban.com/public_html/storage/notulensi';
 
             // Buat folder jika belum ada
             if (!File::exists($uploadPath)) {
@@ -162,7 +162,7 @@ class AdministrationController extends Controller
 
             if ($request->hasFile('file')) {
                 // Hapus file lama
-                $oldPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/' . $notulensi->file_path;
+                $oldPath = '/home/u928398125/domains/hmjtk-polban.com/public_html/storage/' . $notulensi->file_path;
                 if (File::exists($oldPath)) {
                     File::delete($oldPath);
                 }
@@ -171,7 +171,7 @@ class AdministrationController extends Controller
                 $fileName = time() . '.' . $file->getClientOriginalExtension();
 
                 // Path FISIK untuk server
-                $uploadPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/notulensi';
+                $uploadPath = '/home/u928398125/domains/hmjtk-polban.com/public_html/storage/notulensi';
 
                 // Buat folder jika belum ada
                 if (!File::exists($uploadPath)) {
@@ -198,7 +198,7 @@ class AdministrationController extends Controller
     {
         try {
             // Hapus file
-            $filePath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/' . $notulensi->file_path;
+            $filePath = '/home/u928398125/domains/hmjtk-polban.com/public_html/storage/' . $notulensi->file_path;
             if (File::exists($filePath)) {
                 File::delete($filePath);
             }
@@ -255,7 +255,7 @@ class AdministrationController extends Controller
             $fileName = time() . '.' . $file->getClientOriginalExtension();
 
             // Path FISIK untuk server
-            $uploadPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/format-administrasi';
+            $uploadPath = '/home/u928398125/domains/hmjtk-polban.com/public_html/storage/format-administrasi';
 
             // Buat folder jika belum ada
             if (!File::exists($uploadPath)) {
@@ -297,7 +297,7 @@ class AdministrationController extends Controller
 
             if ($request->hasFile('file')) {
                 // Hapus file lama
-                $oldPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/' . $formatAdministrasi->file_path;
+                $oldPath = '/home/u928398125/domains/hmjtk-polban.com/public_html/storage/' . $formatAdministrasi->file_path;
                 if (File::exists($oldPath)) {
                     File::delete($oldPath);
                 }
@@ -306,7 +306,7 @@ class AdministrationController extends Controller
                 $fileName = time() . '.' . $file->getClientOriginalExtension();
 
                 // Path FISIK untuk server
-                $uploadPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/format-administrasi';
+                $uploadPath = '/home/u928398125/domains/hmjtk-polban.com/public_html/storage/format-administrasi';
 
                 // Buat folder jika belum ada
                 if (!File::exists($uploadPath)) {
@@ -333,7 +333,7 @@ class AdministrationController extends Controller
     {
         try {
             // Hapus file
-            $filePath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/' . $formatAdministrasi->file_path;
+            $filePath = '/home/u928398125/domains/hmjtk-polban.com/public_html/storage/' . $formatAdministrasi->file_path;
             if (File::exists($filePath)) {
                 File::delete($filePath);
             }
@@ -390,7 +390,7 @@ class AdministrationController extends Controller
             $fileName = time() . '.' . $file->getClientOriginalExtension();
 
             // Path FISIK untuk server
-            $uploadPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/buku-panduan';
+            $uploadPath = '/home/u928398125/domains/hmjtk-polban.com/public_html/storage/buku-panduan';
 
             // Buat folder jika belum ada
             if (!File::exists($uploadPath)) {
@@ -432,7 +432,7 @@ class AdministrationController extends Controller
 
             if ($request->hasFile('file')) {
                 // Hapus file lama
-                $oldPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/' . $bukuPanduan->file_path;
+                $oldPath = '/home/u928398125/domains/hmjtk-polban.com/public_html/storage/' . $bukuPanduan->file_path;
                 if (File::exists($oldPath)) {
                     File::delete($oldPath);
                 }
@@ -441,7 +441,7 @@ class AdministrationController extends Controller
                 $fileName = time() . '.' . $file->getClientOriginalExtension();
 
                 // Path FISIK untuk server
-                $uploadPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/buku-panduan';
+                $uploadPath = '/home/u928398125/domains/hmjtk-polban.com/public_html/storage/buku-panduan';
 
                 // Buat folder jika belum ada
                 if (!File::exists($uploadPath)) {
@@ -468,7 +468,7 @@ class AdministrationController extends Controller
     {
         try {
             // Hapus file
-            $filePath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/' . $bukuPanduan->file_path;
+            $filePath = '/home/u928398125/domains/hmjtk-polban.com/public_html/storage/' . $bukuPanduan->file_path;
             if (File::exists($filePath)) {
                 File::delete($filePath);
             }
@@ -518,7 +518,7 @@ class AdministrationController extends Controller
             $fileName = time() . '.' . $file->getClientOriginalExtension();
 
             // Path FISIK untuk server
-            $uploadPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/konten-ekslusif';
+            $uploadPath = '/home/u928398125/domains/hmjtk-polban.com/public_html/storage/konten-ekslusif';
 
             // Buat folder jika belum ada
             if (!File::exists($uploadPath)) {
@@ -560,7 +560,7 @@ class AdministrationController extends Controller
 
             if ($request->hasFile('file')) {
                 // Hapus file lama
-                $oldPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/' . $kontenEkslusif->file_path;
+                $oldPath = '/home/u928398125/domains/hmjtk-polban.com/public_html/storage/' . $kontenEkslusif->file_path;
                 if (File::exists($oldPath)) {
                     File::delete($oldPath);
                 }
@@ -569,7 +569,7 @@ class AdministrationController extends Controller
                 $fileName = time() . '.' . $file->getClientOriginalExtension();
 
                 // Path FISIK untuk server
-                $uploadPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/konten-ekslusif';
+                $uploadPath = '/home/u928398125/domains/hmjtk-polban.com/public_html/storage/konten-ekslusif';
 
                 // Buat folder jika belum ada
                 if (!File::exists($uploadPath)) {
@@ -596,7 +596,7 @@ class AdministrationController extends Controller
     {
         try {
             // Hapus file
-            $filePath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/' . $kontenEkslusif->file_path;
+            $filePath = '/home/u928398125/domains/hmjtk-polban.com/public_html/storage/' . $kontenEkslusif->file_path;
             if (File::exists($filePath)) {
                 File::delete($filePath);
             }

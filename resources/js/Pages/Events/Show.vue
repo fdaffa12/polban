@@ -165,7 +165,7 @@ const formatRupiah = (amount) => {
                                             <h3
                                                 class="text-lg font-medium mb-2"
                                             >
-                                                Department
+                                                Perangkat
                                             </h3>
                                             <p class="text-gray-600">
                                                 {{ event.department.dept_name }}

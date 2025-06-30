@@ -154,7 +154,7 @@ const deleteUser = (user) => {
                                 <th
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                                 >
-                                    Department
+                                    Perangkat
                                 </th>
                                 <th
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
@@ -327,13 +327,13 @@ const deleteUser = (user) => {
                         </div>
 
                         <div>
-                            <InputLabel for="department" value="Department" />
+                            <InputLabel for="department" value="Perangkat" />
                             <select
                                 id="department"
                                 v-model="userForm.department_id"
                                 class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                             >
-                                <option value="">Pilih Department</option>
+                                <option value="">Pilih Perangkat</option>
                                 <option
                                     v-for="department in departments"
                                     :key="department.id"

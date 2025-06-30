@@ -42,7 +42,7 @@ class LenteraRestorasiImageController extends Controller
     {
         $request->validate([
             'title' => 'required|string|max:255',
-            'image' => 'required|image|max:1024',
+            'image' => 'required|image|max:10240',
             'description' => 'nullable|string'
         ]);
 
@@ -61,7 +61,7 @@ class LenteraRestorasiImageController extends Controller
     {
         $request->validate([
             'title' => 'required|string|max:255',
-            'image' => 'nullable|image|max:1024',
+            'image' => 'nullable|image|max:10240',
             'description' => 'nullable|string'
         ]);
 
@@ -111,7 +111,7 @@ class LenteraRestorasiImageController extends Controller
             $request->validate([
                 'type' => 'required|in:caption,image',
                 'vision' => $request->type === 'caption' ? 'required|string' : 'nullable',
-                'image' => $request->type === 'image' ? 'required|image|max:1024' : 'nullable',
+                'image' => $request->type === 'image' ? 'required|image|max:10240' : 'nullable',
             ]);
 
             $data = [
@@ -137,7 +137,7 @@ class LenteraRestorasiImageController extends Controller
         $request->validate([
             'type' => 'required|in:caption,image',
             'vision' => $request->type === 'caption' ? 'required|string' : 'nullable',
-            'image' => $request->type === 'image' ? 'nullable|image|max:1024' : 'nullable',
+            'image' => $request->type === 'image' ? 'nullable|image|max:10240' : 'nullable',
         ]);
 
         try {
@@ -191,7 +191,7 @@ class LenteraRestorasiImageController extends Controller
             $request->validate([
                 'type' => 'required|in:caption,image',
                 'mission' => $request->type === 'caption' ? 'required|string' : 'nullable',
-                'image' => $request->type === 'image' ? 'required|image|max:1024' : 'nullable',
+                'image' => $request->type === 'image' ? 'required|image|max:10240' : 'nullable',
             ]);
 
             $data = [
@@ -217,7 +217,7 @@ class LenteraRestorasiImageController extends Controller
         $request->validate([
             'type' => 'required|in:caption,image',
             'mission' => $request->type === 'caption' ? 'required|string' : 'nullable',
-            'image' => $request->type === 'image' ? 'nullable|image|max:1024' : 'nullable',
+            'image' => $request->type === 'image' ? 'nullable|image|max:10240' : 'nullable',
         ]);
 
         try {
@@ -272,7 +272,7 @@ class LenteraRestorasiImageController extends Controller
                 'type' => 'required|in:caption,image',
                 'title' => 'required|string|max:255',
                 'description' => $request->type === 'caption' ? 'required|string' : 'nullable',
-                'image' => $request->type === 'image' ? 'required|image|max:1024' : 'nullable',
+                'image' => $request->type === 'image' ? 'required|image|max:10240' : 'nullable',
             ]);
 
             $data = [
@@ -300,7 +300,7 @@ class LenteraRestorasiImageController extends Controller
             'type' => 'required|in:caption,image',
             'title' => 'required|string|max:255',
             'description' => $request->type === 'caption' ? 'required|string' : 'nullable',
-            'image' => $request->type === 'image' ? 'nullable|image|max:1024' : 'nullable',
+            'image' => $request->type === 'image' ? 'nullable|image|max:10240' : 'nullable',
         ]);
 
         try {
@@ -353,7 +353,7 @@ class LenteraRestorasiImageController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
-            'logo' => 'nullable|image|max:1024',
+            'logo' => 'nullable|image|max:10240',
             'yt_link' => 'nullable|string|url'
         ]);
 

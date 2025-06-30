@@ -415,7 +415,7 @@ const getEventsForDay = (day) => {
                                         scope="col"
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                                     >
-                                        Department
+                                        Perangkat
                                     </th>
                                     <th
                                         scope="col"
@@ -567,13 +567,13 @@ const getEventsForDay = (day) => {
                 <!-- Basic Information -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                     <div>
-                        <InputLabel for="department_id" value="Department" />
+                        <InputLabel for="department_id" value="Perangkat" />
                         <select
                             v-model="eventForm.department_id"
                             class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
                             required
                         >
-                            <option value="">Select Department</option>
+                            <option value="">Select Perangkat</option>
                             <option
                                 v-for="dept in departments"
                                 :key="dept.id"
@@ -881,7 +881,7 @@ const getEventsForDay = (day) => {
                     <div class="bg-gray-50 rounded-lg p-3 sm:p-4">
                         <div class="space-y-3">
                             <div>
-                                <h3 class="text-sm font-medium">Department</h3>
+                                <h3 class="text-sm font-medium">Perangkat</h3>
                                 <p class="text-sm text-gray-600">
                                     {{ selectedEvent.department.dept_name }}
                                 </p>

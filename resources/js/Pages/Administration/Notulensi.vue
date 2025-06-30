@@ -240,7 +240,7 @@ const getDownloadFilename = (file) => {
                                     v-model="selectedDepartment"
                                     class="border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                                 >
-                                    <option value="">Semua Departemen</option>
+                                    <option value="">Semua Perangkat</option>
                                     <option
                                         v-for="department in departments"
                                         :key="department.id"
@@ -283,7 +283,7 @@ const getDownloadFilename = (file) => {
                                         <th
                                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                                         >
-                                            Departemen
+                                            Perangkat
                                         </th>
                                         <th
                                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
@@ -520,13 +520,13 @@ const getDownloadFilename = (file) => {
                     </div>
 
                     <div>
-                        <InputLabel for="department_id" value="Departemen" />
+                        <InputLabel for="department_id" value="Perangkat" />
                         <select
                             id="department_id"
                             v-model="form.department_id"
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                         >
-                            <option value="">Pilih Departemen</option>
+                            <option value="">Pilih Perangkat</option>
                             <option
                                 v-for="department in allDepartments"
                                 :key="department.id"
@@ -606,14 +606,14 @@ const getDownloadFilename = (file) => {
                     <div>
                         <InputLabel
                             for="edit_department_id"
-                            value="Departemen"
+                            value="Perangkat"
                         />
                         <select
                             id="edit_department_id"
                             v-model="editForm.department_id"
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                         >
-                            <option value="">Pilih Departemen</option>
+                            <option value="">Pilih Perangkat</option>
                             <option
                                 v-for="department in allDepartments"
                                 :key="department.id"

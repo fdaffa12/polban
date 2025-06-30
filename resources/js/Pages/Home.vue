@@ -128,7 +128,9 @@ const getYoutubeEmbedUrl = (url) => {
                     </div>
                 </div>
             </div>
-            <div class="container-custom relative z-10">
+            <div
+                class="container-custom relative z-10 float-in-section delay-100"
+            >
                 <div
                     class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
                 >

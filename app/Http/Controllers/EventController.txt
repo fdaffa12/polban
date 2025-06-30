@@ -53,7 +53,7 @@ class EventController extends Controller
             // Handle event flyer
             $flyer = $request->file('event_flyer');
             $flyerName = time() . '_flyer.' . $flyer->getClientOriginalExtension();
-            $flyerPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/events/flyers';
+            $flyerPath = '/home/u928398125/domains/hmjtk-polban.com/public_html/storage/events/flyers';
             if (!File::exists($flyerPath)) {
                 File::makeDirectory($flyerPath, 0777, true);
             }
@@ -63,7 +63,7 @@ class EventController extends Controller
             // Handle gallery images
             $galleryPaths = [];
             if ($request->hasFile('event_gallery')) {
-                $galleryPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/events/gallery';
+                $galleryPath = '/home/u928398125/domains/hmjtk-polban.com/public_html/storage/events/gallery';
                 if (!File::exists($galleryPath)) {
                     File::makeDirectory($galleryPath, 0777, true);
                 }
@@ -80,7 +80,7 @@ class EventController extends Controller
             if ($request->hasFile('event_doc')) {
                 $doc = $request->file('event_doc');
                 $docName = time() . '_doc.' . $doc->getClientOriginalExtension();
-                $docPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/events/docs';
+                $docPath = '/home/u928398125/domains/hmjtk-polban.com/public_html/storage/events/docs';
                 if (!File::exists($docPath)) {
                     File::makeDirectory($docPath, 0777, true);
                 }
@@ -134,7 +134,7 @@ class EventController extends Controller
             // Handle event flyer
             if ($request->hasFile('event_flyer')) {
                 if ($event->event_flyer) {
-                    $oldFlyerPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/' . $event->event_flyer;
+                    $oldFlyerPath = '/home/u928398125/domains/hmjtk-polban.com/public_html/storage/' . $event->event_flyer;
                     if (File::exists($oldFlyerPath)) {
                         File::delete($oldFlyerPath);
                     }
@@ -142,7 +142,7 @@ class EventController extends Controller
 
                 $flyer = $request->file('event_flyer');
                 $flyerName = time() . '_flyer.' . $flyer->getClientOriginalExtension();
-                $flyerPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/events/flyers';
+                $flyerPath = '/home/u928398125/domains/hmjtk-polban.com/public_html/storage/events/flyers';
                 if (!File::exists($flyerPath)) {
                     File::makeDirectory($flyerPath, 0777, true);
                 }
@@ -155,7 +155,7 @@ class EventController extends Controller
                 // Delete old gallery images
                 if ($event->event_gallery) {
                     foreach ($event->event_gallery as $oldImage) {
-                        $oldImagePath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/' . $oldImage;
+                        $oldImagePath = '/home/u928398125/domains/hmjtk-polban.com/public_html/storage/' . $oldImage;
                         if (File::exists($oldImagePath)) {
                             File::delete($oldImagePath);
                         }
@@ -163,7 +163,7 @@ class EventController extends Controller
                 }
 
                 $galleryPaths = [];
-                $galleryPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/events/gallery';
+                $galleryPath = '/home/u928398125/domains/hmjtk-polban.com/public_html/storage/events/gallery';
                 if (!File::exists($galleryPath)) {
                     File::makeDirectory($galleryPath, 0777, true);
                 }
@@ -179,7 +179,7 @@ class EventController extends Controller
             // Handle event document
             if ($request->hasFile('event_doc')) {
                 if ($event->event_doc) {
-                    $oldDocPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/' . $event->event_doc;
+                    $oldDocPath = '/home/u928398125/domains/hmjtk-polban.com/public_html/storage/' . $event->event_doc;
                     if (File::exists($oldDocPath)) {
                         File::delete($oldDocPath);
                     }
@@ -187,7 +187,7 @@ class EventController extends Controller
 
                 $doc = $request->file('event_doc');
                 $docName = time() . '_doc.' . $doc->getClientOriginalExtension();
-                $docPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/events/docs';
+                $docPath = '/home/u928398125/domains/hmjtk-polban.com/public_html/storage/events/docs';
                 if (!File::exists($docPath)) {
                     File::makeDirectory($docPath, 0777, true);
                 }
@@ -224,7 +224,7 @@ class EventController extends Controller
         try {
             // Delete event flyer
             if ($event->event_flyer) {
-                $flyerPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/' . $event->event_flyer;
+                $flyerPath = '/home/u928398125/domains/hmjtk-polban.com/public_html/storage/' . $event->event_flyer;
                 if (File::exists($flyerPath)) {
                     File::delete($flyerPath);
                 }
@@ -233,7 +233,7 @@ class EventController extends Controller
             // Delete gallery images
             if ($event->event_gallery) {
                 foreach ($event->event_gallery as $image) {
-                    $imagePath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/' . $image;
+                    $imagePath = '/home/u928398125/domains/hmjtk-polban.com/public_html/storage/' . $image;
                     if (File::exists($imagePath)) {
                         File::delete($imagePath);
                     }
@@ -242,7 +242,7 @@ class EventController extends Controller
 
             // Delete event document
             if ($event->event_doc) {
-                $docPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/' . $event->event_doc;
+                $docPath = '/home/u928398125/domains/hmjtk-polban.com/public_html/storage/' . $event->event_doc;
                 if (File::exists($docPath)) {
                     File::delete($docPath);
                 }

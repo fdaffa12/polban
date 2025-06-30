@@ -108,7 +108,7 @@ class ArticleController extends Controller
             $imageName = time() . '.' . $image->getClientOriginalExtension();
 
             // Path FISIK untuk server
-            $uploadPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/articles';
+            $uploadPath = '/home/u928398125/domains/hmjtk-polban.com/public_html/storage/articles';
 
             // Buat folder jika belum ada
             if (!File::exists($uploadPath)) {
@@ -151,7 +151,7 @@ class ArticleController extends Controller
         if ($request->hasFile('featured_image')) {
             // Hapus file lama jika ada
             if ($article->featured_image) {
-                $oldPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/' . $article->featured_image;
+                $oldPath = '/home/u928398125/domains/hmjtk-polban.com/public_html/storage/' . $article->featured_image;
                 if (File::exists($oldPath)) {
                     File::delete($oldPath);
                 }
@@ -161,7 +161,7 @@ class ArticleController extends Controller
             $imageName = time() . '.' . $image->getClientOriginalExtension();
 
             // Path FISIK untuk server
-            $uploadPath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/articles';
+            $uploadPath = '/home/u928398125/domains/hmjtk-polban.com/public_html/storage/articles';
 
             // Buat folder jika belum ada
             if (!File::exists($uploadPath)) {
@@ -202,7 +202,7 @@ class ArticleController extends Controller
     {
         // Hapus file gambar jika ada
         if ($article->featured_image) {
-            $imagePath = '/home/u928398125/domains/iftekno.com/public_html/hmjtk/storage/' . $article->featured_image;
+            $imagePath = '/home/u928398125/domains/hmjtk-polban.com/public_html/storage/' . $article->featured_image;
             if (File::exists($imagePath)) {
                 File::delete($imagePath);
             }
