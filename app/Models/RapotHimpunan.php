@@ -13,11 +13,17 @@ class RapotHimpunan extends Model
         'periode_awal',
         'periode_akhir',
         'description',
-        'file_path'
+        'file_path',
+        'department_id',
     ];
 
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function department(): BelongsTo
+    {
+        return $this->belongsTo(Department::class);
     }
 }

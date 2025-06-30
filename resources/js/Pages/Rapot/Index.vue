@@ -15,7 +15,10 @@ const toast = useToast();
 const props = defineProps({
     rapotHmjt: Object,
     users: Array,
+    departments: Array,
     canManageAll: Boolean,
+    canViewDepartmentData: Boolean,
+    filters: Object,
 });
 
 const showCreateModal = ref(false);
@@ -23,21 +26,38 @@ const showEditModal = ref(false);
 const showPreviewModal = ref(false);
 const editingRapot = ref(null);
 const previewFile = ref(null);
-const search = ref("");
+const search = ref(props.filters?.search || "");
 const perPage = ref(10);
+const selectedDepartment = ref(props.filters?.department || "");
 
 // Computed property untuk filter data
 const filteredRapot = computed(() => {
     if (!props.rapotHmjt?.data) return [];
-    if (!search.value) return props.rapotHmjt.data;
 
-    const searchTerm = search.value.toLowerCase();
-    return props.rapotHmjt.data.filter(
-        (item) =>
-            (item.user?.name?.toLowerCase() || "").includes(searchTerm) ||
-            (item.jabatan?.toLowerCase() || "").includes(searchTerm) ||
-            (item.description?.toLowerCase() || "").includes(searchTerm)
-    );
+    let filtered = props.rapotHmjt.data;
+
+    // Filter by search term
+    if (search.value) {
+        const searchTerm = search.value.toLowerCase();
+        filtered = filtered.filter(
+            (item) =>
+                (item.user?.name?.toLowerCase() || "").includes(searchTerm) ||
+                (item.jabatan?.toLowerCase() || "").includes(searchTerm) ||
+                (item.description?.toLowerCase() || "").includes(searchTerm) ||
+                (item.department?.dept_name?.toLowerCase() || "").includes(
+                    searchTerm
+                )
+        );
+    }
+
+    // Filter by department
+    if (selectedDepartment.value) {
+        filtered = filtered.filter(
+            (item) => item.department?.id === selectedDepartment.value
+        );
+    }
+
+    return filtered;
 });
 
 const form = useForm({
@@ -47,6 +67,7 @@ const form = useForm({
     periode_akhir: "",
     file: null,
     description: "",
+    department_id: "",
 });
 
 const editForm = useForm({
@@ -56,6 +77,7 @@ const editForm = useForm({
     periode_akhir: "",
     file: null,
     description: "",
+    department_id: "",
 });
 
 const getFileType = (filePath) => {
@@ -71,11 +93,45 @@ const getFileType = (filePath) => {
 };
 
 const handlePerPageChange = () => {
-    router.get(
-        route("rapot-hmjt.index"),
-        { search: search.value, per_page: perPage.value },
-        { preserveState: true }
-    );
+    let params = { per_page: perPage.value };
+
+    if (search.value) {
+        params.search = search.value;
+    }
+
+    if (selectedDepartment.value) {
+        params.department = selectedDepartment.value;
+    }
+
+    router.get(route("rapot-hmjt.index"), params, { preserveState: true });
+};
+
+const handleDepartmentChange = () => {
+    let params = { per_page: perPage.value };
+
+    if (search.value) {
+        params.search = search.value;
+    }
+
+    if (selectedDepartment.value) {
+        params.department = selectedDepartment.value;
+    }
+
+    router.get(route("rapot-hmjt.index"), params, { preserveState: true });
+};
+
+const handleSearch = () => {
+    let params = { per_page: perPage.value };
+
+    if (search.value) {
+        params.search = search.value;
+    }
+
+    if (selectedDepartment.value) {
+        params.department = selectedDepartment.value;
+    }
+
+    router.get(route("rapot-hmjt.index"), params, { preserveState: true });
 };
 
 const openCreateModal = () => {
@@ -90,6 +146,7 @@ const openEditModal = (rapot) => {
     editForm.periode_awal = rapot.periode_awal;
     editForm.periode_akhir = rapot.periode_akhir;
     editForm.description = rapot.description;
+    editForm.department_id = rapot.department_id;
     showEditModal.value = true;
 };
 
@@ -180,12 +237,28 @@ const getFileExtension = (filePath) => {
                             </h2>
                             <div class="flex items-center space-x-4">
                                 <TextInput
-                                    v-if="canManageAll"
+                                    v-if="canManageAll || canViewDepartmentData"
                                     v-model="search"
                                     type="search"
                                     placeholder="Cari rapor..."
                                     class="w-64"
+                                    @input="handleSearch"
                                 />
+                                <select
+                                    v-if="canManageAll"
+                                    v-model="selectedDepartment"
+                                    class="rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                    @change="handleDepartmentChange"
+                                >
+                                    <option value="">Semua Departemen</option>
+                                    <option
+                                        v-for="department in departments"
+                                        :key="department.id"
+                                        :value="department.id"
+                                    >
+                                        {{ department.dept_name }}
+                                    </option>
+                                </select>
                                 <PrimaryButton
                                     v-if="canManageAll"
                                     @click="openCreateModal"
@@ -204,6 +277,11 @@ const getFileExtension = (filePath) => {
                                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                                         >
                                             Nama
+                                        </th>
+                                        <th
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                        >
+                                            Departemen
                                         </th>
                                         <th
                                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
@@ -239,9 +317,13 @@ const getFileExtension = (filePath) => {
                                     <tr
                                         v-for="item in filteredRapot"
                                         :key="item.id"
+                                        class="hover:bg-gray-50"
                                     >
                                         <td class="px-6 py-4">
                                             {{ item.user?.name }}
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            {{ item.department?.dept_name }}
                                         </td>
                                         <td class="px-6 py-4">
                                             {{ item.jabatan }}
@@ -374,6 +456,11 @@ const getFileExtension = (filePath) => {
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                             required
                             :disabled="!canManageAll && users.length === 1"
+                            @change="
+                                form.department_id =
+                                    users.find((u) => u.id === form.user_id)
+                                        ?.department?.id || ''
+                            "
                         >
                             <option value="">Pilih Nama</option>
                             <option
@@ -386,6 +473,29 @@ const getFileExtension = (filePath) => {
                         </select>
                         <InputError
                             :message="form.errors.user_id"
+                            class="mt-2"
+                        />
+                    </div>
+
+                    <div>
+                        <InputLabel for="department_id" value="Departemen" />
+                        <select
+                            id="department_id"
+                            v-model="form.department_id"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                            required
+                        >
+                            <option value="">Pilih Departemen</option>
+                            <option
+                                v-for="department in departments"
+                                :key="department.id"
+                                :value="department.id"
+                            >
+                                {{ department.dept_name }}
+                            </option>
+                        </select>
+                        <InputError
+                            :message="form.errors.department_id"
                             class="mt-2"
                         />
                     </div>
@@ -496,6 +606,11 @@ const getFileExtension = (filePath) => {
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                             required
                             :disabled="!canManageAll && users.length === 1"
+                            @change="
+                                editForm.department_id =
+                                    users.find((u) => u.id === editForm.user_id)
+                                        ?.department?.id || ''
+                            "
                         >
                             <option value="">Pilih Nama</option>
                             <option
@@ -508,6 +623,32 @@ const getFileExtension = (filePath) => {
                         </select>
                         <InputError
                             :message="editForm.errors.user_id"
+                            class="mt-2"
+                        />
+                    </div>
+
+                    <div>
+                        <InputLabel
+                            for="edit_department_id"
+                            value="Departemen"
+                        />
+                        <select
+                            id="edit_department_id"
+                            v-model="editForm.department_id"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                            required
+                        >
+                            <option value="">Pilih Departemen</option>
+                            <option
+                                v-for="department in departments"
+                                :key="department.id"
+                                :value="department.id"
+                            >
+                                {{ department.dept_name }}
+                            </option>
+                        </select>
+                        <InputError
+                            :message="editForm.errors.department_id"
                             class="mt-2"
                         />
                     </div>

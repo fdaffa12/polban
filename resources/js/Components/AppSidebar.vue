@@ -188,7 +188,7 @@ const items = computed(() => {
                 icon: Mail,
             },
             {
-                title: "Departement",
+                title: "Perangkat",
                 url: route("departments.index"),
                 icon: Building2,
             },

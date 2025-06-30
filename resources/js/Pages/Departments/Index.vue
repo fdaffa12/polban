@@ -50,9 +50,9 @@ const submitDepartment = () => {
                 forceFormData: true,
                 onSuccess: () => {
                     closeDepartmentModal();
-                    toast.success("Department updated successfully");
+                    toast.success("Perangkat updated successfully");
                 },
-                onError: () => toast.error("Failed to update department"),
+                onError: () => toast.error("Failed to update perangkat"),
             }
         );
     } else {
@@ -61,9 +61,9 @@ const submitDepartment = () => {
             forceFormData: true,
             onSuccess: () => {
                 closeDepartmentModal();
-                toast.success("Department added successfully");
+                toast.success("Perangkat added successfully");
             },
-            onError: () => toast.error("Failed to add department"),
+            onError: () => toast.error("Failed to add perangkat"),
         });
     }
 };
@@ -76,8 +76,8 @@ const closeDepartmentModal = () => {
 
 const deleteDepartment = (department) => {
     Swal.fire({
-        title: "Delete Department?",
-        text: "This will also delete all members in this department!",
+        title: "Delete Perangkat?",
+        text: "This will also delete all members in this perangkat!",
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
@@ -91,9 +91,9 @@ const deleteDepartment = (department) => {
                     props.departments = props.departments.filter(
                         (d) => d.id !== department.id
                     );
-                    toast.success("Department deleted successfully");
+                    toast.success("Perangkat deleted successfully");
                 },
-                onError: () => toast.error("Failed to delete department"),
+                onError: () => toast.error("Failed to delete perangkat"),
             });
         }
     });
@@ -136,11 +136,11 @@ const submitMember = () => {
             forceFormData: true,
             onSuccess: () => {
                 closeMemberModal();
-                toast.success("Member updated successfully");
+                toast.success("Anggota updated successfully");
             },
             onError: (errors) => {
                 console.log(errors);
-                toast.error("Failed to update member");
+                toast.error("Failed to update anggota");
             },
         });
     } else {
@@ -149,11 +149,11 @@ const submitMember = () => {
             forceFormData: true,
             onSuccess: () => {
                 closeMemberModal();
-                toast.success("Member added successfully");
+                toast.success("Anggota added successfully");
             },
             onError: (errors) => {
                 console.log(errors);
-                toast.error("Failed to add member");
+                toast.error("Failed to add anggota");
             },
         });
     }
@@ -167,7 +167,7 @@ const closeMemberModal = () => {
 
 const deleteMember = (member) => {
     Swal.fire({
-        title: "Delete Member?",
+        title: "Delete Anggota?",
         text: "You won't be able to revert this!",
         icon: "warning",
         showCancelButton: true,
@@ -187,9 +187,9 @@ const deleteMember = (member) => {
                             (m) => m.id !== member.id
                         );
                     }
-                    toast.success("Member deleted successfully");
+                    toast.success("Anggota deleted successfully");
                 },
-                onError: () => toast.error("Failed to delete member"),
+                onError: () => toast.error("Failed to delete anggota"),
             });
         }
     });
@@ -271,9 +271,9 @@ const submitDeptLogo = () => {
                 forceFormData: true,
                 onSuccess: () => {
                     closeDeptLogoModal();
-                    toast.success("Department logo updated successfully");
+                    toast.success("Logo perangkat updated successfully");
                 },
-                onError: () => toast.error("Failed to update department logo"),
+                onError: () => toast.error("Failed to update logo perangkat"),
             }
         );
     } else {
@@ -282,16 +282,16 @@ const submitDeptLogo = () => {
             forceFormData: true,
             onSuccess: () => {
                 closeDeptLogoModal();
-                toast.success("Department logo added successfully");
+                toast.success("Logo perangkat added successfully");
             },
-            onError: () => toast.error("Failed to add department logo"),
+            onError: () => toast.error("Failed to add logo perangkat"),
         });
     }
 };
 
 const deleteDeptLogo = (logo) => {
     Swal.fire({
-        title: "Delete Department Logo?",
+        title: "Delete Logo Perangkat?",
         text: "You won't be able to revert this!",
         icon: "warning",
         showCancelButton: true,
@@ -303,9 +303,9 @@ const deleteDeptLogo = (logo) => {
             router.delete(route("dept-logos.destroy", logo.id), {
                 preserveScroll: true,
                 onSuccess: () => {
-                    toast.success("Department logo deleted successfully");
+                    toast.success("Logo perangkat deleted successfully");
                 },
-                onError: () => toast.error("Failed to delete department logo"),
+                onError: () => toast.error("Failed to delete logo perangkat"),
             });
         }
     });
@@ -318,10 +318,10 @@ watch(searchQuery, () => {
 </script>
 
 <template>
-    <AuthenticatedLayout title="Department Management">
+    <AuthenticatedLayout title="Perangkat Management">
         <Head>
-            <title>Department Management</title>
-            <meta name="description" content="Manage your departments" />
+            <title>Perangkat Management</title>
+            <meta name="description" content="Manage your perangkat" />
         </Head>
         <div class="py-6 sm:py-12">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
@@ -338,7 +338,7 @@ watch(searchQuery, () => {
                         >
                             <div>
                                 <h2 class="text-xl font-semibold">
-                                    Department Logos
+                                    Logo Perangkat
                                 </h2>
                                 <p class="text-sm text-gray-500">
                                     These logos will be displayed on the front
@@ -346,7 +346,7 @@ watch(searchQuery, () => {
                                 </p>
                             </div>
                             <PrimaryButton @click="openDeptLogoModal()">
-                                Add Department Logo
+                                Add Logo Perangkat
                             </PrimaryButton>
                         </div>
 
@@ -390,21 +390,21 @@ watch(searchQuery, () => {
                     <div
                         class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6"
                     >
-                        <h2 class="text-xl font-semibold">Departments</h2>
+                        <h2 class="text-xl font-semibold">Perangkat</h2>
                         <PrimaryButton @click="openDepartmentModal()">
-                            Add Department
+                            Add Perangkat
                         </PrimaryButton>
                     </div>
 
                     <!-- Search Bar -->
                     <div class="mb-6">
-                        <InputLabel for="search" value="Search Members" />
+                        <InputLabel for="search" value="Search Anggota" />
                         <TextInput
                             id="search"
                             v-model="searchQuery"
                             type="text"
                             class="mt-1 block w-full"
-                            placeholder="Search by member name..."
+                            placeholder="Search by anggota name..."
                         />
                     </div>
 
@@ -558,8 +558,8 @@ watch(searchQuery, () => {
                 <h2 class="text-lg font-medium">
                     {{
                         editingDepartment
-                            ? "Edit Department"
-                            : "Add New Department"
+                            ? "Edit Perangkat"
+                            : "Add New Perangkat"
                     }}
                 </h2>
                 <form @submit.prevent="submitDepartment" class="mt-6">
@@ -567,7 +567,7 @@ watch(searchQuery, () => {
                         <div>
                             <InputLabel
                                 for="dept_name"
-                                value="Department Name"
+                                value="Perangkat Name"
                             />
                             <TextInput
                                 id="dept_name"
@@ -589,7 +589,7 @@ watch(searchQuery, () => {
                                 v-model="departmentForm.desc"
                                 rows="4"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                placeholder="Enter department description..."
+                                placeholder="Enter perangkat description..."
                             ></textarea>
                             <InputError
                                 :message="departmentForm.errors.desc"
@@ -600,7 +600,7 @@ watch(searchQuery, () => {
                         <div>
                             <InputLabel
                                 for="dept_image"
-                                value="Department Image"
+                                value="Perangkat Image"
                             />
                             <input
                                 type="file"

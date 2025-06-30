@@ -9,6 +9,7 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Department;
 
 class RapotHimpunanController extends Controller
 {
@@ -17,24 +18,46 @@ class RapotHimpunanController extends Controller
         return in_array($user->role, ['BPH', 'MSDK/BIRIN']);
     }
 
+    private function canViewDepartmentData($user)
+    {
+        return $user->role === 'FUNGSIONARIS';
+    }
+
     public function rapotHmjtIndex(Request $request)
     {
-        $query = RapotHimpunan::with('user')->select('rapot_himpunans.*');
+        $query = RapotHimpunan::with(['user', 'user.department', 'department'])->select('rapot_himpunans.*');
 
         // Filter berdasarkan role
         $user = Auth::user();
-        if (!$this->canManageAll($user)) {
-            // Jika bukan BPH atau Sekretaris Kabinet, hanya tampilkan data milik sendiri
+        if ($this->canViewDepartmentData($user)) {
+            // Jika Fungsionaris, hanya bisa lihat data sesuai departemennya
+            $query->where('department_id', $user->department_id);
+        } elseif (!$this->canManageAll($user)) {
+            // Jika bukan BPH atau MSDK/BIRIN, hanya tampilkan data milik sendiri
             $query->where('user_id', $user->id);
         }
 
+        // Filter berdasarkan departemen
+        if ($request->filled('department')) {
+            // Untuk Fungsionaris, tetap batasi hanya ke departemennya
+            if ($this->canViewDepartmentData($user)) {
+                if ($request->department != $user->department_id) {
+                    abort(403, 'Anda hanya dapat melihat data dari departemen Anda.');
+                }
+            }
+            $query->where('department_id', $request->department);
+        }
+
         // Pencarian
-        if ($request->has('search')) {
+        if ($request->filled('search')) {
             $searchTerm = $request->search;
             $query->where(function ($q) use ($searchTerm) {
                 $q->whereHas('user', function ($userQuery) use ($searchTerm) {
                     $userQuery->where('name', 'like', "%{$searchTerm}%");
                 })
+                    ->orWhereHas('department', function ($deptQuery) use ($searchTerm) {
+                        $deptQuery->where('dept_name', 'like', "%{$searchTerm}%");
+                    })
                     ->orWhere('jabatan', 'like', "%{$searchTerm}%")
                     ->orWhere('description', 'like', "%{$searchTerm}%");
             });
@@ -42,21 +65,37 @@ class RapotHimpunanController extends Controller
 
         // Paginasi
         $perPage = $request->input('per_page', 10);
-        $rapotHmjt = $query->latest()->paginate($perPage);
+        $rapotHmjt = $query->latest()->paginate($perPage)->withQueryString();
 
         // Get users for dropdown
-        // Jika BPH atau Sekretaris Kabinet, tampilkan semua user
-        // Jika tidak, hanya tampilkan user yang sedang login
-        $usersQuery = User::select('id', 'name');
-        if (!$this->canManageAll($user)) {
+        $usersQuery = User::select('id', 'name')->with('department');
+        if ($this->canViewDepartmentData($user)) {
+            // Jika Fungsionaris, tampilkan semua user dari departemennya
+            $usersQuery->where('department_id', $user->department_id);
+        } elseif (!$this->canManageAll($user)) {
+            // Jika bukan BPH atau MSDK/BIRIN, hanya tampilkan user yang sedang login
             $usersQuery->where('id', $user->id);
         }
         $users = $usersQuery->get();
 
+        // Get departments for dropdown
+        $departments = Department::select('id', 'dept_name');
+        if ($this->canViewDepartmentData($user)) {
+            // Jika Fungsionaris, hanya tampilkan departemennya
+            $departments->where('id', $user->department_id);
+        }
+        $departments = $departments->get();
+
         return Inertia::render('Rapot/Index', [
             'rapotHmjt' => $rapotHmjt,
             'users' => $users,
+            'departments' => $departments,
             'canManageAll' => $this->canManageAll($user),
+            'canViewDepartmentData' => $this->canViewDepartmentData($user),
+            'filters' => [
+                'search' => $request->search,
+                'department' => $request->department,
+            ],
         ]);
     }
 
@@ -74,6 +113,7 @@ class RapotHimpunanController extends Controller
 
         $request->validate([
             'user_id' => 'required|exists:users,id',
+            'department_id' => 'required|exists:departments,id',
             'jabatan' => 'required|string|max:255',
             'periode_awal' => ['required', 'string', 'regex:/^\d{4}-(0[1-9]|1[0-2])$/'],
             'periode_akhir' => [
@@ -95,6 +135,7 @@ class RapotHimpunanController extends Controller
 
         RapotHimpunan::create([
             'user_id' => $request->user_id,
+            'department_id' => $request->department_id,
             'jabatan' => $request->jabatan,
             'periode_awal' => $request->periode_awal,
             'periode_akhir' => $request->periode_akhir,
@@ -119,6 +160,7 @@ class RapotHimpunanController extends Controller
 
         $request->validate([
             'user_id' => 'required|exists:users,id',
+            'department_id' => 'required|exists:departments,id',
             'jabatan' => 'required|string|max:255',
             'periode_awal' => ['required', 'string', 'regex:/^\d{4}-(0[1-9]|1[0-2])$/'],
             'periode_akhir' => [
@@ -137,6 +179,7 @@ class RapotHimpunanController extends Controller
 
         $data = [
             'user_id' => $request->user_id,
+            'department_id' => $request->department_id,
             'jabatan' => $request->jabatan,
             'periode_awal' => $request->periode_awal,
             'periode_akhir' => $request->periode_akhir,
